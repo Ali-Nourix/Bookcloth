@@ -580,6 +580,15 @@ nothing, which looks exactly like a successful copy.
 Sections: `env`, `tokens`, `frame`, `ribbon`, `leftsplit`, `rightsplit`, `root`,
 `editor`, `embeds`, `tasks`, `controls`, `overlays`, `icons`, `tree`.
 
+`tools/embed-doctor.js` goes further than reporting. It accounts for the space
+on all four sides of an embed and names what produces each; lists every rule in
+every loaded stylesheet that targets an embed, in cascade order, so it is
+visible which one wins and from which sheet; and then **applies candidate fixes
+to the live element one at a time, measures, and puts everything back**. The
+answer comes out of the app rather than out of a screenshot, which after three
+rounds of correcting a padding value that could never have worked is the only
+way this should have been done.
+
 `tools/embed-probe.js` is the narrow version of the same thing: paste it with
 the misbehaving note open and it dumps the embed's whole ancestor chain outward
 to the pane and its subtree inward, with each box's direction, overflow,
