@@ -410,8 +410,25 @@ outside a container that clips is not a preference to be outvoted — it is text
 the reader cannot see. Outside a callout the unflagged rule leaves a deliberate
 bleed alone.
 
-The reason the padding kept not changing is one declaration, and it is not a
-padding. **A transclusion has to be told it is a block.** Obsidian's class for
+The padding was contested two ways at once, and from a computed style the two
+are indistinguishable. A doctor run in the vault this was reported from came
+back with the embed computing `padding: 0px 24px 0px 0px` — which is what
+`padding: var(--embed-padding)` produces when something has handed that
+variable those four numbers, and equally what a flagged rule elsewhere
+produces by winning outright. `--embed-padding` is Obsidian's variable and
+twenty-six stylesheets load after the theme there, so both are ordinary. The
+answer is to be immune to both: the value comes from a private
+`--bc-embed-padding`, and the declaration carries a flag on a selector that
+repeats the class, because one class is the floor and anything ties with it
+and wins on order.
+
+`preview/embeds.html` now loads both attacks after `theme.css` — a hijacked
+`--embed-padding` and a `padding: 0 !important; padding-inline-start: 24px
+!important` — and reproduces the reported symptom exactly: 0px above the first
+line, 24px beside it.
+
+The reason the padding kept not changing before that is one declaration, and it
+is not a padding. **A transclusion has to be told it is a block.** Obsidian's class for
 one in Live Preview is literally `inline-embed`, and the element is a `<span>`.
 On an inline box, horizontal padding lays out and vertical padding only paints
 — so the sides showed the padding and the top showed nothing, and correcting

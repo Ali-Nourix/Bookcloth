@@ -2,6 +2,14 @@
 <html><head><meta charset="utf-8">
 <link rel="stylesheet" href="app-shim.css"><link rel="stylesheet" href="../theme.css">
 <style>svg{display:block}
+/* Loaded AFTER theme.css on purpose. In the vault this was reported from,
+   twenty-six stylesheets load after the theme, and both of these are things
+   one of them can do: hand Obsidian's --embed-padding different numbers, and
+   set the padding directly with a flag. A theme that reads Obsidian's variable
+   gets the first; a theme whose declaration carries no flag gets the second.
+   The harness has to be able to do both, or neither answer is verified. */
+body { --embed-padding: 0 24px 0 0; }
+.markdown-embed { padding: 0 !important; padding-inline-start: 24px !important; }
 .stage{min-height:100vh;background:var(--background-secondary);padding:24px;display:flex;gap:16px;align-items:flex-start}
 .pane{flex:1;min-width:0;background:var(--background-primary);border-radius:var(--radius-l);overflow:auto}
 </style></head>

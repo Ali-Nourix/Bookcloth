@@ -232,6 +232,10 @@ body {
    character off the start of each line, which is exactly how it was reported. */
 .callout .markdown-embed { margin-right: -34px; }
 
+/* The two hostile declarations for embeds live in embeds.html, because they
+   have to load AFTER theme.css to mean anything. */
+
+
 /* Heading fold arrows are absolutely positioned outside the text column, at
    the inline start. Inside an embed inside a clipping callout they land beyond
    the edge and are cut in half. */

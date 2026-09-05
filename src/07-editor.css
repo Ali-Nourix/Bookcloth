@@ -19,7 +19,17 @@ body {
      embed is a card: the eye reads the gap above the first line against the
      gap beside it, and two different numbers read as a mistake in the one
      construct whose whole job is to look deliberate. */
-  --embed-padding: var(--bc-gap-4);
+  /* The theme's own name for it. --embed-padding is Obsidian's variable and
+     anything loading after the theme can set it; a doctor run in the vault
+     this was reported from came back with the embed computing
+     `padding: 0px 24px 0px 0px`, which is exactly what
+     `padding: var(--embed-padding)` produces when that variable has been
+     handed those four numbers by someone else. Reading a private token instead
+     means the value cannot be reached that way, and the flag on the
+     declaration means the declaration cannot be outvoted either. Both, because
+     from a computed style the two are indistinguishable. */
+  --bc-embed-padding: var(--bc-gap-4);
+  --embed-padding: var(--bc-embed-padding);
   --embed-font-style: inherit;
   --embed-block-shadow-hover: none;
 
@@ -374,7 +384,13 @@ body.bc-no-fade-done {
    nothing at all — the same failure as aiming at a class that does not exist,
    and just as invisible, because a rule that matches nothing and a rule that
    is outranked both look like "the theme did not style this". */
-.markdown-embed {
+/* The class is repeated on purpose. A flagged declaration still loses to
+   another flagged declaration that is more specific, and one class is the
+   floor — anything in any of the twenty-six sheets that load after the theme
+   ties with it and wins on order. Two classes is the smallest honest answer
+   that does not reach for `body` (which a snippet can target just as easily)
+   and does not pin the theme to somebody else's selector. */
+.markdown-embed.markdown-embed {
   /* A transclusion is a block, and it has to be told so. Obsidian's class for
      one in Live Preview is literally `inline-embed` and the element is a
      <span>: on an inline box, horizontal padding lays out and vertical padding
@@ -397,7 +413,13 @@ body.bc-no-fade-done {
      is never wider than what holds it. */
   margin-inline: 0;
   max-width: 100%;
-  padding: var(--embed-padding);
+  /* Forced, on the evidence. A doctor run in the vault this was reported from
+     came back with `display: block` and `padding: 0px 24px 0px 0px` on an
+     element whose background and ring — set in this same rule, two lines down
+     — were both drawing. A rule cannot half apply, so something else is
+     setting the padding and winning, and the same run showed that forcing 12px
+     put all four sides at 12. The theme owns the box of a block it draws. */
+  padding: var(--bc-embed-padding) !important;
   border-radius: var(--bc-pane-radius);
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
@@ -468,8 +490,9 @@ body.bc-no-fade-done {
      reader cannot see. Outside a callout the plain rule above still leaves a
      deliberate bleed alone. */
   margin: 0 !important;
-  padding: var(--bc-gap-3);
-  /* symmetric here too — the ring is closer in, but it is still a box */
+  /* same reason as the base rule, and it has to shout at least as loudly or
+     the base rule's flag would win over this one on the axis it sets */
+  padding: var(--bc-gap-3) !important;
   background-color: transparent;
   box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
 }
@@ -481,7 +504,7 @@ body.bc-no-fade-done {
    back to being the container. */
 body.bc-callout-rule .callout .markdown-embed,
 body.bc-callout-rule .callout-content .markdown-embed {
-  padding: var(--embed-padding);
+  padding: var(--bc-embed-padding) !important;
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
 }

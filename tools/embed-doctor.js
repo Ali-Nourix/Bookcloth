@@ -101,7 +101,9 @@
   let node = em;
   for (let d = 0; d < 6 && node; d++) {
     chain.push(node);
-    node = [...node.children].find((c) => cs(c).position !== 'absolute');
+    node = [...node.children].find(
+      (c) => cs(c).position !== 'absolute' && cs(c).display !== 'none'
+    );
   }
   chain.forEach((n, i) => {
     const s = cs(n);
@@ -115,8 +117,9 @@
 
   /* ---- every rule in every sheet that targets the embed ------------------ */
   say('=== rules targeting the embed, in cascade order ===');
-  const WANT = /^(display|padding|margin|overflow)/;
+  const WANT = /^(display|padding|margin|overflow|--embed-padding|--bc-embed-padding)/;
   let seen = 0;
+  let scanned = 0;
   [...document.styleSheets].forEach((sheet, si) => {
     let rules;
     try {
@@ -127,28 +130,47 @@
     }
     const walk = (list) => {
       for (const rule of list) {
-        if (rule.cssRules) {
-          walk(rule.cssRules);
-          continue;
-        }
+        scanned++;
+        /* Check the rule BEFORE recursing. Since CSS Nesting shipped, a plain
+           CSSStyleRule also has a .cssRules — an empty list, which is truthy —
+           so `if (rule.cssRules) continue` skips every style rule in the
+           document. That is why the first version of this reported "none" in a
+           vault with twenty-six stylesheets loaded, and why a real finding was
+           read as an absence of one. */
         const sel = rule.selectorText;
-        if (!sel || !/markdown-embed|internal-embed|inline-embed/.test(sel)) continue;
-        const decls = [];
-        for (const prop of rule.style) {
-          if (WANT.test(prop)) {
-            decls.push(`${prop}: ${rule.style.getPropertyValue(prop)}${rule.style.getPropertyPriority(prop) ? ' !important' : ''}`);
+        if (sel && rule.style && /markdown-embed|internal-embed|inline-embed/.test(sel)) {
+          const decls = [];
+          for (const prop of rule.style) {
+            if (WANT.test(prop)) {
+              decls.push(`${prop}: ${rule.style.getPropertyValue(prop)}${rule.style.getPropertyPriority(prop) ? ' !important' : ''}`);
+            }
+          }
+          if (decls.length) {
+            seen++;
+            const who = sheet.ownerNode?.id || (sheet.href || '').split('/').pop() || `inline #${si}`;
+            const hits = em.matches(sel.split(',').find((x) => { try { return em.matches(x.trim()); } catch { return false; } }) || '\u0000') ? ' ← matches this embed' : '';
+            say(`  [${String(si).padStart(2)} ${who}] ${sel}${hits}`);
+            decls.forEach((d) => say(`        ${d}`));
           }
         }
-        if (!decls.length) continue;
-        seen++;
-        const who = sheet.ownerNode?.id || (sheet.href || '').split('/').pop() || `inline #${si}`;
-        say(`  [${String(si).padStart(2)} ${who}] ${sel}`);
-        decls.forEach((d) => say(`        ${d}`));
+        /* anything that groups other rules: @media, @supports, @layer, and a
+           nested rule inside a style rule */
+        if (rule.cssRules && rule.cssRules.length) walk(rule.cssRules);
       }
     };
     walk(rules);
   });
-  if (!seen) say('  none — no loaded stylesheet sets display/padding/margin/overflow on an embed');
+  say(`  (${scanned} rules scanned across ${document.styleSheets.length} stylesheets, ${seen} of them relevant)`);
+  if (!seen) say('  none — and if that number of rules scanned looks like zero, this tool is broken, not the theme');
+
+  /* the variables the padding is read through, since a hijacked value and a
+     losing declaration look identical from a computed style */
+  say('');
+  say('=== the values behind the padding ===');
+  for (const v of ['--bc-embed-padding', '--embed-padding', '--bc-gap-4', '--bc-density']) {
+    say(`  ${v.padEnd(20)} body ${cs(document.body).getPropertyValue(v).trim() || '(unset)'}   on the embed ${cs(em).getPropertyValue(v).trim() || '(unset)'}`);
+  }
+  say(`  background ${cs(em).backgroundColor}   box-shadow ${cs(em).boxShadow.slice(0, 60)}`);
   say('');
 
   /* ---- try the candidate fixes, measure, put everything back ------------- */
