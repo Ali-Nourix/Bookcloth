@@ -419,9 +419,12 @@ body.bc-no-fade-done {
   margin-block-end: 0;
 }
 
-/* Inside a callout the callout is already the container, so a second box round
-   the same content is one box too many. The embed goes flush and reads as what
-   the note says it is: this content, here. */
+/* Inside a callout the callout supplies the fill, so the embed does not add a
+   second one — but it still needs an edge. Going fully flush was a step too
+   far: with no fill of its own and no edge, a transclusion reads as text the
+   author typed, which is exactly how it was reported the second time. A
+   hairline in the callout's own colour and a small inset instead: the
+   callout's tint shows through, and the block is visibly a block. */
 .callout .markdown-embed,
 .callout-content .markdown-embed {
   /* margin, with a flag, because this is the one that was actually cutting the
@@ -434,9 +437,21 @@ body.bc-no-fade-done {
      reader cannot see. Outside a callout the plain rule above still leaves a
      deliberate bleed alone. */
   margin: 0 !important;
-  padding: 0;
+  padding: var(--bc-gap-3);
   background-color: transparent;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
+}
+
+/* Unless the callout has no fill of its own. "The callout is already the
+   container" is only true of a callout that draws one — under the left-rule
+   variant it draws a 3px line and nothing else, so an embed that also drew
+   nothing left the reader with no box anywhere on screen. There the embed goes
+   back to being the container. */
+body.bc-callout-rule .callout .markdown-embed,
+body.bc-callout-rule .callout-content .markdown-embed {
+  padding: var(--embed-padding);
+  background-color: var(--bc-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--background-modifier-border);
 }
 
 .markdown-embed-title {

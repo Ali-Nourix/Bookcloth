@@ -381,9 +381,18 @@ right, it lands at the *start* of a Persian line, on top of the first heading �
 and it is revealed on hover, the way Notion treats block controls, so it never
 sits over the text at all. Hover-less pointers keep it visible.
 
-Inside a callout the embed goes flush: no card, no ring, no padding. The callout
-is already the container, and a second box around the same content is one box
-too many.
+Inside a callout the embed drops its fill — the callout supplies that — but
+keeps a hairline in the callout's own colour and a small inset, so the tint
+shows through and the block still reads as a block. Going fully flush was tried
+and was a step too far: with no fill and no edge, a transclusion reads as text
+the author typed.
+
+And "the callout is already the container" is only true of a callout that draws
+one. Under the **left-rule** callout variant it draws a 3px line and nothing
+else, so an embed that drew nothing left the reader with no box anywhere on
+screen. There the embed goes back to being the container and takes the full
+sunken card. `invariants.mjs` now fails if an embed has no edge and sits in
+nothing that has one.
 
 The cut at the right edge had a second cause, and it needed a console dump of
 the real note to find. The embed arrives with a **negative inline-start

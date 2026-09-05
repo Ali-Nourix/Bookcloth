@@ -9,14 +9,18 @@
  */
 import { chromium } from 'playwright';
 
-const [mode = 'light', page = 'index.html'] = process.argv.slice(2);
+/* extra body classes matter: the theme's Style Settings toggles are body
+   classes, and one of them (bc-callout-rule) turns a callout into something
+   that draws no container — which changed what an embed inside it has to do. */
+const [mode = 'light', page = 'index.html', classes = ''] = process.argv.slice(2);
 
 const browser = await chromium.launch();
 const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 await pg.goto('file://' + process.cwd() + '/' + page);
-await pg.evaluate((m) => {
-  document.body.className = document.body.className.replace(/theme-\w+/, 'theme-' + m);
-}, mode);
+await pg.evaluate(([m, c]) => {
+  document.body.className =
+    document.body.className.replace(/theme-\w+/, 'theme-' + m) + (c ? ' ' + c : '');
+}, [mode, classes]);
 await pg.waitForTimeout(300);
 
 const result = await pg.evaluate(() => {
@@ -205,6 +209,23 @@ const result = await pg.evaluate(() => {
         break;
       }
     }
+  }
+
+  /* 5c. an embed always has a visible edge — its own, or the fill of the
+         callout holding it. Going flush inside a callout is only sound while
+         the callout draws a container; under the left-rule variant it draws a
+         3px line and nothing else, and an embed that also drew nothing left no
+         box anywhere on screen. That shipped, and this is the check for it. */
+  const opaque = (v) => v && v !== 'transparent' && !/,\s*0\s*\)$/.test(v);
+  for (const em of all('.markdown-embed')) {
+    const s2 = getComputedStyle(em);
+    let edged = opaque(s2.backgroundColor) || s2.boxShadow !== 'none' ||
+      parseFloat(s2.borderTopWidth) + parseFloat(s2.borderLeftWidth) > 0;
+    if (!edged) {
+      const co = em.closest('.callout');
+      if (co) edged = opaque(getComputedStyle(co).backgroundColor);
+    }
+    if (!edged) fails.push('embed has no edge and sits in nothing that has one');
   }
 
   /* 6. the in-progress box follows the accent. */
