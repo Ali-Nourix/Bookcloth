@@ -9,6 +9,11 @@
    ========================================================================== */
 
 body {
+  /* Stamped so a console probe can say which build is actually running. A
+     screenshot cannot tell a fix that did not work from a fix that was never
+     installed, and this session has burned rounds on that distinction. */
+  --bc-version: "2.6.6";
+
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
      which outranks these declarations. So these are defaults, not overrides:

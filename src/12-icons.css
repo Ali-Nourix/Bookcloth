@@ -330,16 +330,22 @@ body {
   --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
   --bc-check-mask-bang: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9"/><path d="M12 19h.01"/></svg>');
 
-  /* The two alternate states carry their own hues, because "in progress" and
-     "needs attention" are not the same signal as "done" and colouring all
-     three with the accent throws that away. Overridable in Style Settings,
-     so they are plain values rather than aliases of the semantic hues. */
-  --bc-task-progress: #337ea9;
+  /* "In progress" follows the accent, and is the same fill as a done box: the
+     two are one state of work in two stages, and a box that is half the
+     accent reads as that far along without needing a second hue to say so.
+     It is --bc-ac-fill rather than the raw accent because the fill is the
+     clamped step — a pale accent like a light teal would put a 1.9:1 edge on
+     white, and a checkbox border is a boundary that has to be seen.
+
+     "Needs attention" keeps a hue of its own. It is not a stage of the same
+     work, it is an interruption, and colouring it with the accent is how it
+     stops being one. Both stay overridable in Style Settings; clearing an
+     override there puts this back. */
+  --bc-task-progress: var(--bc-ac-fill);
   --bc-task-attention: #d9730d;
 }
 
 .theme-dark {
-  --bc-task-progress: #529cca;
   --bc-task-attention: #ffa344;
 }
 

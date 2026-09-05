@@ -528,7 +528,7 @@ settings:
     -
         id: bc-task-progress
         title: In-progress task colour
-        description: The half-filled box on a `- [/]` task.
+        description: The half-filled box on a `- [/]` task. Left alone it follows the accent, so changing the accent changes it too; set a colour here to pin it to one, and clear the override to hand it back to the accent.
         type: variable-themed-color
         format: hex
         opacity: false

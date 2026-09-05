@@ -9,14 +9,18 @@
  */
 import { chromium } from 'playwright';
 
-const [mode = 'light', page = 'index.html'] = process.argv.slice(2);
+/* extra body classes matter: the theme's Style Settings toggles are body
+   classes, and one of them (bc-callout-rule) turns a callout into something
+   that draws no container — which changed what an embed inside it has to do. */
+const [mode = 'light', page = 'index.html', classes = ''] = process.argv.slice(2);
 
 const browser = await chromium.launch();
 const pg = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 await pg.goto('file://' + process.cwd() + '/' + page);
-await pg.evaluate((m) => {
-  document.body.className = document.body.className.replace(/theme-\w+/, 'theme-' + m);
-}, mode);
+await pg.evaluate(([m, c]) => {
+  document.body.className =
+    document.body.className.replace(/theme-\w+/, 'theme-' + m) + (c ? ' ' + c : '');
+}, [mode, classes]);
 await pg.waitForTimeout(300);
 
 const result = await pg.evaluate(() => {
@@ -110,7 +114,169 @@ const result = await pg.evaluate(() => {
     notes.push(`task checkbox ${w}px`);
   }
 
-  /* 5. one band height, not two opinions about it. */
+  /* 5. an embed is a block on this page, not a page of its own. The inner
+        .markdown-preview-view arrives with --file-margins, which ends in 20vh,
+        so an unreset embed opened with a fifth of the window under its last
+        line. Measured as slack: the gap between the embed's bottom and the
+        bottom of the last thing in it. */
+  for (const em of all('.markdown-embed')) {
+    const box = rect(em);
+    const es = getComputedStyle(em);
+    const kids = [...em.querySelectorAll('*')].filter(shown);
+    if (!kids.length) continue;
+    const lowest = Math.max(...kids.map((k) => rect(k).bottom));
+    const slack = R(box.bottom - lowest - parseFloat(es.paddingBottom));
+    if (slack > 8) fails.push(`embed has ${slack}px of empty space under its last line`);
+
+    /* and nothing in it may run past its content box. pre and table are
+       allowed to scroll inside themselves; everything else has to wrap. */
+    const left = box.left + parseFloat(es.paddingLeft);
+    const right = box.right - parseFloat(es.paddingRight);
+    /* an overlay control is not content: insets on an absolutely positioned
+       box resolve against the padding box, so the embed's open-in-full sits a
+       padding's width outside the content box on purpose. Its placement is
+       checked below instead. Icon geometry is the svg's business, not the
+       layout's, so anything inside one is skipped with it. */
+    const overlaid = (el) => {
+      if (el.ownerSVGElement) return true;
+      for (let n = el; n && n !== em; n = n.parentElement) {
+        const pos = getComputedStyle(n).position;
+        if (pos === 'absolute' || pos === 'fixed') return true;
+      }
+      return false;
+    };
+    for (const k of kids) {
+      if (k.closest('pre, table, [style*="overflow"]')) continue;
+      if (overlaid(k)) continue;
+      if (getComputedStyle(k).overflowX !== 'visible') continue;
+      const r = rect(k);
+      if (r.right > right + 0.5 || r.left < left - 0.5) {
+        const tag = `${k.tagName.toLowerCase()}.${(k.getAttribute('class') || '').split(/\s+/)[0]}`;
+        fails.push(`embed content overflows: ${tag} by ${R(Math.max(r.right - right, left - r.left))}px`);
+        break;
+      }
+    }
+
+    /* the open-in-full control sits at the inline end, not over the text */
+    const link = em.querySelector(':scope > .markdown-embed-link');
+    if (link) {
+      const lr = rect(link);
+      const rtl = getComputedStyle(em).direction === 'rtl';
+      const nearEnd = rtl ? Math.abs(lr.left - left) < 24 : Math.abs(lr.right - right) < 24;
+      if (!nearEnd && getComputedStyle(link).opacity !== '0') {
+        fails.push('embed link is not at the inline end of the embed');
+      }
+    }
+  }
+  notes.push(`embeds checked: ${all('.markdown-embed').length}`);
+
+  /* 5b. nothing may be clipped by an ancestor that hides its overflow. This is
+         the check the earlier ones missed: an embed can fit its own content box
+         perfectly and still be cut, because it is the CONTAINER that clips. In
+         a live vault the embed carried a negative inline-start margin and stood
+         34px past a callout that Obsidian gives overflow: hidden — so in a
+         right-to-left note one character came off the start of every line. */
+  const clipper = (el) => {
+    for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+      const o = getComputedStyle(n);
+      if (o.overflowX !== 'visible' || o.overflowY !== 'visible') return n;
+    }
+    return null;
+  };
+  for (const em of all('.markdown-embed')) {
+    const c = clipper(em);
+    if (!c) continue;
+    const cr = rect(c);
+    const csy = getComputedStyle(c);
+    const inner = {
+      left: cr.left + parseFloat(csy.paddingLeft) + parseFloat(csy.borderLeftWidth),
+      right: cr.right - parseFloat(csy.paddingRight) - parseFloat(csy.borderRightWidth),
+    };
+    const er = rect(em);
+    const past = R(Math.max(er.right - inner.right, inner.left - er.left));
+    if (past > 0.5) {
+      const who = `${c.tagName.toLowerCase()}.${(c.getAttribute('class') || '').split(/\s+/)[0]}`;
+      fails.push(`embed stands ${past}px outside ${who}, which clips (overflow ${csy.overflow})`);
+    }
+    /* and nothing inside it may be cut by that same ancestor either */
+    for (const k of em.querySelectorAll('*')) {
+      if (k.ownerSVGElement || !shown(k)) continue;
+      const kr = rect(k);
+      const cut = R(Math.max(kr.right - inner.right, inner.left - kr.left));
+      if (cut > 0.5) {
+        const tag = `${k.tagName.toLowerCase()}.${(k.getAttribute('class') || '').split(/\s+/)[0]}`;
+        fails.push(`${tag} inside the embed is cut off by ${cut}px`);
+        break;
+      }
+    }
+  }
+
+  /* 5c. an embed always has a visible edge — its own, or the fill of the
+         callout holding it. Going flush inside a callout is only sound while
+         the callout draws a container; under the left-rule variant it draws a
+         3px line and nothing else, and an embed that also drew nothing left no
+         box anywhere on screen. That shipped, and this is the check for it. */
+  const opaque = (v) => v && v !== 'transparent' && !/,\s*0\s*\)$/.test(v);
+  for (const em of all('.markdown-embed')) {
+    const s2 = getComputedStyle(em);
+    let edged = opaque(s2.backgroundColor) || s2.boxShadow !== 'none' ||
+      parseFloat(s2.borderTopWidth) + parseFloat(s2.borderLeftWidth) > 0;
+    if (!edged) {
+      const co = em.closest('.callout');
+      if (co) edged = opaque(getComputedStyle(co).backgroundColor);
+    }
+    if (!edged) fails.push('embed has no edge and sits in nothing that has one');
+  }
+
+  /* 5d. an embed's padding is the same on the top as on the sides. Measured
+         rather than declared: the gap above the first drawn thing had been
+         anywhere between 12px and 63px while every side stayed at 16px,
+         because Obsidian opens a preview with two zero-height spacers and the
+         rule meant for the first heading was landing on one of them. */
+  for (const em of all('.markdown-embed')) {
+    const er = rect(em);
+    const es = getComputedStyle(em);
+    const rtl = es.direction === 'rtl';
+    const overlaid2 = (el) => {
+      if (el.ownerSVGElement) return true;
+      for (let n = el; n && n !== em; n = n.parentElement) {
+        const pos = getComputedStyle(n).position;
+        if (pos === 'absolute' || pos === 'fixed') return true;
+      }
+      return false;
+    };
+    const drawn = [...em.querySelectorAll('*')].filter((k) => shown(k) && !overlaid2(k));
+    if (!drawn.length) continue;
+    const top = Math.min(...drawn.map((k) => rect(k).top));
+    const side = rtl
+      ? er.right - Math.max(...drawn.map((k) => rect(k).right))
+      : Math.min(...drawn.map((k) => rect(k).left)) - er.left;
+    const gapTop = R(top - er.top);
+    const gapSide = R(side);
+    if (Math.abs(gapTop - gapSide) > 1) {
+      fails.push(`embed padding is ragged: ${gapTop}px above the first line, ${gapSide}px beside it`);
+    }
+  }
+
+  /* 6. the in-progress box follows the accent. */
+  const half = all('input[type=checkbox]').find(
+    (e) => (e.getAttribute('data-task') ?? e.closest('[data-task]')?.getAttribute('data-task')) === '/'
+  );
+  if (half) {
+    const hs = getComputedStyle(half);
+    const accent = getComputedStyle(document.body).getPropertyValue('--interactive-accent').trim();
+    const probe = document.createElement('div');
+    probe.style.cssText = `position:absolute;visibility:hidden;color:${accent}`;
+    document.body.append(probe);
+    const want = getComputedStyle(probe).color;
+    probe.remove();
+    if (hs.borderTopColor !== want) {
+      fails.push(`in-progress box is ${hs.borderTopColor}, accent is ${want}`);
+    }
+    notes.push(`in-progress box ${hs.borderTopColor} = accent`);
+  }
+
+  /* 7. one band height, not two opinions about it. */
   const cs = getComputedStyle(document.body);
   const band = cs.getPropertyValue('--bc-topbar-height').trim();
   const header = cs.getPropertyValue('--header-height').trim();

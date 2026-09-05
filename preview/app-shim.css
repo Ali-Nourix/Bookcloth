@@ -184,6 +184,73 @@ body {
 .markdown-rendered mark { background-color: var(--text-highlight-bg); color: inherit; }
 .markdown-rendered hr { border: none; border-top: var(--hr-thickness) solid var(--hr-color); }
 
+/* ---------- transclusions ----------
+   The harness had no embed at all, which is why an embedded note section
+   inside a callout shipped looking like the source note pasted in and clipped.
+   What matters here is the shape of the problem: an embed nests a whole
+   .markdown-preview-view inside a block of the page, so the inner view arrives
+   carrying the outer page's chrome — its file margins, its centred sizer, its
+   readable-line max-width — inside a container that is a fraction of that
+   width. A theme that does not take those off gets a page inside a page. */
+.markdown-embed {
+  position: relative;
+  border-left: var(--embed-border-left);
+  border-right: var(--embed-border-right);
+  border-top: var(--embed-border-top);
+  border-bottom: var(--embed-border-bottom);
+  background-color: var(--embed-background);
+  padding: var(--embed-padding);
+  font-style: var(--embed-font-style);
+}
+/* Obsidian gives the title 24px of inline padding to clear the link button,
+   and renders the element even when there is no title to put in it — height 0,
+   and still contributing whatever margin a theme puts on it. */
+.markdown-embed-title { font-weight: 600; padding-right: 24px; }
+/* physical right, not inline-end — in an RTL note this lands on the wrong side
+   and over the text unless the theme says otherwise */
+.markdown-embed-link { position: absolute; top: 0; right: 0; padding: 4px; color: var(--text-faint); cursor: pointer; }
+.markdown-embed-content { max-height: 100%; overflow: auto; }
+.markdown-embed .markdown-preview-view { overflow: auto; }
+/* Deliberately NOT `display: block`. Obsidian's class for a transclusion in
+   Live Preview is literally `inline-embed` and the element is a <span>. On an
+   inline box, horizontal padding lays out and vertical padding only paints —
+   so a theme's padding shows on the sides and does nothing on the top. A
+   harness built out of <div>s cannot show that, and did not. */
+
+/* Transcribed from a live vault, because every one of these is load-bearing
+   and none of them were in the harness while the defect was being chased.
+
+   The callout clips. Obsidian does this so its rounded corner stays clean, and
+   in Live Preview the callout is a .cm-embed-block, so a theme cannot simply
+   turn it off — anything sticking out of the callout is gone, silently. */
+.callout { overflow: hidden; }
+.cm-embed-block { position: relative; }
+
+/* And the embed sticks out. It carries a negative inline-start margin, so in a
+   right-to-left note it reaches 34px past the callout's padding on the right —
+   the side every line begins on. Clipped by the rule above, that is one
+   character off the start of each line, which is exactly how it was reported. */
+.callout .markdown-embed { margin-right: -34px; }
+
+/* Heading fold arrows are absolutely positioned outside the text column, at
+   the inline start. Inside an embed inside a clipping callout they land beyond
+   the edge and are cut in half. */
+.heading-collapse-indicator {
+  position: absolute;
+  inset-inline-start: -22px;
+  width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.el-h1, .el-h2, .el-h3 { position: relative; }
+
+/* Obsidian opens every preview with two zero-height spacers before the first
+   block. They are why `.markdown-preview-sizer > :first-child` lands on a
+   spacer instead of on the first heading. */
+.markdown-preview-pusher { width: 1px; height: 0; }
+.mod-header { height: 0; }
+
 .callout { padding: var(--callout-padding); margin-block: 1em; }
 .callout-title { display: flex; font-weight: var(--callout-title-weight); }
 .callout-icon { display: flex; align-items: center; }
