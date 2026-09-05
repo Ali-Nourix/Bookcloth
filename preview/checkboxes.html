@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bookcloth — task checkbox states</title>
+<link rel="stylesheet" href="app-shim.css">
+<link rel="stylesheet" href="../theme.css">
+<!-- ?plugin=<id> loads preview/plugins/<id>.css here, i.e. after the theme,
+     which is where Obsidian puts a plugin's sheet. -->
+<script>
+  for (const id of (new URLSearchParams(location.search).get('plugin') || '').split(',')) {
+    if (/^[a-z0-9-]+$/.test(id)) document.write('<link rel="stylesheet" href="plugins/' + id + '.css">');
+  }
+</script>
+<style>
+  body { padding: 28px 34px; }
+  .grid { display: grid; grid-template-columns: max-content 1fr; gap: 10px 20px; align-items: center; max-width: 780px; }
+  .grid h3 { grid-column: 1 / -1; margin: 18px 0 2px; font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-muted); }
+  .k { font-family: var(--font-monospace); font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .v { display: flex; align-items: center; gap: 10px; }
+  .zoom { zoom: 2.6; }
+</style>
+</head>
+<body class="theme-light mod-macos is-focused">
+  <div class="markdown-reading-view">
+    <div class="markdown-preview-view markdown-rendered">
+      <div class="grid">
+
+        <h3>Reading view · data-task on the &lt;li&gt;</h3>
+        <div class="k">[ ]</div>
+        <div class="v"><ul class="contains-task-list" style="margin:0"><li class="task-list-item" data-task=" "><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">Not started</span></li></ul></div>
+        <div class="k">[/]</div>
+        <div class="v"><ul class="contains-task-list" style="margin:0"><li class="task-list-item" data-task="/"><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">In progress</span></li></ul></div>
+        <div class="k">[x]</div>
+        <div class="v"><ul class="contains-task-list" style="margin:0"><li class="task-list-item is-checked" data-task="x"><input class="task-list-item-checkbox" type="checkbox" checked><span class="task-list-item-text">Done</span></li></ul></div>
+        <div class="k">[!]</div>
+        <div class="v"><ul class="contains-task-list" style="margin:0"><li class="task-list-item" data-task="!"><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">Not done</span></li></ul></div>
+
+        <h3>Reading view · the classes TaskPro adds</h3>
+        <div class="k">.is-in-progress</div>
+        <div class="v"><ul class="contains-task-list" style="margin:0"><li class="task-list-item"><input class="task-list-item-checkbox is-in-progress" type="checkbox"><span class="task-list-item-text">In progress</span></li></ul></div>
+        <div class="k">.is-not-done</div>
+        <div class="v"><ul class="contains-task-list" style="margin:0"><li class="task-list-item"><input class="task-list-item-checkbox is-not-done" type="checkbox"><span class="task-list-item-text">Not done</span></li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="markdown-source-view mod-cm6 is-live-preview">
+    <div class="cm-editor"><div class="cm-scroller"><div class="cm-content">
+      <div class="grid">
+        <h3>Live preview · data-task on the line</h3>
+        <div class="k">[/]</div>
+        <div class="v"><div class="HyperMD-task-line" data-task="/"><input class="task-list-item-checkbox" type="checkbox"><span>In progress</span></div></div>
+        <div class="k">[!]</div>
+        <div class="v"><div class="HyperMD-task-line" data-task="!"><input class="task-list-item-checkbox" type="checkbox"><span>Not done</span></div></div>
+
+        <h3>Live preview · data-task on the input</h3>
+        <div class="k">[/]</div>
+        <div class="v"><input class="task-list-item-checkbox" type="checkbox" data-task="/"><span>In progress</span></div>
+        <div class="k">[!]</div>
+        <div class="v"><input class="task-list-item-checkbox" type="checkbox" data-task="!"><span>Not done</span></div>
+
+        <h3>Enlarged — the glyphs at 2.6&times;</h3>
+        <div class="k">[/] [!]</div>
+        <div class="v zoom"><input class="task-list-item-checkbox" type="checkbox" data-task="/"><input class="task-list-item-checkbox" type="checkbox" data-task="!"><input class="task-list-item-checkbox" type="checkbox" checked></div>
+      </div>
+    </div></div></div>
+  </div>
+
+  <script>
+    if (new URLSearchParams(location.search).has('dark')) {
+      document.body.className = document.body.className.replace('theme-light', 'theme-dark');
+    }
+  </script>
+</body>
+</html>

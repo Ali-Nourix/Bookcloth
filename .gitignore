@@ -2,3 +2,9 @@ node_modules/
 preview/fonts/
 preview/shot-*.png
 package-lock.json
+
+# Plugin stylesheets copied in for the preview harness (see preview/plugins/README.md).
+preview/plugins/*.css
+
+# The harness loads ../theme.css directly; this copy only went stale.
+preview/theme.css
