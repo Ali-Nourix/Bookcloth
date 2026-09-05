@@ -1,4 +1,4 @@
-/* Bookcloth 2.2.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.2.2 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -333,6 +333,16 @@ settings:
         default: 28
         min: 22
         max: 40
+        step: 1
+        format: px
+    -
+        id: bc-icon-gap
+        title: Space between icon buttons
+        description: How far apart the 28px squares in a toolbar sit. Below about 4px a row of them reads as one bar with seams in it.
+        type: variable-number-slider
+        default: 6
+        min: 0
+        max: 14
         step: 1
         format: px
     -
@@ -696,6 +706,13 @@ body {
   --bc-row-base: 27px;
   --bc-row-height: calc(var(--bc-row-base) * var(--bc-density));
   --bc-row-inset: 8px;
+
+  /* The space between two icon buttons. Its own token rather than a step of
+     the density scale: 28px squares are the most repeated shape in the
+     chrome, and how far apart they sit is the single number that decides
+     whether a toolbar reads as a row of buttons or as one bar with seams in
+     it. Tunable, because how much air that needs is a matter of taste. */
+  --bc-icon-gap: 6px;
 
   /* What Obsidian's floating status bar occupies. Only the floating layout
      reads it, to keep the panels clear of it. */
@@ -1580,9 +1597,7 @@ body.bc-indent-guides {
 .workspace-ribbon {
   border: none;
   align-items: center;
-  /* 4px, not 2. Two 28px squares two pixels apart read as one bar with a
-     seam in it rather than as two buttons. */
-  gap: var(--bc-gap-2);
+  gap: var(--bc-icon-gap);
 }
 
 .workspace-ribbon.mod-left::before,
@@ -1682,7 +1697,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container {
   padding-inline: var(--bc-gap-3);
-  gap: var(--bc-gap-2);
+  gap: var(--bc-icon-gap);
 }
 
 /* Sidebar tabs are icon-only, so their hit area has to be square. Left at
@@ -1788,12 +1803,11 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   padding-inline: var(--bc-row-inset);
 }
 
-.nav-header .nav-buttons-container {
-  gap: var(--bc-gap-2);
-}
-
-.view-actions {
-  gap: var(--bc-gap-2);
+.nav-header .nav-buttons-container,
+.nav-buttons-container,
+.view-actions,
+.view-header-nav-buttons {
+  gap: var(--bc-icon-gap);
 }
 
 .tree-item-self.mod-collapsible .tree-item-inner {
@@ -1886,8 +1900,9 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   padding-inline: var(--bc-gap-3);
 }
 
-.workspace-split.mod-root .workspace-tab-header-status-container {
-  gap: var(--bc-gap-2);
+.workspace-split.mod-root .workspace-tab-header-status-container,
+.workspace-tab-header-status-container {
+  gap: var(--bc-icon-gap);
 }
 
 .workspace-split.mod-root .workspace-tab-header {
@@ -1960,7 +1975,7 @@ body.bc-tabs-underline
   /* Set rather than added to, so the inset is the same whatever Obsidian's
      own padding happens to be in the version underneath. */
   padding-inline: var(--bc-gap-4);
-  gap: var(--bc-gap-2);
+  gap: var(--bc-icon-gap);
 }
 
 .view-header-title {
@@ -3691,29 +3706,57 @@ body.bc-float-panes .workspace {
   padding-block-end: calc(var(--bc-pane-gap) + var(--bc-statusbar-height));
 }
 
-/* The card is painted on each leaf group, and the split behind them only
-   carries the gap. One pane per sidebar looks exactly as it did; two stop
-   pretending to be one. */
+/* Where the card is painted depends on how many panes the sidebar holds, and
+   getting that wrong costs either the seam between two panes or the surface
+   under a plugin's footer.
+
+   One pane — the common case — and the split is the card. That matters
+   because a plugin can render a footer bar as a direct child of the split,
+   outside .workspace-tabs entirely; painting the card further in leaves that
+   bar with no surface under it and no corner to be clipped by.
+
+   Two or more, and the card moves to each leaf group so a calendar sitting
+   above an outline reads as two panels rather than one tall surface. The
+   split behind them keeps only the gap. `:has(… ~ …)` rather than `+`
+   because Obsidian puts a resize handle between them. */
+
 body.bc-float-panes .workspace-split.mod-left-split,
-body.bc-float-panes .workspace-split.mod-right-split,
+body.bc-float-panes .workspace-split.mod-right-split {
+  background-color: var(--background-secondary);
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  background-color: var(--tab-container-background);
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes
+  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs),
+body.bc-float-panes
+  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs),
 body.bc-float-panes .workspace-split.mod-left-split .workspace-split,
 body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
   background-color: transparent;
+  border-radius: 0;
   gap: var(--bc-pane-gap);
+  /* The clip moved to the cards inside, so the split itself must not keep
+     one: a stacked sidebar clipped at its own rectangle would cut anything
+     either pane renders past it, for no corner in return. */
+  overflow: visible;
 }
 
-body.bc-float-panes .workspace-split.mod-left-split .workspace-tabs,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-tabs,
-body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+body.bc-float-panes
+  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs,
+body.bc-float-panes
+  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs {
   background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
   /* Each is its own card now, so the hairline that separated them when they
      were flush would be a line inside a rounded corner. */
   box-shadow: none;
-}
-
-body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
-  background-color: var(--tab-container-background);
 }
 
 body.bc-float-panes
@@ -3751,9 +3794,21 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
    **Square panel corners** turns the clipping off for anyone who finds a
    plugin that does draw outside its panel. */
 
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split .workspace-tabs,
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split .workspace-tabs,
+/* The clip follows the card. On a single-pane sidebar that is the split, so a
+   footer rendered outside .workspace-tabs is still cut at the panel's corner;
+   on a stacked one it is each leaf group. */
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
 body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
+  overflow: clip;
+}
+
+body.bc-float-panes:not(.bc-no-clip-panes)
+  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs,
+body.bc-float-panes:not(.bc-no-clip-panes)
+  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs {
   overflow: clip;
 }
 

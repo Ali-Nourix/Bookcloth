@@ -59,9 +59,14 @@ what the Notion desktop app does with its own tabs. **Tab style** offers Pill (a
 floating rounded tab) and Underline (a flat tab with a marker) instead.
 
 **Floating panels** in Style Settings lifts every region onto its own rounded
-card on a darker backdrop. Two panes stacked in one sidebar — a calendar above
-an outline, say — become two cards with the same gap as everything else rather
-than one tall surface; flush, they are separated by a hairline instead. And the
+card on a darker backdrop. Where that card is painted depends on how many panes
+the sidebar holds, and getting it wrong costs one of two things. One pane and
+the card is the split itself — which matters because a plugin can render a
+footer bar as a direct child of the split, outside the pane entirely, and
+painting the card further in leaves that bar with no surface under it and no
+corner to be clipped by. Two or more and the card moves to each pane, so a
+calendar above an outline reads as two panels rather than one tall surface;
+flush, they are separated by a hairline instead. And the
 panels stop above the status bar: Obsidian floats it over the bottom-right of
 whatever is beneath it, which flush is fine and floating puts it on top of the
 editor's own bottom corners. The gap only reads as a gap if the thing behind it
@@ -146,7 +151,7 @@ font-size slider keeps working:
 | Text colours | Body, muted and faint ink, separately per theme |
 | Semantic colours | All eight hues — red through pink — separately per theme |
 | Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
-| Shape and density | Corner radius, icon button size, sidebar row height, density, note width, visible borders |
+| Shape and density | Corner radius, icon button size, space between icon buttons, sidebar row height, density, note width, visible borders |
 | Floating panels | Float the panels, gap, backdrop colour, corner clipping |
 | Icons | Icon size, stroke weight |
 | Interface | Tab style, indentation guides, hide status bar, hide ribbon |
@@ -178,7 +183,10 @@ the sidebar-toggle button sits a few pixels above the tabs beside it and what
 should be one row reads as three.
 
 Bookcloth gives all four the same 40px band and the same 28px control, so every
-icon in that row shares one centre line. Measured rather than eyeballed: ribbon
+icon in that row shares one centre line — and the same 6px between them, which
+is its own setting because how far apart 28px squares sit is the one number
+that decides whether a toolbar reads as a row of buttons or as one bar with
+seams in it. Measured rather than eyeballed: ribbon
 action, both sidebar toggles, both sidebar tab strips and the new-tab button all
 return a centre of exactly 20px. The editor tabs are the deliberate exception —
 they are 34px and aligned to the bottom of the band, because they merge with the

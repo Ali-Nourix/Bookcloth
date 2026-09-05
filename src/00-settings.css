@@ -332,6 +332,16 @@ settings:
         step: 1
         format: px
     -
+        id: bc-icon-gap
+        title: Space between icon buttons
+        description: How far apart the 28px squares in a toolbar sit. Below about 4px a row of them reads as one bar with seams in it.
+        type: variable-number-slider
+        default: 6
+        min: 0
+        max: 14
+        step: 1
+        format: px
+    -
         id: bc-row-base
         title: Sidebar row height
         description: Notion's is 27px. Interface density scales it from here.

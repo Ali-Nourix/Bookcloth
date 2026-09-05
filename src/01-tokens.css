@@ -109,6 +109,13 @@ body {
   --bc-row-height: calc(var(--bc-row-base) * var(--bc-density));
   --bc-row-inset: 8px;
 
+  /* The space between two icon buttons. Its own token rather than a step of
+     the density scale: 28px squares are the most repeated shape in the
+     chrome, and how far apart they sit is the single number that decides
+     whether a toolbar reads as a row of buttons or as one bar with seams in
+     it. Tunable, because how much air that needs is a matter of taste. */
+  --bc-icon-gap: 6px;
+
   /* What Obsidian's floating status bar occupies. Only the floating layout
      reads it, to keep the panels clear of it. */
   --bc-statusbar-height: 26px;

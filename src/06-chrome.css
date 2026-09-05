@@ -121,9 +121,7 @@ body.bc-indent-guides {
 .workspace-ribbon {
   border: none;
   align-items: center;
-  /* 4px, not 2. Two 28px squares two pixels apart read as one bar with a
-     seam in it rather than as two buttons. */
-  gap: var(--bc-gap-2);
+  gap: var(--bc-icon-gap);
 }
 
 .workspace-ribbon.mod-left::before,
@@ -223,7 +221,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container {
   padding-inline: var(--bc-gap-3);
-  gap: var(--bc-gap-2);
+  gap: var(--bc-icon-gap);
 }
 
 /* Sidebar tabs are icon-only, so their hit area has to be square. Left at
@@ -329,12 +327,11 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   padding-inline: var(--bc-row-inset);
 }
 
-.nav-header .nav-buttons-container {
-  gap: var(--bc-gap-2);
-}
-
-.view-actions {
-  gap: var(--bc-gap-2);
+.nav-header .nav-buttons-container,
+.nav-buttons-container,
+.view-actions,
+.view-header-nav-buttons {
+  gap: var(--bc-icon-gap);
 }
 
 .tree-item-self.mod-collapsible .tree-item-inner {
@@ -427,8 +424,9 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   padding-inline: var(--bc-gap-3);
 }
 
-.workspace-split.mod-root .workspace-tab-header-status-container {
-  gap: var(--bc-gap-2);
+.workspace-split.mod-root .workspace-tab-header-status-container,
+.workspace-tab-header-status-container {
+  gap: var(--bc-icon-gap);
 }
 
 .workspace-split.mod-root .workspace-tab-header {
@@ -501,7 +499,7 @@ body.bc-tabs-underline
   /* Set rather than added to, so the inset is the same whatever Obsidian's
      own padding happens to be in the version underneath. */
   padding-inline: var(--bc-gap-4);
-  gap: var(--bc-gap-2);
+  gap: var(--bc-icon-gap);
 }
 
 .view-header-title {
