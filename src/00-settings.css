@@ -322,9 +322,19 @@ settings:
         step: 1
         format: px
     -
+        id: bc-topbar-height
+        title: Top bar height
+        description: The band across the top of the window. The ribbon's collapse control, both sidebar tab strips and the editor tab bar all measure from this one number, and the inset that centres a button in it is worked out from the button's own size — so a taller bar keeps everything on the same centre line instead of drifting apart.
+        type: variable-number-slider
+        default: 45
+        min: 32
+        max: 64
+        step: 1
+        format: px
+    -
         id: bc-hit
         title: Icon button size
-        description: The square hit area behind every icon-only button.
+        description: The square hit area behind every icon-only button. It centres itself in the top bar above, so the two can be set independently.
         type: variable-number-slider
         default: 28
         min: 22

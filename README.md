@@ -189,11 +189,21 @@ and the right sidebar's tab strip. Each brings its own padding, so left alone
 the sidebar-toggle button sits a few pixels above the tabs beside it and what
 should be one row reads as three.
 
-Bookcloth gives all four the same 40px band and the same 28px control, so every
+Bookcloth gives all four the same 45px band and the same 28px control, so every
 icon in that row shares one centre line — and the same 6px between them, which
 is its own setting because how far apart 28px squares sit is the one number
 that decides whether a toolbar reads as a row of buttons or as one bar with
 seams in it.
+
+The band is one number and the inset is worked out from it: a 28px control
+centres in a 45px band at 8.5px, so `--bc-band-pad` is
+`(band − control) / 2` rather than a figure of its own. It had been a figure of
+its own, and a live dump showed what that costs. Obsidian sizes the tab strips
+from `--header-height`, which the theme was setting to 45px while positioning
+the ribbon's collapse control against a separate `--bc-topbar-height` of 40px.
+Two numbers for one band, 2.5px apart, in the one row where nothing is allowed
+to be 2.5px out. `--header-height` is now set from the band rather than given
+an opinion of its own, and `node invariants.mjs` fails if the two ever drift.
 
 The sidebar collapse control took eight releases, and the reason is worth
 writing down because none of the seven wrong answers looked wrong at the time.
@@ -268,17 +278,36 @@ rendered at 14px is 1.17px on screen while the same stroke at 28px is 2.33px.
 Scaling the artwork without adjusting the stroke is what makes sidebar chevrons
 look spindly next to ribbon glyphs.
 
-So Bookcloth pairs a stroke weight with every size, tuned to land at a constant
-~1.4px on screen. That is what puts outline artwork at the visual weight of a
-solid set. Two sliders scale the whole thing: **Icon size** and **Icon stroke
-weight**. Pointer target minimums are enforced on touch only — forcing a minimum
-square on desktop is what widens every button in a dense plugin toolbar.
+So Bookcloth pairs a stroke weight with every size. Two sliders scale the whole
+thing: **Icon size** and **Icon stroke weight**. Pointer target minimums are
+enforced on touch only — forcing a minimum square on desktop is what widens
+every button in a dense plugin toolbar.
+
+The pairing has one rule that took a live measurement to learn: **the same
+rendered size must mean the same stroke**, whichever token an element happens to
+resolve. Obsidian ships `--icon-l` at 18px, identical to `--icon-m`, and its own
+stylesheet hands the ribbon and the sidebar tab icons the *l* role while pane
+actions get *m*. That is invisible while the two agree. Bookcloth had made *l* a
+step larger with a stroke of its own, and a dump from a real vault came back
+with three weights — 1.575px, 1.71px and 2px — on 18px icons standing in one
+row, because Obsidian assigns those roles at a specificity a two-class selector
+cannot answer. The fix is not to win that argument on every selector; it is to
+make *l* and *m* the same size and the same stroke, so there is nothing to
+argue about. Where the theme forces an icon's box it forces the stroke in the
+same declaration, for the same reason — a forced size with an inherited weight
+is how the row broke in the first place.
 
 Three sizes, three roles, and every icon in a given row shares one of them —
 which is the point. 14px for inline markers (chevrons, property keys, the tab's
 close button), 16px for icons that label a line of text (menu rows, callout
 titles), 18px for every icon that is a button in the chrome. A 16px control
 beside an 18px control reads as a mistake even when neither is wrong alone.
+
+The folding chevrons are the one place Obsidian sets `stroke-width` on the
+element itself, so they never see `--icon-stroke` and were still drawing at the
+4px it chose for the 10px box it ships — a weight that becomes a blob at 14px.
+Carrying that ratio across to 14px was tried and dropped: it left two stroke
+weights at one size, which is the defect this whole pass exists to remove.
 
 `--icon-size` only reaches artwork that carries Obsidian's `.svg-icon` class
 and reads the variable. Plugins ship their own and size it themselves, which is
@@ -299,9 +328,17 @@ Both alternate colours are separate controls, because "in progress" and "needs
 attention" are not the same signal as "done" and colouring all three with the
 accent throws that distinction away.
 
-The box itself is 1.15em rather than 1em: a checkbox sits beside body text but
-is read as a control, and at exactly the text size it disappears into the line.
-**Checkbox size** moves it.
+The box is 1.15 of the text size rather than 1em: a checkbox sits beside body
+text but is read as a control, and at exactly the text size it disappears into
+the line. **Checkbox size** moves it.
+
+Of the text size, and not `em`, for a reason worth writing down. A checkbox is
+an `<input>`, and an input does not inherit `font-size` — `1em` on one is the
+user agent's 13.33px, not the size of the words beside it. Written as `1.15em`
+it measured **15.3px** in a real vault: smaller than Obsidian's own 18px
+default, in the release that was supposed to make it bigger. Measured from
+`--font-text-size` it is 1.15 of whatever the reader actually set — 20.7px at
+an 18px base.
 
 The tick is drawn from Lucide's check at a weight that survives at that size,
 positioned to sit optically rather than mathematically centred. Its shape is
@@ -427,6 +464,16 @@ ones the app computes with the theme switched off. It measures once with the
 default theme, once with Bookcloth, restores the theme, and prints both — and
 the difference between the two runs is exactly the theme's effect, with nothing
 inferred.
+
+`node invariants.mjs [light|dark] [page]` is the other half. The probe measures
+the real app; this asserts, in the harness, the things the theme claims — one
+band centre line across the four containers that hold it, one stroke per
+rendered icon size, a header whose actions stay inside it and leave the title a
+width, a checkbox no smaller than the one it replaces, and one number for the
+band rather than two. Every check in it exists because the probe caught the
+theme getting that exact thing wrong in a real vault, and because `measure.mjs`
+had been printing several of them, correctly, for releases — a script that only
+reports cannot fail.
 
 `env` is the section to read first. It names the Obsidian build, the appearance
 settings that change geometry, every enabled plugin and CSS snippet, and where

@@ -10,13 +10,13 @@
    ========================================================================== */
 
 body {
-  /* The band across the top of the window: the sidebar tab strips, the
-     editor tab strip and the ribbon's first icon all measure from this. */
-  --bc-topbar-height: 40px;
   /* The editor tab, bottom-flush against the page so the two merge. */
   --bc-tab-height: 34px;
 
-  --header-height: 45px;
+  /* Obsidian sizes the tab strips from --header-height, so it has to be the
+     band and not a second opinion about it. --bc-topbar-height is in
+     01-tokens.css with the rest of the geometry. */
+  --header-height: var(--bc-topbar-height);
   --divider-width: 1px;
   --divider-width-hover: 3px;
   --divider-color: transparent;
@@ -303,6 +303,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 
 .workspace-tab-header,
 .workspace-tab-header-new-tab,
+.workspace-tab-header-tab-list,
 .workspace-tab-header-status-container,
 .workspace-tab-header-status-container .clickable-icon,
 .sidebar-toggle-button,
@@ -313,7 +314,8 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 
 .sidebar-toggle-button,
 .sidebar-toggle-button .clickable-icon,
-.workspace-tab-header-new-tab {
+.workspace-tab-header-new-tab,
+.workspace-tab-header-tab-list {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -445,6 +447,18 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .view-actions,
 .view-header-nav-buttons {
   gap: var(--bc-icon-gap);
+}
+
+/* Obsidian spaces these rows with a margin on each item. Setting gap as well
+   does not replace that margin, it adds to it: measured in a real vault, eight
+   view actions at 28px came to 280px in a header with 332px of content box,
+   pushed 22px past the right edge and squeezed .view-header-title to a width
+   of zero. The gap above is the theme's one spacing control, so the margins it
+   would otherwise stack on come off. */
+.view-actions > .view-action,
+.nav-buttons-container > .nav-action-button,
+.nav-buttons-container > .clickable-icon {
+  margin-inline-end: 0;
 }
 
 .tree-item-self.mod-collapsible .tree-item-inner {

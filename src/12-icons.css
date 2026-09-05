@@ -14,15 +14,25 @@ body {
   --icon-xs: calc(14px * var(--bc-icon-scale));
   --icon-s: calc(16px * var(--bc-icon-scale));
   --icon-m: calc(18px * var(--bc-icon-scale));
-  --icon-l: calc(20px * var(--bc-icon-scale));
+  /* Deliberately the same as --icon-m, which is how Obsidian ships it. The two
+     are not interchangeable in its stylesheet — the ribbon and the sidebar tab
+     icons ask for l, pane actions ask for m — so the moment they differ, one
+     row of chrome renders at two sizes and two weights. Making l a step larger
+     was the whole reason a live dump came back with 18px icons at 1.575px
+     sitting next to 18px icons at 1.71px. Rather than out-specify Obsidian on
+     every one of those selectors, the disagreement is removed. */
+  --icon-l: var(--icon-m);
   --icon-xl: calc(28px * var(--bc-icon-scale));
 
+  /* Obsidian pairs one stroke with each size and repeats it for m and l. Same
+     here, for the same reason: whichever token an element ends up resolving,
+     an 18px icon is an 18px icon at one weight. */
   --bc-icon-weight: 1;
-  --icon-xs-stroke-width: calc(2.3px * var(--bc-icon-weight));
-  --icon-s-stroke-width: calc(2.15px * var(--bc-icon-weight));
-  --icon-m-stroke-width: calc(1.9px * var(--bc-icon-weight));
-  --icon-l-stroke-width: calc(1.75px * var(--bc-icon-weight));
-  --icon-xl-stroke-width: calc(1.4px * var(--bc-icon-weight));
+  --icon-xs-stroke-width: calc(2px * var(--bc-icon-weight));
+  --icon-s-stroke-width: calc(2px * var(--bc-icon-weight));
+  --icon-m-stroke-width: calc(1.75px * var(--bc-icon-weight));
+  --icon-l-stroke-width: var(--icon-m-stroke-width);
+  --icon-xl-stroke-width: calc(1.25px * var(--bc-icon-weight));
 
   /* 18px is the default, not 16. Anything the theme does not name explicitly
      is an icon button somewhere in the chrome, and coming out one step below
@@ -76,6 +86,11 @@ button:has(> svg) > svg,
 button:has(> :only-child svg) svg {
   width: var(--icon-m) !important;
   height: var(--icon-m) !important;
+  /* The stroke has to travel with the size, and for the same reason. Forcing
+     the box while leaving the weight alone is how a live dump came back with
+     three different stroke widths on 18px icons standing in one row. Harmless
+     on filled artwork: stroke-width does nothing where there is no stroke. */
+  stroke-width: var(--icon-stroke) !important;
   flex: 0 0 auto;
 }
 
@@ -89,6 +104,7 @@ button:has(> :only-child svg) svg {
 .suggestion-flair svg {
   width: var(--icon-xs) !important;
   height: var(--icon-xs) !important;
+  stroke-width: var(--icon-xs-stroke-width) !important;
 }
 
 .menu-item-icon svg,
@@ -113,6 +129,22 @@ button:has(> :only-child svg) svg {
 .search-input-container .svg-icon {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
+}
+
+/* The folding chevrons need forcing rather than a weight of their own.
+   Obsidian sets stroke-width on the element itself, so --icon-stroke never
+   reaches them: measured live, they were still drawing at 4px — a weight it
+   chose for the 10px box it ships, which becomes a blob at 14px. They are in
+   the 14px list above and take that list's stroke like everything else in it.
+
+   Carrying Obsidian's heavier ratio across was tried first and dropped: it
+   left two stroke weights at one size, which is the defect this whole pass
+   exists to remove, and a heavier chevron is Obsidian's taste rather than
+   Notion's. */
+.collapse-indicator svg {
+  width: var(--icon-xs) !important;
+  height: var(--icon-xs) !important;
+  stroke-width: var(--icon-xs-stroke-width) !important;
 }
 
 /* 16px: icons that label a line of text — a menu row, a callout title. They
@@ -148,7 +180,7 @@ button:has(> :only-child svg) svg {
 /* A callout title is set at 600; a hairline icon beside it looks unfinished.
    The icon is nudged one notch heavier to match the text it labels. */
 .callout-icon .svg-icon {
-  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.1);
+  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.15);
 }
 
 .callout-title {
@@ -282,14 +314,18 @@ button:has(> :only-child svg):hover,
    masks are written out here rather than inherited so the theme controls the
    shape, the optical centring and how much of the box each mark fills.
 
-   Size is its own token rather than a flat 1em: a checkbox sits beside body
-   text but is read as a control, and at exactly the text size it disappears
-   into the line. 1.15em puts it a shade above the x-height of the words next
-   to it, which is where it reads as something you can click. */
+   Size is a ratio of the text size rather than a flat 1em, and it is measured
+   from --font-text-size rather than from em. A checkbox is an <input>, and an
+   input does not inherit font-size: 1em on one is the user agent's 13.33px, so
+   `1.15em` came out as 15.3px in a real vault — smaller than Obsidian's own
+   18px default, in a theme whose whole point here was a bigger box. Against
+   the text size it is 1.15 of whatever the reader actually set. */
 
 body {
   --bc-check-size: 1.15;
-  --checkbox-size: calc(var(--bc-check-size) * 1em * var(--bc-icon-scale));
+  --checkbox-size: calc(
+    var(--bc-check-size) * var(--font-text-size, 16px) * var(--bc-icon-scale)
+  );
 
   --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
   --bc-check-mask-bang: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9"/><path d="M12 19h.01"/></svg>');

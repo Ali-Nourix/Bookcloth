@@ -97,10 +97,19 @@ body {
      are 28px squares with a 4px corner; so are these. */
   --bc-hit: 28px;
 
-  /* The inset above and below every top-band control. Shared by the ribbon,
-     both sidebar tab strips and the editor tab bar, because those four rows
-     live in different containers and only line up if they are told to. */
-  --bc-band-pad: 6px;
+  /* The band across the top of the window. The ribbon, both sidebar tab
+     strips and the editor tab bar are four separate containers, and they only
+     read as one row if they all measure from the same number — so this is the
+     number, and Obsidian's own --header-height is set from it rather than
+     given a figure of its own. Keeping two numbers for one band is how the
+     ribbon's collapse control ended up 2.5px above everything beside it. */
+  --bc-topbar-height: 45px;
+
+  /* The inset above and below every top-band control. Derived, not chosen: a
+     28px square centres in a 45px band at 8.5px, and if either number moves
+     the inset follows instead of going stale. max() keeps it sane if a
+     setting makes the control taller than the band it sits in. */
+  --bc-band-pad: max(0px, calc((var(--bc-topbar-height) - var(--bc-hit)) / 2));
 
   /* Notion's sidebar row: 27px tall, 14px text, an 8px inset from the panel
      edge and a 4px corner. Rows are the most repeated shape in the app, so

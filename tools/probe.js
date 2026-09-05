@@ -360,8 +360,14 @@
       if (!r.width) continue;
       const s = cs(svg);
       const key = `${R(r.width)}x${R(r.height)} stroke ${s.strokeWidth}`;
-      const owner = svg.parentElement?.className || svg.closest('[class]')?.className || '?';
-      const ctx = String(owner).split(/\s+/).slice(0, 2).join('.');
+      /* className on an SVG element is an SVGAnimatedString, so String() on it
+         gives "[object SVGAnimatedString]" and the census names nothing. */
+      const owner =
+        svg.parentElement?.getAttribute('class') ||
+        svg.getAttribute('class') ||
+        svg.closest('[class]')?.getAttribute('class') ||
+        '?';
+      const ctx = owner.trim().split(/\s+/).slice(0, 2).join('.');
       const g = groups.get(key) || new Map();
       g.set(ctx, (g.get(ctx) || 0) + 1);
       groups.set(key, g);

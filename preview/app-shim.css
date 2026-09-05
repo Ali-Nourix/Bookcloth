@@ -23,9 +23,19 @@ body {
   --size-4-5: 20px; --size-4-6: 24px; --size-4-8: 32px; --size-4-9: 36px;
   --size-4-12: 48px; --size-4-18: 72px;
 
-  --icon-xs: 14px; --icon-s: 16px; --icon-m: 18px; --icon-l: 20px; --icon-xl: 32px;
+  /* Obsidian's own figures, measured in a live vault: l is the same 18px as m,
+     and the two share one stroke. A harness that gives l its own size cannot
+     show what happens when a theme separates them. */
+  --icon-xs: 14px; --icon-s: 16px; --icon-m: 18px; --icon-l: 18px; --icon-xl: 32px;
+  --icon-xs-stroke-width: 2px;
+  --icon-s-stroke-width: 2px;
+  --icon-m-stroke-width: 1.75px;
+  --icon-l-stroke-width: 1.75px;
+  --icon-xl-stroke-width: 1.25px;
   --icon-size: var(--icon-m);
-  --icon-stroke: 1.75px;
+  --icon-stroke: var(--icon-m-stroke-width);
+
+  --header-height: 40px;
 
   --input-height: 30px;
   --font-weight: 400;
@@ -52,7 +62,9 @@ body {
 .callout[data-callout="example"] { --callout-color: var(--color-purple-rgb); }
 
 /* ---------- workspace shell ---------- */
-.app-container { height: 100vh; display: flex; flex-direction: column; }
+/* position: relative — this, not the ribbon, is what the absolutely positioned
+   collapse control resolves its top against in the real app. */
+.app-container { height: 100vh; display: flex; flex-direction: column; position: relative; }
 .horizontal-main-container { flex: 1; display: flex; min-height: 0; }
 .workspace { flex: 1; display: flex; min-height: 0; }
 
@@ -80,7 +92,11 @@ body {
 .workspace-split.mod-root { flex: 1; min-width: 0; background-color: var(--background-primary); }
 
 .workspace-tabs { display: flex; flex-direction: column; flex: 1; min-height: 0; background-color: var(--tab-container-background); }
-.workspace-tab-header-container { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+/* height, not min-height. A theme that answers with min-height does not win,
+   it just gets ignored — which is how one band ended up being 45px while the
+   control positioned against it was placed for 40px. */
+.workspace-tab-header-container { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; height: var(--header-height); }
+.workspace-tab-header-tab-list { display: flex; align-items: center; padding: 8px 0 6px; margin-right: 4px; }
 .workspace-tab-header { display: flex; align-items: center; cursor: pointer; max-width: var(--tab-max-width); }
 .workspace-tab-header.is-active { background-color: var(--tab-background-active); }
 .workspace-tab-header-inner { display: flex; align-items: center; gap: var(--size-4-2); min-width: 0; }
@@ -104,7 +120,9 @@ body {
 }
 .view-header-title-container { display: flex; align-items: center; flex: 1; min-width: 0; }
 .view-header-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.view-actions { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.view-actions { display: flex; align-items: center; margin-left: auto; }
+/* Per-item margin. A theme that adds gap does not replace this, it adds to it. */
+.view-action { margin-right: 8px; }
 .view-content { flex: 1; min-height: 0; overflow-y: auto; }
 
 /* ---------- sidebar ---------- */
@@ -289,6 +307,24 @@ input.metadata-input-text, input.metadata-input-number {
 .workspace-ribbon:hover .sidebar-toggle-button.mod-left,
 .workspace-ribbon:hover .workspace-ribbon-collapse-btn { opacity: 1; }
 .workspace-ribbon.mod-left { margin-top: 45px; }
+
+/* Obsidian hands the ribbon and the sidebar tab icons the l role and pane
+   actions the m role, at a specificity a theme cannot answer with a two-class
+   selector. That is fine while l and m agree — and it is exactly why they have
+   to. Separate them and this is the rule that renders one row of chrome at two
+   sizes and two weights, which is what a live dump came back with. */
+.workspace-ribbon .side-dock-ribbon-action .svg-icon,
+.workspace-tab-header .workspace-tab-header-inner-icon .svg-icon {
+  --icon-size: var(--icon-l);
+  --icon-stroke: var(--icon-l-stroke-width);
+}
+
+/* stroke-width straight on the element, so --icon-stroke never reaches it.
+   Tuned by Obsidian for the 10px box it ships; a theme that enlarges the icon
+   and leaves this alone gets a blob. */
+.collapse-icon svg,
+.collapse-indicator svg,
+.tree-item-icon svg { stroke-width: 4px; }
 
 /* ---------- floating layers ---------- */
 .menu { position: absolute; min-width: 220px; z-index: 30; padding: var(--size-2-3); }
