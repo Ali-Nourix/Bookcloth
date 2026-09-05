@@ -331,8 +331,37 @@ body.bc-no-fade-done {
 
 .markdown-embed-content {
   max-height: none;
-  /* the last resort against a wide table or a long code line: scroll it,
-     because the alternative the report showed was silently clipping it */
+  /* NOT overflow-x: auto. A box with overflow-x auto and overflow-y visible
+     computes overflow-y to auto as well, so that one declaration turns the
+     embed's whole body into a scroll container — and a scroll container clips
+     whatever does not fit instead of letting it show. Worse in a Persian note:
+     if the container's own direction is ltr while the text inside is rtl, the
+     resting scroll position is the left edge, so the clipped side is the right
+     one, which is where every line begins. Wrapping is handled below and the
+     two things that genuinely cannot wrap scroll inside themselves. */
+  overflow: visible;
+  min-width: 0;
+}
+
+/* Long unbroken strings — a URL, a tag, a path — are the one thing that can
+   still push a line past the edge. They wrap rather than widening the block. */
+.markdown-embed .markdown-preview-sizer,
+.markdown-embed p,
+.markdown-embed li,
+.markdown-embed h1,
+.markdown-embed h2,
+.markdown-embed h3,
+.markdown-embed h4 {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* The two that cannot wrap carry their own scroll, so the clipping is theirs
+   and visible rather than the whole embed's and silent. */
+.markdown-embed pre,
+.markdown-embed .table-wrapper,
+.markdown-embed .markdown-rendered table {
+  max-width: 100%;
   overflow-x: auto;
 }
 

@@ -508,6 +508,14 @@ nothing, which looks exactly like a successful copy.
 Sections: `env`, `tokens`, `frame`, `ribbon`, `leftsplit`, `rightsplit`, `root`,
 `editor`, `embeds`, `tasks`, `controls`, `overlays`, `icons`, `tree`.
 
+`tools/embed-probe.js` is the narrow version of the same thing: paste it with
+the misbehaving note open and it dumps the embed's whole ancestor chain outward
+to the pane and its subtree inward, with each box's direction, overflow,
+scroll extent and how far it runs past the content box. It also prints
+`--bc-version`, because a screenshot cannot tell a fix that did not work from a
+fix that was never installed, and this project has spent rounds on that
+difference.
+
 `embeds` reports the two numbers that say whether a transclusion is a block or a
 page pretending to be one — the dead space under its last line and the widest
 overflow past its content box — and whether Obsidian is putting
