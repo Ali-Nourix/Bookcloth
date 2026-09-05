@@ -324,9 +324,17 @@ half-filled box is two signals competing for eighteen pixels and the amount of
 colour is the one that reads without being looked at. `- [!]` is filled with
 the one glyph that means it.
 
-Both alternate colours are separate controls, because "in progress" and "needs
-attention" are not the same signal as "done" and colouring all three with the
-accent throws that distinction away.
+`- [/]` follows the accent, and is the same fill as a done box. The two are one
+piece of work at two stages, and a box filled halfway with the accent says how
+far along without needing a second hue to say it. It takes the accent's
+*clamped* step rather than the raw accent, because a pale accent — a light teal,
+say — puts a 1.9:1 edge on white, and a checkbox border is a boundary that has
+to be visible.
+
+`- [!]` keeps a hue of its own. It is not a stage of the same work, it is an
+interruption, and colouring it with the accent is precisely how it stops being
+one. Both remain colour controls in Style Settings; clearing an override hands
+the in-progress box back to the accent.
 
 The box is 1.15 of the text size rather than 1em: a checkbox sits beside body
 text but is read as a control, and at exactly the text size it disappears into
@@ -345,6 +353,48 @@ positioned to sit optically rather than mathematically centred. Its shape is
 set on the element for both options rather than leaving the square as "the
 state with no rule", so a box set to square cannot be quietly rounded again by
 anything else that touches the radius.
+
+## Transclusions
+
+An embed is the one construct in Obsidian that nests a whole
+`.markdown-preview-view` inside a block of the page. The inner view arrives
+carrying everything the outer page gave it — the file margins, the centred
+sizer, the readable-line max-width — inside a container a fraction of a page
+wide. `--file-margins` ends in `20vh`, so before this was reset every embed
+opened with a fifth of the window's height of blank space under its last line,
+and anything sized for a full note ran past the edge and was quietly cut. A
+page inside a page.
+
+So the inner view is stripped back to being a block: no padding, no margin, no
+max-width, no minimum height. Forced, because several plugins write to those
+exact elements — pretty-properties pushes `.markdown-preview-sizer` down by a
+banner height, which inside an embed is the same defect wearing a different
+hat. This is structural rather than a preference. An embed is a block on *this*
+page.
+
+The container itself is a sunken card with one inset ring. A ring rather than
+borders because Obsidian draws an embed's edge as four separate physical
+borders, and four physical borders cannot be made symmetrical in a
+right-to-left note without restating all of them. For the same reason the
+open-in-full control is placed with a logical inset — pinned to the physical
+right, it lands at the *start* of a Persian line, on top of the first heading —
+and it is revealed on hover, the way Notion treats block controls, so it never
+sits over the text at all. Hover-less pointers keep it visible.
+
+Inside a callout the embed goes flush: no card, no ring, no padding. The callout
+is already the container, and a second box around the same content is one box
+too many.
+
+One selector detail is worth recording, because it cost this release. The rule
+had been written as `.internal-embed .markdown-embed` — and Obsidian puts both
+of those classes **on the same element**, so it matched nothing at all. Every
+embed in the theme was unstyled, and the symptom was indistinguishable from a
+rule being outranked: the theme simply appeared not to have styled it. That is
+the second time in this project that a selector matching nothing has been
+mistaken for a specificity problem. `node invariants.mjs light embeds.html`
+now measures the two numbers that would have caught it — how much dead space
+sits under an embed's last line, and how far anything in it runs past the
+content box.
 
 ## Working with plugins
 
@@ -456,7 +506,13 @@ level of what you type — calling it from inside a function silently does
 nothing, which looks exactly like a successful copy.
 
 Sections: `env`, `tokens`, `frame`, `ribbon`, `leftsplit`, `rightsplit`, `root`,
-`editor`, `tasks`, `controls`, `overlays`, `icons`, `tree`.
+`editor`, `embeds`, `tasks`, `controls`, `overlays`, `icons`, `tree`.
+
+`embeds` reports the two numbers that say whether a transclusion is a block or a
+page pretending to be one — the dead space under its last line and the widest
+overflow past its content box — and whether Obsidian is putting
+`internal-embed` and `markdown-embed` on one element or two, which decides
+whether a descendant selector between them matches anything.
 
 `bcBaseline` is the one that matters for the harness. `app-shim.css` is supposed
 to reproduce *Obsidian*, not Bookcloth, so the numbers it should encode are the

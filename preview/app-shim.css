@@ -184,6 +184,31 @@ body {
 .markdown-rendered mark { background-color: var(--text-highlight-bg); color: inherit; }
 .markdown-rendered hr { border: none; border-top: var(--hr-thickness) solid var(--hr-color); }
 
+/* ---------- transclusions ----------
+   The harness had no embed at all, which is why an embedded note section
+   inside a callout shipped looking like the source note pasted in and clipped.
+   What matters here is the shape of the problem: an embed nests a whole
+   .markdown-preview-view inside a block of the page, so the inner view arrives
+   carrying the outer page's chrome — its file margins, its centred sizer, its
+   readable-line max-width — inside a container that is a fraction of that
+   width. A theme that does not take those off gets a page inside a page. */
+.markdown-embed {
+  position: relative;
+  border-left: var(--embed-border-left);
+  border-right: var(--embed-border-right);
+  border-top: var(--embed-border-top);
+  border-bottom: var(--embed-border-bottom);
+  background-color: var(--embed-background);
+  padding: var(--embed-padding);
+  font-style: var(--embed-font-style);
+}
+.markdown-embed-title { font-weight: 600; }
+/* physical right, not inline-end — in an RTL note this lands on the wrong side
+   and over the text unless the theme says otherwise */
+.markdown-embed-link { position: absolute; top: 0; right: 0; padding: 4px; color: var(--text-faint); cursor: pointer; }
+.markdown-embed-content { max-height: 100%; }
+.internal-embed { display: block; }
+
 .callout { padding: var(--callout-padding); margin-block: 1em; }
 .callout-title { display: flex; font-weight: var(--callout-title-weight); }
 .callout-icon { display: flex; align-items: center; }

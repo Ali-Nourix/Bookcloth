@@ -110,7 +110,81 @@ const result = await pg.evaluate(() => {
     notes.push(`task checkbox ${w}px`);
   }
 
-  /* 5. one band height, not two opinions about it. */
+  /* 5. an embed is a block on this page, not a page of its own. The inner
+        .markdown-preview-view arrives with --file-margins, which ends in 20vh,
+        so an unreset embed opened with a fifth of the window under its last
+        line. Measured as slack: the gap between the embed's bottom and the
+        bottom of the last thing in it. */
+  for (const em of all('.markdown-embed')) {
+    const box = rect(em);
+    const es = getComputedStyle(em);
+    const kids = [...em.querySelectorAll('*')].filter(shown);
+    if (!kids.length) continue;
+    const lowest = Math.max(...kids.map((k) => rect(k).bottom));
+    const slack = R(box.bottom - lowest - parseFloat(es.paddingBottom));
+    if (slack > 8) fails.push(`embed has ${slack}px of empty space under its last line`);
+
+    /* and nothing in it may run past its content box. pre and table are
+       allowed to scroll inside themselves; everything else has to wrap. */
+    const left = box.left + parseFloat(es.paddingLeft);
+    const right = box.right - parseFloat(es.paddingRight);
+    /* an overlay control is not content: insets on an absolutely positioned
+       box resolve against the padding box, so the embed's open-in-full sits a
+       padding's width outside the content box on purpose. Its placement is
+       checked below instead. Icon geometry is the svg's business, not the
+       layout's, so anything inside one is skipped with it. */
+    const overlaid = (el) => {
+      if (el.ownerSVGElement) return true;
+      for (let n = el; n && n !== em; n = n.parentElement) {
+        const pos = getComputedStyle(n).position;
+        if (pos === 'absolute' || pos === 'fixed') return true;
+      }
+      return false;
+    };
+    for (const k of kids) {
+      if (k.closest('pre, table, [style*="overflow"]')) continue;
+      if (overlaid(k)) continue;
+      if (getComputedStyle(k).overflowX !== 'visible') continue;
+      const r = rect(k);
+      if (r.right > right + 0.5 || r.left < left - 0.5) {
+        const tag = `${k.tagName.toLowerCase()}.${(k.getAttribute('class') || '').split(/\s+/)[0]}`;
+        fails.push(`embed content overflows: ${tag} by ${R(Math.max(r.right - right, left - r.left))}px`);
+        break;
+      }
+    }
+
+    /* the open-in-full control sits at the inline end, not over the text */
+    const link = em.querySelector(':scope > .markdown-embed-link');
+    if (link) {
+      const lr = rect(link);
+      const rtl = getComputedStyle(em).direction === 'rtl';
+      const nearEnd = rtl ? Math.abs(lr.left - left) < 24 : Math.abs(lr.right - right) < 24;
+      if (!nearEnd && getComputedStyle(link).opacity !== '0') {
+        fails.push('embed link is not at the inline end of the embed');
+      }
+    }
+  }
+  notes.push(`embeds checked: ${all('.markdown-embed').length}`);
+
+  /* 6. the in-progress box follows the accent. */
+  const half = all('input[type=checkbox]').find(
+    (e) => (e.getAttribute('data-task') ?? e.closest('[data-task]')?.getAttribute('data-task')) === '/'
+  );
+  if (half) {
+    const hs = getComputedStyle(half);
+    const accent = getComputedStyle(document.body).getPropertyValue('--interactive-accent').trim();
+    const probe = document.createElement('div');
+    probe.style.cssText = `position:absolute;visibility:hidden;color:${accent}`;
+    document.body.append(probe);
+    const want = getComputedStyle(probe).color;
+    probe.remove();
+    if (hs.borderTopColor !== want) {
+      fails.push(`in-progress box is ${hs.borderTopColor}, accent is ${want}`);
+    }
+    notes.push(`in-progress box ${hs.borderTopColor} = accent`);
+  }
+
+  /* 7. one band height, not two opinions about it. */
   const cs = getComputedStyle(document.body);
   const band = cs.getPropertyValue('--bc-topbar-height').trim();
   const header = cs.getPropertyValue('--header-height').trim();

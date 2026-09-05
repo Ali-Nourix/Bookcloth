@@ -7,10 +7,14 @@
 body {
   /* Notion's embedded page: a bordered card, not a quote. */
   --embed-background: transparent;
-  --embed-border-left: 1px solid var(--background-modifier-border);
-  --embed-border-right: 1px solid var(--background-modifier-border);
-  --embed-border-top: 1px solid var(--background-modifier-border);
-  --embed-border-bottom: 1px solid var(--background-modifier-border);
+  /* Obsidian draws the embed's edge as four separate physical borders. Four
+     borders cannot be made symmetrical in a right-to-left note without
+     restating all of them, so none of them draw and the ring below does the
+     job with one inset shadow that has no sides to get wrong. */
+  --embed-border-left: none;
+  --embed-border-right: none;
+  --embed-border-top: none;
+  --embed-border-bottom: none;
   --embed-padding: var(--bc-gap-4) var(--bc-gap-5);
   --embed-font-style: inherit;
   --embed-block-shadow-hover: none;
@@ -300,15 +304,124 @@ body.bc-no-fade-done {
   border-radius: var(--radius-s);
 }
 
-.markdown-embed-title {
-  font-weight: var(--font-medium);
-  color: var(--text-normal);
+/* --- Transclusions -------------------------------------------------------
+   An embed nests an entire .markdown-preview-view inside a block of the page,
+   and that inner view arrives carrying the whole page's chrome: the file
+   margins, the centred sizer, the readable-line max-width. --file-margins ends
+   in 20vh, so every embed opened with a fifth of the window's height of empty
+   space under its last line, inside a container a fraction of a page wide.
+   That is the "it looks like the note was pasted in" — a page inside a page.
+
+   The reset is forced because a plugin's stylesheet loads after the theme's
+   and several of them write to these exact elements: pretty-properties pushes
+   .markdown-preview-sizer down by a banner height, which inside an embed is
+   the same defect again. This is structural rather than a preference — an
+   embed is a block on this page, not a page of its own. */
+.markdown-embed .markdown-preview-view,
+.markdown-embed .markdown-preview-sizer,
+.markdown-embed .markdown-preview-section,
+.markdown-embed .markdown-embed-content > .markdown-rendered {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  width: auto !important;
+  background-color: transparent;
 }
 
-.internal-embed .markdown-embed {
-  margin-inline-start: 0;
-  border-radius: var(--radius-m);
+.markdown-embed-content {
+  max-height: none;
+  /* the last resort against a wide table or a long code line: scroll it,
+     because the alternative the report showed was silently clipping it */
+  overflow-x: auto;
+}
+
+/* Selector on .markdown-embed itself, not `.internal-embed .markdown-embed`.
+   Obsidian puts both classes on one element, so the descendant version matched
+   nothing at all — the same failure as aiming at a class that does not exist,
+   and just as invisible, because a rule that matches nothing and a rule that
+   is outranked both look like "the theme did not style this". */
+.markdown-embed {
+  position: relative;
+  margin-block: var(--bc-gap-3);
   padding: var(--embed-padding);
+  border-radius: var(--bc-pane-radius);
+  background-color: var(--bc-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+.markdown-embed > :first-child,
+.markdown-embed-content > :first-child,
+.markdown-embed .markdown-preview-sizer > :first-child {
+  margin-block-start: 0;
+}
+
+.markdown-embed > :last-child,
+.markdown-embed-content > :last-child,
+.markdown-embed .markdown-preview-sizer > :last-child {
+  margin-block-end: 0;
+}
+
+/* Inside a callout the callout is already the container, so a second box round
+   the same content is one box too many. The embed goes flush and reads as what
+   the note says it is: this content, here. */
+.callout .markdown-embed,
+.callout-content .markdown-embed {
+  margin-block: 0;
+  padding: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.markdown-embed-title {
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  margin-block-end: var(--bc-gap-2);
+  text-align: start;
+}
+
+/* Obsidian pins the open-in-full control to the physical right, which in a
+   right-to-left note is the start of the line and lands on top of the first
+   heading — which is what the report's screenshot shows. Logical inset, and
+   the physical one explicitly cleared first so the later logical declaration
+   is the one that resolves. Revealed on hover, the way Notion treats block
+   controls, so it never sits over the text; hover-less pointers keep it. */
+.markdown-embed-link {
+  right: auto;
+  left: auto;
+  inset-inline-end: var(--bc-gap-2);
+  inset-block-start: var(--bc-gap-2);
+  padding: var(--bc-gap-1);
+  border-radius: var(--radius-s);
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity var(--bc-speed) var(--bc-ease);
+}
+
+.markdown-embed:hover > .markdown-embed-link,
+.markdown-embed-link:focus-visible {
+  opacity: 1;
+}
+
+.markdown-embed-link:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+@media (hover: none) {
+  .markdown-embed-link {
+    opacity: 1;
+  }
+}
+
+/* Nothing inside an embed may set its own width against the page: a table or a
+   code block sized for a full note is what ran past the edge and was cut. */
+.markdown-embed table,
+.markdown-embed pre,
+.markdown-embed img,
+.markdown-embed video {
+  max-width: 100%;
 }
 
 /* --- Selection ----------------------------------------------------------- */

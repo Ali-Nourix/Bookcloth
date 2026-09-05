@@ -295,6 +295,66 @@
     probe('.callout-icon svg', { depth: 5, extras: ICON });
   };
 
+  S.embeds = () => {
+    head('embeds (open a note that transcludes another, ideally inside a callout)');
+    const els = [...document.querySelectorAll('.markdown-embed')];
+    say(`.markdown-embed on screen: ${els.length}`);
+    if (!els.length) {
+      say('  nothing to measure — open a note with ![[Some note#Heading]] in it');
+      return;
+    }
+    els.slice(0, 4).forEach((em, i) => {
+      const inCallout = !!em.closest('.callout');
+      const cls = em.getAttribute('class') || '';
+      line(em, `embed[${i + 1}] ${inCallout ? 'inside a callout' : 'standalone'}  class="${cls}"`, 1);
+
+      /* the classes on one element or on two decides whether a descendant
+         selector like `.internal-embed .markdown-embed` matches anything */
+      const both = em.classList.contains('internal-embed');
+      say(`    internal-embed on the same element: ${both ? 'YES' : 'no (nested markup)'}`);
+
+      for (const sel of ['.markdown-embed-link', '.markdown-embed-title', '.markdown-embed-content',
+        '.markdown-preview-view', '.markdown-preview-sizer', '.markdown-preview-section']) {
+        const el = em.querySelector(sel);
+        if (el) line(el, sel, 2);
+        else say(`      ${sel}  —— not present`);
+      }
+
+      /* the two numbers that say whether it is a block or a page pretending
+         to be one: dead space under the last line, and anything past the edge */
+      const es = cs(em);
+      const box = em.getBoundingClientRect();
+      const kids = [...em.querySelectorAll('*')].filter((k) => k.getBoundingClientRect().height);
+      if (kids.length) {
+        const lowest = Math.max(...kids.map((k) => k.getBoundingClientRect().bottom));
+        say(`      slack under last line: ${R(box.bottom - lowest - parseFloat(es.paddingBottom))}px`);
+        const l = box.left + parseFloat(es.paddingLeft);
+        const r = box.right - parseFloat(es.paddingRight);
+        /* same exclusions as preview/invariants.mjs, so the two agree: an
+           absolutely positioned overlay resolves its insets against the
+           padding box and sits outside the content box on purpose, and a pre
+           or a table is allowed to scroll inside itself. */
+        const overlaid = (k) => {
+          if (k.ownerSVGElement) return true;
+          if (k.closest('pre, table')) return true;
+          for (let n = k; n && n !== em; n = n.parentElement) {
+            const pos = cs(n).position;
+            if (pos === 'absolute' || pos === 'fixed') return true;
+          }
+          return cs(k).overflowX !== 'visible';
+        };
+        const over = kids
+          .filter((k) => !overlaid(k))
+          .map((k) => {
+            const kr = k.getBoundingClientRect();
+            return Math.max(kr.right - r, l - kr.left);
+          })
+          .filter((n) => n > 0.5);
+        say(`      widest overflow past the content box: ${over.length ? R(Math.max(...over)) + 'px' : 'none'}`);
+      }
+    });
+  };
+
   S.tasks = () => {
     head('tasks');
     const sel = 'input[type="checkbox"]';
@@ -449,7 +509,7 @@
   };
 
   /* ---------------------------------------------------------------- runner */
-  const ORDER = ['env', 'tokens', 'frame', 'ribbon', 'leftsplit', 'rightsplit', 'root', 'editor', 'tasks', 'controls', 'overlays', 'icons'];
+  const ORDER = ['env', 'tokens', 'frame', 'ribbon', 'leftsplit', 'rightsplit', 'root', 'editor', 'embeds', 'tasks', 'controls', 'overlays', 'icons'];
 
   window.bcProbe = (...only) => {
     out = [];
