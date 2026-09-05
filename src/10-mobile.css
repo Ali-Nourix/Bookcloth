@@ -1,15 +1,20 @@
 /* ==========================================================================
    MOBILE
    Bigger targets, no hover-dependent affordances, safe areas respected.
+   Notion's phone app keeps the same 4px geometry for controls and reserves
+   the large corners for sheets, which is what this does.
    ========================================================================== */
 
 body.is-mobile {
-  --bc-density: 1.25;
+  --bc-density: 1.2;
+  --bc-row-base: 30px;
   --nav-item-size: 15px;
-  --font-ui-small: 14px;
+  --font-ui-small: 15px;
   --font-ui-medium: 15px;
-  --file-margins: var(--bc-gap-5) var(--bc-gap-5) 40vh;
-  --radius-l: calc(14px * var(--bc-radius-scale));
+  --file-margins: var(--bc-gap-4) var(--bc-gap-4) 30vh;
+  --bc-hit: 34px;
+  /* Sheets and dialogs only. Rows, buttons and inputs keep their 4px. */
+  --bc-modal-radius: 14px;
 }
 
 /* Nothing on a touch screen may hide behind :hover. */
@@ -24,22 +29,23 @@ body.is-mobile ::-webkit-scrollbar-thumb {
 
 /* Floating panes are a desktop idea. On a phone the pane is the whole screen,
    so the gap would only eat into it. */
-body.is-mobile .workspace {
+body.is-mobile.bc-float-panes .workspace {
   padding: 0;
   gap: 0;
 }
 
-body.is-mobile .workspace-split.mod-root .workspace-tabs,
-body.is-mobile .workspace-split.mod-root .workspace-leaf,
-body.is-mobile .workspace-split.mod-root .workspace-leaf-content,
-body.is-mobile .workspace-split.mod-left-split,
-body.is-mobile .workspace-split.mod-right-split {
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tabs,
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf,
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf-content,
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tab-header-container,
+body.is-mobile.bc-float-panes .workspace-split.mod-left-split,
+body.is-mobile.bc-float-panes .workspace-split.mod-right-split {
   border-radius: 0;
 }
 
-body.is-mobile .app-container,
-body.is-mobile .horizontal-main-container,
-body.is-mobile .workspace {
+body.is-mobile.bc-float-panes .app-container,
+body.is-mobile.bc-float-panes .horizontal-main-container,
+body.is-mobile.bc-float-panes .workspace {
   background-color: var(--background-secondary);
 }
 
@@ -68,9 +74,8 @@ body.is-mobile .suggestion-item {
   align-items: center;
 }
 
-body.is-mobile .modal,
-body.is-mobile .prompt {
-  border-radius: var(--radius-xl);
+body.is-mobile button:not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
+  height: 40px;
 }
 
 /* Toolbar above the keyboard */

@@ -1,7 +1,9 @@
 /* ==========================================================================
    TYPOGRAPHY
-   Sizes are relative to --font-text-size so Obsidian's own font-size slider
-   keeps working. Nothing here fixes a pixel value on body text.
+   Notion's scale: a 14px interface, a 16px page, three heading levels that
+   step 20 → 24 → 30, and a 40px page title above them. Sizes are relative to
+   --font-text-size so Obsidian's own font-size slider keeps working; nothing
+   here fixes a pixel value on body text.
    ========================================================================== */
 
 body {
@@ -13,30 +15,34 @@ body {
   --line-height-normal: var(--bc-line-height);
   --line-height-tight: 1.3;
 
-  /* Notion and Slite both run their interface at 14px with a 12px secondary
-     step. Obsidian's default 13px reads cramped next to them, and a 12px nav
-     row is where the sidebar starts looking like a settings dialog. */
+  /* Notion runs at 14px throughout — sidebar, menus, buttons, settings — with
+     a 12px step for hints, hotkeys and counts. Obsidian's --font-ui-small is
+     the size it gives menu items and buttons, so that is the one that has to
+     be 14px for the interface to read as Notion's. */
   --font-ui-smaller: 12px;
-  --font-ui-small: 13px;
+  --font-ui-small: 14px;
   --font-ui-medium: 14px;
   --font-ui-large: 16px;
 
   --file-line-width: var(--bc-line-width);
-  --file-margins: var(--bc-gap-6) max(var(--bc-gap-6), 5vw) var(--bc-gap-6);
+  /* Notion leaves a screenful of room under the last block, so there is
+     always somewhere to click and keep writing. */
+  --file-margins: var(--bc-gap-5) max(var(--bc-gap-6), 4vw) 20vh;
 
-  --p-spacing: 0.9em;
+  --p-spacing: 0.5em;
   --p-spacing-empty: 0em;
 
   /* Headings ------------------------------------------------------------
-     A quiet 1.2-ish scale. h1 is a heading, not a billboard — the note title
-     is already doing that job above it. Colour stays at --text-normal:
-     hierarchy comes from size, weight and the space around it. */
-  --h1-size: calc(1.8em * var(--bc-h-scale));
-  --h2-size: calc(1.44em * var(--bc-h-scale));
-  --h3-size: calc(1.2em * var(--bc-h-scale));
-  --h4-size: calc(1.02em * var(--bc-h-scale));
-  --h5-size: calc(0.95em * var(--bc-h-scale));
-  --h6-size: calc(0.88em * var(--bc-h-scale));
+     Notion has exactly three, at 30/24/20px on a 16px page, all at 600. The
+     three Obsidian adds below them continue the ramp rather than inventing a
+     new one. Colour stays at --text-normal: hierarchy comes from size, weight
+     and the space around it. */
+  --h1-size: calc(1.875em * var(--bc-h-scale));
+  --h2-size: calc(1.5em * var(--bc-h-scale));
+  --h3-size: calc(1.25em * var(--bc-h-scale));
+  --h4-size: calc(1.0625em * var(--bc-h-scale));
+  --h5-size: calc(1em * var(--bc-h-scale));
+  --h6-size: calc(0.9375em * var(--bc-h-scale));
 
   --h1-weight: var(--bc-h-weight);
   --h2-weight: var(--bc-h-weight);
@@ -52,9 +58,9 @@ body {
   --h5-color: var(--text-normal);
   --h6-color: var(--text-muted);
 
-  --h1-line-height: 1.22;
-  --h2-line-height: 1.28;
-  --h3-line-height: 1.34;
+  --h1-line-height: 1.3;
+  --h2-line-height: 1.3;
+  --h3-line-height: 1.3;
   --h4-line-height: 1.4;
   --h5-line-height: 1.4;
   --h6-line-height: 1.4;
@@ -68,73 +74,78 @@ body {
 
   --h6-variant: normal;
 
+  /* The page title: 40px at 700, the one piece of display type in the app. */
   --inline-title-color: var(--text-normal);
-  --inline-title-size: calc(2em * var(--bc-h-scale));
-  --inline-title-weight: var(--bc-h-weight);
+  --inline-title-size: calc(2.5em * var(--bc-h-scale));
+  --inline-title-weight: 700;
   --inline-title-line-height: 1.2;
   --inline-title-font: inherit;
 
-  --bold-weight: 650;
+  --bold-weight: 600;
   --bold-color: var(--text-normal);
   --italic-color: inherit;
 
-  --blockquote-border-thickness: 2px;
-  --blockquote-border-color: var(--bc-control-border);
+  /* Notion's quote: a 3px rule in the ink colour, text at full contrast. */
+  --blockquote-border-thickness: 3px;
+  --blockquote-border-color: var(--text-normal);
   --blockquote-font-style: normal;
-  --blockquote-color: var(--text-muted);
+  --blockquote-color: var(--text-normal);
   --blockquote-background-color: transparent;
 
-  --hr-color: var(--background-modifier-border);
+  --hr-color: var(--background-modifier-border-hover);
   --hr-thickness: 1px;
 
-  --list-indent: 1.6em;
-  --list-spacing: 0.1em;
-  --list-marker-color: var(--text-faint);
-  --list-marker-color-hover: var(--text-muted);
+  --list-indent: 1.5em;
+  --list-spacing: 0.125em;
+  --list-marker-color: var(--text-normal);
+  --list-marker-color-hover: var(--text-normal);
   --list-marker-color-collapsed: var(--text-accent);
-  --list-bullet-size: 0.32em;
+  --list-bullet-size: 0.3em;
   --list-bullet-radius: 50%;
 
   --code-size: calc(1em * var(--bc-code-size));
   --code-white-space: pre-wrap;
 
-  --table-text-size: 0.92em;
-  --table-line-height: 1.45;
-  --table-header-size: 0.82em;
-  --table-header-weight: var(--font-semibold);
+  --table-text-size: 0.875em;
+  --table-line-height: 1.5;
+  --table-header-size: 0.875em;
+  --table-header-weight: var(--font-medium);
   --table-header-color: var(--text-muted);
 }
 
-/* Optical tightening. Large type wants less tracking than small type;
-   leaving both at 0 is what makes headings look pasted on. */
-.markdown-rendered h1,
-.markdown-rendered h2,
-.HyperMD-header-1,
-.HyperMD-header-2,
+/* Optical tightening. Inter at 40px wants less tracking than Inter at 16px;
+   leaving both at 0 is what makes a title look pasted on. Applied to display
+   sizes only. */
 .inline-title,
-.view-header-title,
-.modal-title {
-  letter-spacing: -0.018em;
+.markdown-rendered h1,
+.HyperMD-header-1 {
+  letter-spacing: -0.02em;
 }
 
-.markdown-rendered h3,
-.markdown-rendered h4,
-.HyperMD-header-3,
-.HyperMD-header-4 {
-  letter-spacing: -0.008em;
+.markdown-rendered h2,
+.HyperMD-header-2 {
+  letter-spacing: -0.01em;
 }
 
 /* Space above a heading belongs to the heading; space below belongs to the
-   content it introduces. Obsidian's defaults give both the same value, which
-   is why long notes read as an undifferentiated column. */
+   content it introduces. Notion's proportion is roughly 8:1, which is what
+   makes a long page read as sections rather than as one column. */
 .markdown-rendered h1,
 .markdown-rendered h2,
+.markdown-source-view.mod-cm6 .HyperMD-header-1,
+.markdown-source-view.mod-cm6 .HyperMD-header-2 {
+  margin-block-start: 1.9em;
+  margin-block-end: 0.25em;
+}
+
 .markdown-rendered h3,
 .markdown-rendered h4,
 .markdown-rendered h5,
-.markdown-rendered h6 {
-  margin-block-start: 1.9em;
-  margin-block-end: 0.55em;
+.markdown-rendered h6,
+.markdown-source-view.mod-cm6 .HyperMD-header-3,
+.markdown-source-view.mod-cm6 .HyperMD-header-4 {
+  margin-block-start: 1.5em;
+  margin-block-end: 0.2em;
 }
 
 .markdown-rendered h1:first-child,
@@ -149,7 +160,7 @@ body {
 }
 
 .inline-title {
-  margin-bottom: 0.45em;
+  margin-bottom: 0.3em;
 }
 
 /* Headings stay body-ink by default; hierarchy comes from size and space.
@@ -160,29 +171,51 @@ body.bc-accent-headings {
   --inline-title-color: var(--text-accent);
 }
 
-body.bc-link-underline {
+/* Link style -------------------------------------------------------------
+   Default is Notion's: the accent, underlined at rest, because in a document
+   a link that only reveals itself on hover is a link you have to hunt for.
+   The Ink option is Notion's own inline-link treatment — body colour with a
+   faint underline — for anyone who wants links to disappear into the prose. */
+body {
   --link-decoration: underline;
   --link-external-decoration: underline;
+}
+
+body.bc-link-plain {
+  --link-decoration: none;
+  --link-external-decoration: none;
+  --link-decoration-hover: underline;
+  --link-external-decoration-hover: underline;
+}
+
+body.bc-link-ink {
+  --link-color: var(--text-normal);
+  --link-color-hover: var(--text-normal);
+  --link-external-color: var(--text-normal);
+  --link-external-color-hover: var(--text-normal);
+}
+
+body.bc-link-ink .markdown-rendered a,
+body.bc-link-ink .cm-s-obsidian .cm-link,
+body.bc-link-ink .cm-s-obsidian .cm-hmd-internal-link {
+  text-decoration-color: var(--background-modifier-border-hover);
 }
 
 /* Serif body option — editor only. The interface stays sans so the note
    stands apart from the app around it. */
 body.bc-serif-body {
   --font-text-theme: var(--bc-stack-serif);
-  --bc-line-height: 1.7;
-}
-
-/* Serif sets slightly narrower: the same measure in characters. */
-body.bc-serif-body {
+  --bc-line-height: 1.6;
+  /* Serif sets slightly narrower: the same measure in characters. */
   --file-line-width: calc(var(--bc-line-width) - 2rem);
 }
 
-/* Links: underline on hover only, so a note dense with links still reads as
-   prose rather than as a form. */
+/* Links sit inside prose, so the underline is offset off the baseline rather
+   than through the descenders. */
 .markdown-rendered a,
 .cm-s-obsidian .cm-link,
 .cm-s-obsidian .cm-hmd-internal-link {
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.16em;
   text-decoration-thickness: 1px;
   transition: color var(--bc-speed) var(--bc-ease);
 }
@@ -192,20 +225,25 @@ body.bc-serif-body {
   text-decoration-color: var(--background-modifier-border-hover);
 }
 
-/* Blockquotes: a hairline rule, no italics, no background. Written with
-   logical properties so the rule lands on the correct side in a
-   right-to-left note without a second set of rules to maintain. */
+/* Blockquotes: Notion's 3px rule, no italics, no background, full-contrast
+   text. Written with logical properties so the rule lands on the correct side
+   in a right-to-left note without a second set of rules to maintain. */
 .markdown-rendered blockquote {
   border-left: none;
   border-right: none;
   border-inline-start: var(--blockquote-border-thickness) solid
     var(--blockquote-border-color);
   padding: 0;
-  padding-inline-start: 1.15em;
+  padding-inline-start: 0.875em;
   margin-inline-start: 0;
+  margin-block: 0.5em;
 }
 
+/* Notion's highlight is a solid pastel band, not a translucent wash, so the
+   text on top of it keeps its contrast. */
 .markdown-rendered mark {
   border-radius: var(--radius-s);
-  padding: 0.08em 0.14em;
+  padding: 0.1em 0.1em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }

@@ -1,11 +1,22 @@
 /* ==========================================================================
    CHROME
-   Sidebar, ribbon, tabs, header, status bar. The rule for all of it: recede.
-   Chrome is separated from the editor by tone, never by a drawn line.
+   Sidebar, ribbon, tabs, header, status bar.
+
+   Notion's shell is three flush regions: a warm-grey sidebar, a grey tab
+   strip, and the white page. Nothing is boxed and nothing is separated by a
+   drawn line — the tone change is the seam. The one rule for all of it is
+   that every control in the top band sits on the same centre line, whichever
+   of the four containers it happens to live in.
    ========================================================================== */
 
 body {
-  --header-height: 40px;
+  /* The band across the top of the window: the sidebar tab strips, the
+     editor tab strip and the ribbon's first icon all measure from this. */
+  --bc-topbar-height: 40px;
+  /* The editor tab, bottom-flush against the page so the two merge. */
+  --bc-tab-height: 34px;
+
+  --header-height: 45px;
   --divider-width: 1px;
   --divider-width-hover: 3px;
   --divider-color: transparent;
@@ -14,15 +25,15 @@ body {
 
   --ribbon-background: var(--background-secondary);
   --ribbon-background-collapsed: var(--background-secondary);
-  --ribbon-width: 44px;
-  --ribbon-padding: var(--bc-band-pad) var(--bc-gap-2);
+  --ribbon-width: 40px;
+  --ribbon-padding: var(--bc-band-pad) var(--bc-gap-1);
 
   --sidebar-markdown-font-size: 0.9em;
   --sidebar-tab-text-display: none;
 
-  --vault-name-font-size: var(--font-ui-small);
-  --vault-name-font-weight: var(--font-medium);
-  --vault-name-color: var(--text-muted);
+  --vault-name-font-size: var(--font-ui-medium);
+  --vault-name-font-weight: var(--font-semibold);
+  --vault-name-color: var(--text-normal);
 
   --status-bar-background: transparent;
   --status-bar-border-color: transparent;
@@ -38,7 +49,7 @@ body {
   --titlebar-text-color-focused: var(--text-muted);
   --titlebar-text-weight: var(--font-medium);
 
-  --file-header-font-size: var(--font-ui-small);
+  --file-header-font-size: var(--font-ui-medium);
   --file-header-font-weight: var(--font-medium);
   --file-header-border: none;
   --file-header-justify: flex-start;
@@ -51,42 +62,49 @@ body {
   --tab-outline-width: 0px;
   --tab-curve: 0px;
   --tab-font-size: var(--font-ui-medium);
-  --tab-font-weight: var(--font-medium);
+  --tab-font-weight: var(--font-normal);
   --tab-text-color: var(--text-faint);
   --tab-text-color-active: var(--text-muted);
   --tab-text-color-focused: var(--text-muted);
   --tab-text-color-focused-active: var(--text-normal);
   --tab-text-color-focused-highlighted: var(--bc-select-fg);
   --tab-text-color-focused-active-current: var(--text-normal);
-  --tab-max-width: 240px;
+  --tab-max-width: 220px;
 
-  /* Navigation ---------------------------------------------------------- */
+  /* Navigation ----------------------------------------------------------
+     Notion's sidebar row: 27px tall, 14px at medium weight, a 4px corner and
+     an 8px inset from the panel edge. */
   --nav-item-size: var(--font-ui-medium);
-  --nav-item-weight: var(--font-normal);
-  --nav-item-weight-hover: var(--font-normal);
+  --nav-item-weight: var(--font-medium);
+  --nav-item-weight-hover: var(--font-medium);
   --nav-item-weight-active: var(--font-medium);
   --nav-item-color: var(--text-muted);
   --nav-item-color-hover: var(--text-normal);
   --nav-item-color-active: var(--bc-select-fg);
   --nav-item-color-selected: var(--bc-select-fg);
   --nav-item-background-hover: var(--background-modifier-hover);
-  --nav-item-background-active: var(--bc-select-bg);
+  --nav-item-background-active: var(--bc-select-bg-strong);
   --nav-item-background-selected: var(--bc-select-bg-strong);
-  --nav-item-padding: calc(var(--bc-gap-2) + 1px) var(--bc-gap-3);
+  --nav-item-padding: var(--bc-gap-2) var(--bc-gap-3);
   --nav-item-radius: var(--radius-m);
   --nav-item-parent-padding: var(--nav-item-padding);
   --nav-item-children-padding-left: var(--bc-gap-4);
-  --nav-item-children-margin-left: var(--bc-gap-3);
+  --nav-item-children-margin-left: var(--bc-gap-4);
   --nav-item-white-space: nowrap;
 
   --nav-indentation-guide-width: 1px;
-  --nav-indentation-guide-color: var(--background-modifier-border);
+  /* Notion draws none. The setting puts them back. */
+  --nav-indentation-guide-color: transparent;
 
-  --nav-heading-color: var(--text-faint);
-  --nav-heading-color-hover: var(--text-muted);
-  --nav-heading-color-collapsed: var(--text-faint);
-  --nav-heading-weight: var(--font-semibold);
-  --nav-heading-weight-hover: var(--font-semibold);
+  --nav-heading-color: var(--text-muted);
+  --nav-heading-color-hover: var(--text-normal);
+  --nav-heading-color-collapsed: var(--text-muted);
+  --nav-heading-weight: var(--font-medium);
+  --nav-heading-weight-hover: var(--font-medium);
+}
+
+body.bc-indent-guides {
+  --nav-indentation-guide-color: var(--background-modifier-border);
 }
 
 /* --- Workspace shell ----------------------------------------------------- */
@@ -95,27 +113,15 @@ body {
   background-color: var(--background-secondary);
 }
 
-/* Give the editor pane its own rounded plane floating on the backdrop. This
-   is the single structural idea in the theme, so nothing else needs a border.
-   Corners go on the pane's two end pieces rather than on a clipping
-   container: `overflow: hidden` here would swallow anything a plugin renders
-   past its own bounds — Kanban date pickers, Excalidraw panels, Dataview
-   menus. Pane geometry and the backdrop behind it live in 13-panes. */
-.workspace-split.mod-root .workspace-tab-header-container {
-  border-start-start-radius: var(--bc-pane-radius);
-  border-start-end-radius: var(--bc-pane-radius);
-}
-
-.workspace-split.mod-root .workspace-leaf-content {
-  background-color: var(--background-primary);
-  border-end-start-radius: var(--bc-pane-radius);
-  border-end-end-radius: var(--bc-pane-radius);
-}
-
-/* --- Ribbon -------------------------------------------------------------- */
+/* --- Ribbon --------------------------------------------------------------
+   Notion has no icon rail, so this one is dissolved into the sidebar: same
+   tone, no border, no divider. It reads as the top of the sidebar rather than
+   as a fourth region. */
 
 .workspace-ribbon {
   border: none;
+  align-items: center;
+  gap: var(--bc-gap-1);
 }
 
 .workspace-ribbon.mod-left::before,
@@ -127,10 +133,6 @@ body {
    gives the sidebar-toggle button a different container from the plugin
    actions below it, so left to itself the top icon sits off the column the
    rest of them share. Sizing them all identically is what lines them up. */
-.workspace-ribbon {
-  align-items: center;
-}
-
 .side-dock-ribbon-action,
 .workspace-ribbon .clickable-icon,
 .workspace-ribbon .sidebar-toggle-button {
@@ -153,6 +155,14 @@ body {
   background-color: var(--background-modifier-hover);
 }
 
+/* The active ribbon glyph is marked by a grey slab, not by recolouring the
+   glyph — one accented shape per region is enough, and in Notion that shape
+   is never in the chrome. */
+.side-dock-ribbon-action.is-active {
+  background-color: var(--bc-select-bg-strong);
+  color: var(--text-normal);
+}
+
 body.bc-hide-ribbon .workspace-ribbon.mod-left {
   opacity: 0;
   transition: opacity 200ms var(--bc-ease);
@@ -168,13 +178,14 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
    containers: the ribbon column, the left tab strip, the editor tab bar and
    the right tab strip. Each brings its own padding, so the sidebar-toggle
    button ends up a few pixels above the tabs beside it and the row reads as
-   three rows. Giving all of them the same band padding and the same control
-   height puts every icon on one centre line. */
+   three rows. One band height and one control height put every icon on the
+   same centre line. */
 
 .workspace-tab-header-container {
   align-items: center;
-  min-height: calc(var(--bc-hit) + var(--bc-band-pad) * 2);
+  min-height: var(--bc-topbar-height);
   padding-block: var(--bc-band-pad);
+  border-bottom: none;
 }
 
 .workspace-tab-header,
@@ -207,13 +218,9 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   box-shadow: none;
 }
 
-.workspace-tab-header-container {
-  border-bottom: none;
-}
-
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container {
-  padding-inline: var(--bc-gap-2);
+  padding-inline: var(--bc-gap-3);
   gap: var(--bc-gap-1);
 }
 
@@ -260,22 +267,25 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   color: var(--text-normal);
 }
 
+/* Sidebar panes take Notion's 8px inset, so a row's rounded corner clears the
+   panel edge. Only the list panes: giving a plugin pane horizontal padding is
+   how a theme breaks the ones that lay out their own. */
 .workspace-leaf-content[data-type="file-explorer"] .view-content,
 .workspace-leaf-content[data-type="search"] .view-content,
 .workspace-leaf-content[data-type="bookmarks"] .view-content,
 .workspace-leaf-content[data-type="tag"] .view-content,
-.workspace-leaf-content[data-type="outline"] .view-content {
-  padding-inline: var(--bc-gap-2);
+.workspace-leaf-content[data-type="outline"] .view-content,
+.workspace-leaf-content[data-type="backlink"] .view-content,
+.workspace-leaf-content[data-type="outgoing-link"] .view-content,
+.workspace-leaf-content[data-type="all-properties"] .view-content {
+  padding-inline: var(--bc-row-inset);
 }
 
-/* The active ribbon glyph is marked by a tinted slab, not by recolouring the
-   glyph itself — one accented shape per region is enough. */
-.side-dock-ribbon-action.is-active {
-  background-color: var(--bc-select-bg);
-}
-
-/* Nav rows: a soft rounded slab, inset from the panel edge. */
+/* Nav rows: Notion's 27px slab. The height is set rather than left to the
+   text, so a row with an icon, a row with a chevron and a row with neither
+   are all the same height. */
 .tree-item-self {
+  min-height: var(--bc-row-height);
   border-radius: var(--nav-item-radius);
   transition: background-color var(--bc-speed) var(--bc-ease),
     color var(--bc-speed) var(--bc-ease);
@@ -303,8 +313,18 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   padding-bottom: var(--bc-gap-5);
 }
 
-body.bc-no-indent-guides {
-  --nav-indentation-guide-color: transparent;
+/* The pane's own action row lines up with the rows beneath it: same inset,
+   same left edge. */
+.nav-header {
+  padding-inline: var(--bc-row-inset);
+}
+
+.nav-header .nav-buttons-container {
+  gap: var(--bc-gap-1);
+}
+
+.tree-item-self.mod-collapsible .tree-item-inner {
+  font-weight: inherit;
 }
 
 /* Drop target while dragging a note into a folder. */
@@ -320,10 +340,9 @@ body.bc-no-indent-guides {
   font-size: var(--font-ui-smaller);
 }
 
-/* Containment. A pane that has been inset by a gap is narrower than before,
-   so every row in it needs somewhere to give. Without a min-width of zero a
-   flex child refuses to shrink below its content and the text runs under the
-   rounded corner instead of ellipsising. */
+/* Containment. Every row in a sidebar needs somewhere to give: without a
+   min-width of zero a flex child refuses to shrink below its content and the
+   text runs past the panel instead of ellipsising. */
 .workspace-leaf-content,
 .workspace-tabs,
 .view-content,
@@ -350,8 +369,7 @@ body.bc-no-indent-guides {
 
 /* Room at the foot of every scrolling pane. Without it the last item in a
    sidebar list sits underneath the status bar and is read as cut off — which
-   it is. Only the block end is padded: giving plugin panes horizontal padding
-   is how a theme breaks the ones that lay out their own. */
+   it is. Only the block end is padded. */
 .workspace-split.mod-left-split .view-content,
 .workspace-split.mod-right-split .view-content {
   padding-block-end: var(--bc-gap-6);
@@ -362,83 +380,128 @@ body.bc-no-indent-guides {
   scroll-padding-block-end: var(--bc-gap-5);
 }
 
-/* Vault name reads as a label, not a title. */
+/* Vault name reads as Notion's workspace switcher: a name, not a title. */
 .workspace-drawer-vault-name,
 .nav-header .vault-name {
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
-/* --- Root tabs ----------------------------------------------------------- */
+/* --- Root tabs -----------------------------------------------------------
+   Browser-shaped: the active tab is the page colour, bottom-flush against the
+   editor so the two are one surface. Inactive tabs are transparent on the
+   grey strip. */
 
 .workspace-split.mod-root .workspace-tab-header-container {
-  background-color: var(--background-secondary);
-  padding-inline: var(--bc-gap-2);
+  background-color: var(--tab-container-background);
+  height: var(--bc-topbar-height);
+  min-height: var(--bc-topbar-height);
+  align-items: flex-end;
+  padding-block: 0;
   gap: var(--bc-gap-1);
+  /* On a frameless window this row also holds the window controls, and
+     Obsidian reserves their width in --frame-*-space. Taking the larger of
+     that and the theme's own inset means the first tab never ends up under
+     the traffic lights, and the fallback keeps the rule working on the
+     builds that define neither. */
+  padding-inline-start: max(var(--bc-gap-3), var(--frame-left-space, 0px));
+  padding-inline-end: max(var(--bc-gap-3), var(--frame-right-space, 0px));
 }
 
 .workspace-split.mod-root .workspace-tab-header {
-  border-radius: var(--radius-m);
+  height: var(--bc-tab-height);
+  align-self: flex-end;
+  border-radius: var(--tab-radius) var(--tab-radius) 0 0;
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
 .workspace-split.mod-root .workspace-tab-header-inner {
   display: flex;
   align-items: center;
-  height: var(--bc-hit);
+  height: 100%;
   padding-block: 0;
   padding-inline: var(--bc-gap-3);
-  border-radius: var(--radius-m);
+  border-radius: inherit;
 }
 
 .workspace-split.mod-root .workspace-tab-header:not(.is-active):hover {
   background-color: var(--background-modifier-hover);
 }
 
+/* The row's icon-only controls stay centred in the band even though the tabs
+   beside them are aligned to its bottom edge. */
+.workspace-split.mod-root .workspace-tab-header-new-tab,
+.workspace-split.mod-root .workspace-tab-header-status-container {
+  align-self: center;
+}
+
+.workspace-tab-header-status-container {
+  padding-inline-end: var(--bc-gap-1);
+}
+
+/* Pill variant: a floating rounded tab, centred in the band. */
+body.bc-tabs-pill .workspace-split.mod-root .workspace-tab-header-container {
+  align-items: center;
+  padding-block: var(--bc-band-pad);
+}
+
+body.bc-tabs-pill .workspace-split.mod-root .workspace-tab-header {
+  height: var(--bc-hit);
+  align-self: center;
+  border-radius: var(--radius-l);
+}
+
 /* Underline variant: flat tabs with a hairline marker instead of a slab. */
+body.bc-tabs-underline .workspace-split.mod-root .workspace-tab-header {
+  border-radius: 0;
+}
+
 body.bc-tabs-underline
   .workspace-split.mod-root
   .workspace-tab-header.is-active {
   background-color: transparent;
-  box-shadow: inset 0 -2px 0 0 var(--bc-ac-500);
-  border-radius: 0;
+  box-shadow: inset 0 -2px 0 0 var(--text-normal);
 }
 
 .workspace-tab-header-new-tab {
   border-radius: var(--radius-m);
 }
 
-.workspace-tab-header-status-container {
-  padding-inline-end: var(--bc-gap-2);
-}
-
 /* --- View header ---------------------------------------------------------
-   Only the chrome is restyled here. Padding is left to Obsidian so a plugin
-   view that lays out its own header keeps working. */
+   Notion's page topbar: the title as a quiet breadcrumb on the left, actions
+   on the right, no rule beneath. Padding is left to Obsidian so a plugin view
+   that lays out its own header keeps working. */
 
 .view-header {
   background-color: transparent;
   border-bottom: none;
+  /* Set rather than added to, so the inset is the same whatever Obsidian's
+     own padding happens to be in the version underneath. */
+  padding-inline: var(--bc-gap-4);
+  gap: var(--bc-gap-1);
 }
 
 .view-header-title {
   font-size: var(--font-ui-medium);
   font-weight: var(--font-medium);
-  color: var(--text-muted);
+  color: var(--text-normal);
 }
 
 .view-header-icon,
 .view-action {
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
 }
 
 .view-header-breadcrumb {
+  color: var(--text-muted);
+}
+
+.view-header-breadcrumb-separator {
   color: var(--text-faint);
 }
 
 /* --- Status bar ----------------------------------------------------------
-   The status bar floats over the bottom of whatever pane is beneath it, so
-   panes reserve room for it rather than letting their last row be sliced in
-   half by it. The reserve lives on the panes, below. */
+   Notion has no status bar. This one keeps out of the way: no fill, no rule,
+   faint 12px text at the bottom right. */
 
 .status-bar {
   border-top: none;
@@ -465,12 +528,12 @@ body.bc-hide-statusbar .status-bar:hover {
   transition: background-color 120ms var(--bc-ease);
 }
 
-/* --- Scrollbars ---------------------------------------------------------- */
-/* Thumb only, no track, and it stays out of the way until the pane is used. */
+/* --- Scrollbars ----------------------------------------------------------
+   Thumb only, no track, and it stays out of the way until the pane is used. */
 
 ::-webkit-scrollbar {
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-corner {

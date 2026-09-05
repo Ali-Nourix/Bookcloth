@@ -25,8 +25,8 @@ Reading View and flip between them — the two should not visibly jump.
 
 ## Prose and inline
 
-The measure is set to forty-two rem, which lands near sixty-eight characters at
-the default size. This paragraph exists to show what a wall of text looks like
+The measure is set to forty-four rem — Notion's own text column, near seventy
+characters at the default size. This paragraph exists to show what a wall of text looks like
 before anything decorates it: **bold**, *italic*, ***both***, ~~struck
 through~~, ==highlighted==, `inline code`, and a [external link](https://obsidian.md).
 

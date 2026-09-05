@@ -6,7 +6,7 @@ settings:
     -
         id: bc-info
         title: About
-        description: Pick your accent in Obsidian's own Appearance settings — the whole interface derives its tints from it. Everything below is optional fine-tuning, and the theme is complete with all of it left alone.
+        description: Bookcloth follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
         type: heading
         level: 1
         collapsed: true
@@ -19,16 +19,16 @@ settings:
     -
         id: accent
         title: Accent override
-        description: Only applies while Obsidian's own accent is set to Default.
+        description: Only applies while Obsidian's own accent is set to Default. The default is Notion's blue.
         type: variable-themed-color
         format: hsl-split
         opacity: false
-        default-light: '#c96442'
-        default-dark: '#d97757'
+        default-light: '#2383e2'
+        default-dark: '#2383e2'
     -
         id: bc-accent-intensity
         title: Accent intensity
-        description: How loudly the accent is used across the interface.
+        description: How loudly the accent is used across the interface. Notion keeps it to links, the caret, selection and one filled button — that is Normal.
         type: class-select
         allowEmpty: false
         default: bc-accent-normal
@@ -45,9 +45,9 @@ settings:
     -
         id: bc-tint
         title: Neutral warmth
-        description: How much of the accent hue bleeds into the greys. Zero gives pure neutral greys.
+        description: How much of the accent hue bleeds into the greys. Zero — the default — leaves Notion's own warm neutrals alone.
         type: variable-number-slider
-        default: 4
+        default: 0
         min: 0
         max: 14
         step: 1
@@ -66,20 +66,20 @@ settings:
         collapsed: true
     -
         id: bc-bg-primary
-        title: Editor background
+        title: Page background
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#fcfbf7'
-        default-dark: '#1f1f1e'
+        default-light: '#ffffff'
+        default-dark: '#191919'
     -
         id: bc-bg-secondary
-        title: Sidebar and chrome background
+        title: Sidebar and tab strip
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#f4f3ee'
-        default-dark: '#191918'
+        default-light: '#f7f7f5'
+        default-dark: '#202020'
     -
         id: bc-bg-raised
         title: Raised surfaces
@@ -88,16 +88,16 @@ settings:
         format: hex
         opacity: false
         default-light: '#ffffff'
-        default-dark: '#2a2a28'
+        default-dark: '#252525'
     -
         id: bc-bg-sunken
         title: Sunken surfaces
-        description: Code blocks and inline code.
+        description: Code blocks.
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#f7f6f1'
-        default-dark: '#171716'
+        default-light: '#f7f6f3'
+        default-dark: '#252525'
     -
         id: bc-border-strength
         title: Border strength
@@ -120,29 +120,29 @@ settings:
         format: hex
         opacity: false
         default-light: '#37352f'
-        default-dark: '#e6e4dd'
+        default-dark: '#d4d4d4'
     -
         id: bc-ink-muted
         title: Muted text
-        description: Filenames, tab titles, table headers, callout bodies.
+        description: Filenames, tab titles, table headers, property labels.
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#6f6d66'
-        default-dark: '#a2a099'
+        default-light: '#706f6b'
+        default-dark: '#9b9b9b'
     -
         id: bc-ink-faint
         title: Faint text
-        description: Status bar, counts, section labels. Non-essential information only.
+        description: Status bar, counts, icons at rest. Non-essential information only.
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#8b8a83'
-        default-dark: '#78766f'
+        default-light: '#9b9a97'
+        default-dark: '#6f6f6f'
     -
         id: bc-hue-head
         title: Semantic colours
-        description: Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
+        description: Notion's own palette. Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
         type: heading
         level: 1
         collapsed: true
@@ -152,64 +152,64 @@ settings:
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#b3453a'
-        default-dark: '#e08a7c'
+        default-light: '#d44c47'
+        default-dark: '#ff7369'
     -
         id: color-orange-rgb
         title: Orange
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#a75f2b'
-        default-dark: '#e0a171'
+        default-light: '#d9730d'
+        default-dark: '#ffa344'
     -
         id: color-yellow-rgb
         title: Yellow
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#8a6d12'
-        default-dark: '#d6be7c'
+        default-light: '#cb912f'
+        default-dark: '#ffdc49'
     -
         id: color-green-rgb
         title: Green
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#4f7a55'
-        default-dark: '#8fbf93'
+        default-light: '#448361'
+        default-dark: '#4dab9a'
     -
         id: color-cyan-rgb
         title: Cyan
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#377a7c'
-        default-dark: '#7ebcbe'
+        default-light: '#3a838c'
+        default-dark: '#5eb7c4'
     -
         id: color-blue-rgb
         title: Blue
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#3e6c9e'
-        default-dark: '#96add6'
+        default-light: '#337ea9'
+        default-dark: '#529cca'
     -
         id: color-purple-rgb
         title: Purple
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#765ca2'
-        default-dark: '#b29cdb'
+        default-light: '#9065b0'
+        default-dark: '#9a6dd7'
     -
         id: color-pink-rgb
         title: Pink
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#a85280'
-        default-dark: '#db94b8'
+        default-light: '#c14c8a'
+        default-dark: '#e255a1'
     -
         id: bc-typo-head
         title: Typography
@@ -243,6 +243,7 @@ settings:
     -
         id: bc-h-scale
         title: Heading scale
+        description: Notion's headings are 30, 24 and 20px on a 16px page. This scales all three at once.
         type: variable-number-slider
         default: 1
         min: 0.85
@@ -262,29 +263,46 @@ settings:
         id: bc-line-height
         title: Line height
         type: variable-number-slider
-        default: 1.6
+        default: 1.5
         min: 1.3
         max: 2.1
         step: 0.05
     -
         id: bc-code-size
         title: Code font size
-        description: Relative to the surrounding text.
+        description: Relative to the surrounding text. Notion sets code at 85%.
         type: variable-number-slider
-        default: 0.875
+        default: 0.85
         min: 0.7
         max: 1.1
         step: 0.025
     -
-        id: bc-link-underline
-        title: Underline links at rest
-        description: Off by default — links underline on hover only.
+        id: bc-link-style
+        title: Link style
+        description: Notion underlines links where they sit. Plain underlines on hover only; Ink is Notion's own inline-link treatment — body colour with a faint rule.
+        type: class-select
+        allowEmpty: false
+        default: bc-link-underline
+        options:
+            -
+                label: Accent, underlined
+                value: bc-link-underline
+            -
+                label: Accent, plain
+                value: bc-link-plain
+            -
+                label: Ink, underlined
+                value: bc-link-ink
+    -
+        id: bc-code-ink
+        title: Inline code in body ink
+        description: Off by default — Notion sets inline code in red on a grey chip.
         type: class-toggle
         default: false
     -
         id: bc-rtl
         title: Persian / Arabic typography
-        description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading and tracking for Arabic script.
+        description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading, tracking and task alignment for Arabic script.
         type: class-toggle
         default: false
     -
@@ -294,19 +312,9 @@ settings:
         level: 1
         collapsed: true
     -
-        id: bc-pane-radius
-        title: Panel corner radius
-        description: The rounding on every panel — sidebars, the editor, modals and the command palette.
-        type: variable-number-slider
-        default: 10
-        min: 0
-        max: 24
-        step: 1
-        format: px
-    -
         id: bc-radius-scale
-        title: Interface corner rounding
-        description: Scales the smaller radii — rows, chips, buttons, inputs. 0 is fully square.
+        title: Corner rounding
+        description: Scales every radius — rows, chips, buttons, inputs, menus, modals. Notion sits at 1. Zero is fully square.
         type: variable-number-slider
         default: 1
         min: 0
@@ -318,6 +326,16 @@ settings:
         description: The square hit area behind every icon-only button.
         type: variable-number-slider
         default: 28
+        min: 22
+        max: 40
+        step: 1
+        format: px
+    -
+        id: bc-row-base
+        title: Sidebar row height
+        description: Notion's is 27px. Interface density scales it from here.
+        type: variable-number-slider
+        default: 27
         min: 22
         max: 40
         step: 1
@@ -341,15 +359,43 @@ settings:
     -
         id: bc-line-width
         title: Note width
+        description: Notion's text column is 44rem.
         type: variable-number
-        default: 42
+        default: 44
         format: rem
+    -
+        id: bc-borders
+        title: Visible panel borders
+        description: Off by default — panels are separated by tone, not by lines.
+        type: class-toggle
+        default: false
+    -
+        id: bc-float-head
+        title: Floating panels
+        description: Off by default. Notion's layout is flush; turning this on lifts every region onto its own rounded card, with a darker backdrop behind them.
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-float-panes
+        title: Float the panels
+        type: class-toggle
+        default: false
+    -
+        id: bc-pane-radius
+        title: Panel corner radius
+        type: variable-number-slider
+        default: 8
+        min: 0
+        max: 24
+        step: 1
+        format: px
     -
         id: bc-pane-gap
         title: Gap between panels
         description: The space every panel keeps from its neighbours and from the window edge.
         type: variable-number
-        default: 6
+        default: 8
         format: px
     -
         id: bc-backdrop
@@ -358,20 +404,8 @@ settings:
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#ebe9e2'
-        default-dark: '#101010'
-    -
-        id: bc-flush-panes
-        title: Flush panels
-        description: Turns off the floating layout and returns to Obsidian's edge-to-edge panels.
-        type: class-toggle
-        default: false
-    -
-        id: bc-borders
-        title: Visible panel borders
-        description: Off by default — panels are separated by tone, not by lines.
-        type: class-toggle
-        default: false
+        default-light: '#ebebea'
+        default-dark: '#131313'
     -
         id: bc-icon-head
         title: Icons
@@ -381,7 +415,7 @@ settings:
     -
         id: bc-icon-scale
         title: Icon size
-        description: Scales the whole icon set. Stroke weight adjusts with it.
+        description: Scales the whole set. Notion runs its chrome icons at 16px, which is 1.
         type: variable-number-slider
         default: 1
         min: 0.8
@@ -404,16 +438,26 @@ settings:
     -
         id: bc-tab-style
         title: Tab style
+        description: Merged is Notion's — the active tab is the page colour and runs into it. Pill floats it in the strip; Underline flattens it to a marker.
         type: class-select
         allowEmpty: false
-        default: bc-tabs-pill
+        default: bc-tabs-merged
         options:
+            -
+                label: Merged
+                value: bc-tabs-merged
             -
                 label: Pill
                 value: bc-tabs-pill
             -
                 label: Underline
                 value: bc-tabs-underline
+    -
+        id: bc-indent-guides
+        title: Show file tree indentation guides
+        description: Off by default — Notion draws none.
+        type: class-toggle
+        default: false
     -
         id: bc-hide-statusbar
         title: Hide status bar until hover
@@ -422,11 +466,6 @@ settings:
     -
         id: bc-hide-ribbon
         title: Hide ribbon until hover
-        type: class-toggle
-        default: false
-    -
-        id: bc-no-indent-guides
-        title: Hide file tree indentation guides
         type: class-toggle
         default: false
     -
@@ -451,9 +490,9 @@ settings:
     -
         id: bc-wash
         title: Callout colour strength
-        description: How much hue a callout carries.
+        description: How much hue a callout carries. Notion's fills land at about 12%.
         type: variable-number-slider
-        default: 10
+        default: 12
         min: 3
         max: 25
         step: 1

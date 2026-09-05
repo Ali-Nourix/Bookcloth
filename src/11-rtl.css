@@ -92,3 +92,13 @@ body.bc-callout-rule [dir="rtl"] .callout {
 [dir="rtl"] .cm-formatting-list {
   unicode-bidi: isolate;
 }
+
+/* A task checkbox is aligned to the top of its line, and the offset that
+   centres it there is a function of the leading. Arabic script runs at 1.85,
+   not the 1.5 that offset was measured against, so left alone the box floats
+   a third of a line above the words it belongs to. Deriving it from the line
+   height puts it back on the first line at any leading. */
+body.bc-rtl .markdown-rendered .task-list-item-checkbox,
+body.bc-rtl .contains-task-list .task-list-item-checkbox {
+  margin-block-start: calc((var(--line-height-normal) - 1) * 0.5em);
+}

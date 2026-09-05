@@ -1,8 +1,8 @@
 # Bookcloth
 
-A quiet, warm theme for Obsidian. Paper-coloured light mode, ink-coloured dark
-mode, and a single accent colour that the entire interface derives its tints
-from. Minimal in what it draws, not in what it covers.
+Notion, in Obsidian. A white page against warm-grey chrome, a 14px interface
+over a 16px document, 4px corners, 16px icons, and flush panels that meet
+without a gap or a line. Minimal in what it draws, not in what it covers.
 
 ![Bookcloth in light mode](screenshot.png)
 
@@ -17,20 +17,57 @@ Only `theme.css` and `manifest.json` are needed at runtime. Everything else is
 source, documentation or development tooling.
 
 **Recommended companion:** the community plugin **Style Settings**. Bookcloth
-is complete without it; with it you get fifty-five controls covering colour,
+is complete without it; with it you get around sixty controls covering colour,
 type, shape, density, icons, panel layout and plugin support.
 
-## Floating panels
+## What "like Notion" means here
 
-Every region — ribbon, both sidebars, the editor — sits as its own rounded
-surface on a backdrop that is deliberately darker than the panels themselves.
-The gap only reads as a gap if the thing behind it is darker, so the two are
-set together: **Gap between panels** and **Backdrop behind the panels** are
-adjacent controls, and moving one usually means moving the other.
+Not a mood board. Where Notion states a figure, that figure is used:
 
-The gap is applied to the container, not as margins on the panels, so the space
-between two panels is the same as the space at the window edge instead of
-double it.
+| | Notion | Bookcloth |
+| --- | --- | --- |
+| Page / chrome, light | `#ffffff` / `#f7f7f5` | same |
+| Page / chrome, dark | `#191919` / `#202020` | same |
+| Body ink | `#37352f` | same |
+| Interface text | 14px | 14px |
+| Document text | 16px / 1.5 | same |
+| Page title | 40px / 700 | same |
+| Headings | 30 / 24 / 20px at 600 | same |
+| Text column | 708px | 44rem |
+| Sidebar row | 27px tall, 4px corner | same |
+| Buttons, inputs | 32px tall, 4px corner | same |
+| Icon buttons | 28px square, 4px corner | same |
+| Chrome icons | 16px | 16px |
+| Menus / modals | 6px / 8px, three-layer shadow | same |
+| Hover / selected | `rgba(55,53,47,.06)` / `.08` | same |
+| Elevation | `0 0 0 1px, 0 3px 6px, 0 9px 24px` | same |
+
+The two deliberate departures are both about contrast, and both are listed
+under [Accessibility](#accessibility).
+
+## Flush panels
+
+The sidebar, the tab strip and the page are three flush regions. Nothing is
+boxed, nothing is separated by a drawn line — the tone change is the seam. The
+ribbon is dissolved into the sidebar: same colour, no border, so it reads as
+the top of the sidebar rather than as a fourth region.
+
+The active editor tab is browser-shaped. It is the page colour, bottom-flush
+against the editor, so the tab and the page below it are one surface — which is
+what the Notion desktop app does with its own tabs. **Tab style** offers Pill (a
+floating rounded tab) and Underline (a flat tab with a marker) instead.
+
+**Floating panels** in Style Settings lifts every region onto its own rounded
+card on a darker backdrop. The gap only reads as a gap if the thing behind it
+is darker, so the two are set together: **Gap between panels** and **Backdrop
+behind the panels** are adjacent controls, and moving one usually means moving
+the other. The gap is applied to the container, not as margins on the panels,
+so the space between two panels is the same as the space at the window edge
+instead of double it.
+
+Corners are painted onto the panels rather than clipped with `overflow: hidden`.
+Clipping would swallow anything a sidebar plugin renders past its own edge —
+date pickers, colour swatches, drag previews.
 
 Every scrolling pane reserves room at its foot. The status bar floats over the
 bottom of whatever is beneath it, and without that reserve the last item in a
@@ -38,50 +75,68 @@ sidebar list sits underneath it and is read as cut off — which it is. Only the
 block end is padded; giving plugin panes horizontal padding is how a theme
 breaks the ones that lay out their own.
 
-Corners are painted onto the panels rather than clipped with `overflow: hidden`.
-Clipping would swallow anything a sidebar plugin renders past its own edge —
-date pickers, colour swatches, drag previews.
-
-**Flush panels** in Style Settings returns to Obsidian's edge-to-edge layout.
-Mobile is always flush: on a phone the panel is the whole screen and a gap would
-only eat into it.
-
 ## The accent
 
-Set it in **Settings → Appearance → Accent color**. That is the real control —
-Obsidian writes your choice to `--accent-h/s/l` and Bookcloth builds a nine-step
-ramp plus six alpha washes from those three numbers. Links, the caret, the
-active file row, the selected tab, checkboxes, selection, tag pills, search
-matches, the focused graph node and every filled button move together.
+The default is Notion's blue, `#2383e2`. Change it in **Settings → Appearance →
+Accent color** — that is the real control. Obsidian writes your choice to
+`--accent-h/s/l` and Bookcloth builds a nine-step ramp plus seven alpha washes
+from those three numbers. Links, the caret, checkboxes, selection, focus rings,
+the focused graph node and every filled button move together.
 
 Two things happen automatically:
 
 - **Dark mode lifts the hue.** The same choice is rendered eight points lighter
   and slightly desaturated on dark ground, so one pick reads correctly in both
   modes without setting a second colour.
-- **Filled controls step down in light mode.** Buttons and toggles use one step
-  darker than the base so white label text stays above 4.5:1 whatever hue you
-  pick.
+- **Filled controls do not follow that lift.** Buttons, toggles and checkboxes
+  read from a separate step that ignores the lift and is clamped at 45%
+  lightness, so white label text stays at 5:1 in both themes. Notion fills its
+  primary button with the accent at full strength, which puts white text at
+  3.9:1; this is one shade darker and nobody will notice the shade.
 
-Chrome is neutral by default. In Notion and Slite the selected page in the
-sidebar is a plain grey slab with ordinary dark text, and colouring it is what
-makes a sidebar start looking like a dashboard — so the accent is kept for
-links, the caret, checkboxes and focus, where it carries meaning. **Accent
-intensity → Vivid** washes the accent back through the chrome, tabs and tags;
-**Subtle** drops the selected row to a whisper.
+Chrome is neutral. In Notion the selected page in the sidebar is a plain grey
+slab with ordinary dark text, and colouring it is what makes a sidebar start
+looking like a dashboard — so the accent is kept for links, the caret,
+checkboxes and focus, where it carries meaning. **Accent intensity → Vivid**
+washes the accent back through the chrome, tabs and tags; **Subtle** drops the
+selected row to a whisper.
+
+## Typography
+
+Notion's scale, all of it relative to `--font-text-size` so Obsidian's own
+font-size slider keeps working:
+
+- **Interface** at 14px, with a 12px step for hints, hotkeys and counts. This
+  matters more than it sounds — Obsidian's default 13px reads cramped beside
+  Notion, and Obsidian gives menu items, buttons and settings the same variable,
+  so all three had to move together.
+- **Page** at 16px on 1.5 leading, in a 44rem column.
+- **Title** at 40px / 700; **headings** at 30 / 24 / 20px, all at 600. Space
+  above a heading belongs to the heading and space below belongs to the content
+  it introduces, in roughly Notion's 8:1 proportion — which is what makes a long
+  page read as sections rather than as one column.
+- **Links** are the accent, underlined where they sit. **Link style** offers
+  Plain (underline on hover only) and Ink — Notion's own inline-link treatment,
+  body colour with a faint rule.
+- **Inline code** is Notion's red on a grey chip. **Inline code in body ink**
+  turns it off.
+- **Quotes** take Notion's 3px rule and full-contrast text, not a grey italic.
+- **Tables** are Notion's grid: a hairline on every cell, header row on the
+  chrome tone.
 
 ## Settings
 
 | Group | What's in it |
 | --- | --- |
 | Accent | Accent override, intensity, neutral warmth, accent headings |
-| Surfaces | Editor / sidebar / raised / sunken backgrounds, border strength |
+| Surfaces | Page / sidebar / raised / sunken backgrounds, border strength |
 | Text colours | Body, muted and faint ink, separately per theme |
 | Semantic colours | All eight hues — red through pink — separately per theme |
-| Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link underline, Persian and Arabic support |
-| Shape and density | Panel corner radius, interface rounding, icon button size, density, note width, panel gap, backdrop colour, flush panels, visible borders |
+| Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
+| Shape and density | Corner rounding, icon button size, sidebar row height, density, note width, visible borders |
+| Floating panels | Float the panels, panel radius, gap, backdrop colour |
 | Icons | Icon size, stroke weight |
-| Interface | Tab style, hide status bar, hide ribbon, indentation guides |
+| Interface | Tab style, indentation guides, hide status bar, hide ribbon |
 | Editor | Callout style and colour strength, checkbox style, task fading, active line |
 | Plugin support | Opt out of any of the bundled plugin styles |
 
@@ -101,19 +156,20 @@ and the right sidebar's tab strip. Each brings its own padding, so left alone
 the sidebar-toggle button sits a few pixels above the tabs beside it and what
 should be one row reads as three.
 
-Bookcloth gives all four the same band padding and the same control height, so
-every icon in that row shares one centre line. Measured rather than eyeballed:
-ribbon action, both sidebar toggles, both sidebar tab strips, the editor tabs
-and the new-tab button all return the same centre.
+Bookcloth gives all four the same 40px band and the same 28px control, so every
+icon in that row shares one centre line. Measured rather than eyeballed: ribbon
+action, both sidebar toggles, both sidebar tab strips and the new-tab button all
+return a centre of exactly 20px. The editor tabs are the deliberate exception —
+they are 34px and aligned to the bottom of the band, because they merge with the
+page rather than float in the strip.
 
-## Two radii, not one
+## One radius scale
 
-Panels and interface elements are rounded on separate scales, because they are
-different kinds of object. **Panel corner radius** is a card: sidebars, the
-editor, modals and the command palette, at 10px by default. **Interface corner
-rounding** scales the small stuff — rows, chips, buttons, inputs — which sits
-around 4-5px. Notion and Slite both work in that range, and anything larger
-turns a 28px sidebar row into a lozenge.
+Notion's whole interface sits between 3px and 8px: rows, chips, buttons and
+inputs at 4px, menus and code at 6px, modals and popovers at 8px. **Corner
+rounding** scales all of it at once; 0 is fully square. The panel radius is a
+separate control because a floating panel is a card and wants to look like one,
+and it only applies when floating panels are switched on.
 
 Every icon-only control is a square of a single size, set by **Icon button
 size**. This matters more than it sounds: Obsidian's sidebar tabs are wider
@@ -126,14 +182,17 @@ the column they share.
 
 ## Icons
 
-Lucide is drawn on a 24-unit grid with a 2px stroke. Scale that artwork down
-without adjusting the stroke and it goes spindly; scale it up and it goes
-clumsy. Bookcloth pairs a stroke weight with every size rather than setting one
-globally, so sidebar chevrons, tab glyphs, ribbon icons and callout markers all
-read at the same visual weight even though they are different sizes.
+Notion's icon set is solid and sits at 16px. Obsidian ships Lucide, which is
+outline artwork drawn on a 24-unit grid with a 2px stroke — and a 2px stroke
+rendered at 14px is 1.17px on screen while the same stroke at 28px is 2.33px.
+Scaling the artwork without adjusting the stroke is what makes sidebar chevrons
+look spindly next to ribbon glyphs.
 
-Two sliders scale the whole set: **Icon size** and **Icon stroke weight**.
-Pointer targets stay at least 24px square regardless.
+So Bookcloth pairs a stroke weight with every size, tuned to land at a constant
+~1.4px on screen. That is what puts outline artwork at the visual weight of a
+solid set. Two sliders scale the whole thing: **Icon size** and **Icon stroke
+weight**. Pointer target minimums are enforced on touch only — forcing a minimum
+square on desktop is what widens every button in a dense plugin toolbar.
 
 The checkbox tick is drawn from Lucide's check at a weight that survives at
 16px, positioned to sit optically rather than mathematically centred. Its shape
@@ -144,21 +203,19 @@ anything else that touches the radius.
 ## Working with plugins
 
 Plugins build their pane headers out of real `<button>` elements wrapping an
-icon. A theme that gives every button a fill and a border turns each of those
+icon. A theme that gives every button a fill and a ring turns each of those
 into a box, and in a narrow sidebar header the boxes take every spare pixel
 from the label beside them — Notebook Navigator's folder name collapses to one
 letter and an ellipsis. Bookcloth excludes icon-only buttons from the boxed
 treatment at the source, in the `:not()` chain, rather than trying to un-style
 them afterwards, because a later rule would lose the specificity contest.
 
-Pointer target minimums are enforced on touch only. Forcing a minimum square on
-desktop is what widened those toolbar buttons in the first place.
-
 The theme deliberately does not set padding on containers that plugins fill —
-`.modal`, `.prompt`, `.menu`, `.suggestion-container`, `.setting-item`,
-`.view-header`. It restyles their colour, radius and shadow and leaves layout
-to Obsidian, because a theme that repads those boxes double-pads some plugin
-dialogs and crops others.
+`.modal`, `.prompt`, `.menu`, `.suggestion-container`, `.setting-item`. It
+restyles their colour, radius and shadow and leaves layout to Obsidian, because
+a theme that repads those boxes double-pads some plugin dialogs and crops
+others. The one exception is `.view-header`, which is *set* rather than added
+to, so the inset is the same whatever Obsidian's own padding is underneath.
 
 For the same reason there is no `overflow: hidden` on the editor pane and no
 blanket `[data-type] .view-content` rule. Clipping the pane swallows anything a
@@ -176,7 +233,9 @@ variable layer.
 Turn on **Typography → Persian / Arabic typography**. It puts Vazirmatn and
 Estedad at the front of the font stacks, raises the leading to 1.85, and removes
 the negative letter-spacing that Latin display type wants and Arabic script
-does not.
+does not. It also re-derives the task-checkbox offset from the leading: that
+offset centres the box on the first line, and a value measured against 1.5
+leaves the box floating a third of a line above the words at 1.85.
 
 Right-to-left support is not behind that toggle. Blockquotes, embeds, lists and
 tables are written with logical properties, so they mirror on their own rather
@@ -193,12 +252,15 @@ The token layer is public:
 ```css
 var(--bc-ac-50) … var(--bc-ac-800)          /* nine-step accent ramp */
 var(--bc-ac-a03) … var(--bc-ac-a40)         /* transparent accent washes */
+var(--bc-ac-fill) var(--bc-ac-fill-hover)   /* filled controls, contrast-safe */
 
 var(--bc-surface-raised)                    /* modals, menus, cards */
 var(--bc-surface-sunken)                    /* code blocks, wells */
-var(--bc-control-border)                    /* checkbox and quote rules */
+var(--bc-control-border)                    /* the 1px inset ring on controls */
 var(--bc-select-bg) var(--bc-select-bg-strong) var(--bc-select-fg)
 var(--bc-gap-1) … var(--bc-gap-6)           /* density-aware spacing */
+var(--bc-hit) var(--bc-row-height) var(--bc-row-inset)
+var(--bc-topbar-height) var(--bc-control-height)
 ```
 
 All of them respond to the user's accent, theme and density settings.
@@ -223,24 +285,39 @@ ln -s "$(pwd)" /path/to/vault/.obsidian/themes/Bookcloth
 ```
 
 `preview/` holds a browser harness that reproduces Obsidian's DOM so you can
-look at changes — and take screenshots — without launching the app. See
-`preview/README.md`.
+look at changes — and take screenshots and measure contrast — without launching
+the app. See `preview/README.md`.
 
 ## Accessibility
 
-Measured against the default palette:
+Measured against the default palette, in the harness, at the ratios the browser
+actually resolves:
 
 | | Light | Dark |
 | --- | --- | --- |
-| Body text | 17.5:1 | 12.6:1 |
-| Muted text | 5.2:1 | 5.9:1 |
-| Links | 4.8:1 | 5.9:1 |
-| Button label on accent | 5.0:1 | 6.1:1 |
-| Semantic hues (lowest of eight) | 4.6:1 | 5.8:1 |
+| Body text | 12.3:1 | 11.9:1 |
+| Muted text, on the page | 5.0:1 | 6.3:1 |
+| Muted text, on the sidebar | 4.7:1 | 5.9:1 |
+| Links | 5.0:1 | 6.8:1 |
+| Button label on accent | 5.0:1 | 5.1:1 |
+| Error / warning / success text | 4.9 / 4.9 / 4.5:1 | 6.6 / 13.1 / 6.4:1 |
 
-Faint text — status bar, counts, section labels — sits at 3.3:1 light and 3.5:1
-dark and carries non-essential information only. Focus rings are visible on
-every interactive element, and `prefers-reduced-motion` is respected.
+Two values are knowingly below 4.5:1, both of them Notion's own:
+
+- **Faint text** — status bar, counts, icons at rest — is 2.8:1 light and 3.5:1
+  dark. It carries non-essential information only.
+- **Inline code** is Notion's red, 3.5:1 on the light chip. It is the one
+  colour Notion spends inside body text and removing it loses the look, so it
+  ships as-is with **Inline code in body ink** as the way out.
+
+The eight semantic hues are Notion's exactly. Six of them land between 4.3:1
+and 4.5:1 on the page; Notion's yellow (2.8:1) and orange (3.3:1) do not, which
+is why the three *message* colours — error, warning, success — are darkened
+separately rather than read from the hues. The hues themselves drive callout
+fills, tags, the graph and syntax, where they are a wash or an icon.
+
+Focus rings are visible on every interactive element, and
+`prefers-reduced-motion` is respected.
 
 ## Notes and limits
 

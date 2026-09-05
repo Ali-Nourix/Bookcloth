@@ -18,8 +18,12 @@ body {
 
 /* --- Search -------------------------------------------------------------- */
 
+/* Notion's search field: full-width, quiet, and the same height as every
+   other control in the app. */
 .search-input-container input {
   border-radius: var(--input-radius);
+  height: var(--bc-control-height);
+  font-size: var(--font-ui-small);
 }
 
 .search-result-file-title {
@@ -46,7 +50,7 @@ body {
 }
 
 .search-result-file-matched-text {
-  background-color: var(--bc-ac-a24);
+  background-color: var(--text-highlight-bg);
   color: var(--text-normal);
   border-radius: 2px;
   padding: 0 1px;
@@ -80,9 +84,9 @@ body {
 
 .graph-controls {
   border-radius: var(--radius-l);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   background-color: var(--bc-surface-raised);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-l);
   padding: var(--bc-gap-3);
 }
 
@@ -105,20 +109,32 @@ body {
 .canvas-card-menu,
 .canvas-control-group {
   border-radius: var(--radius-l);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   background-color: var(--bc-surface-raised);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-l);
 }
 
 .canvas-control-item {
   border-radius: var(--radius-s);
 }
 
-/* --- Bases / table views -------------------------------------------------- */
+/* --- Bases / table views --------------------------------------------------
+   Obsidian's database view is the closest thing it has to a Notion table, so
+   it gets Notion's grid: hairlines on every cell and a header on the chrome
+   tone. */
 
 .bases-toolbar,
 .bases-table-container {
   border-radius: var(--radius-m);
+}
+
+.bases-table-header-cell,
+.bases-tr .bases-td {
+  border-color: var(--table-border-color);
+}
+
+.bases-table-header {
+  background-color: var(--table-header-background);
 }
 
 .bases-table-header-cell {

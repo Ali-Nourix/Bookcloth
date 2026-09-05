@@ -5,12 +5,13 @@
    ========================================================================== */
 
 body {
+  /* Notion's embedded page: a bordered card, not a quote. */
   --embed-background: transparent;
-  --embed-border-left: 2px solid var(--bc-control-border);
-  --embed-border-right: none;
-  --embed-border-top: none;
-  --embed-border-bottom: none;
-  --embed-padding: 0 0 0 1.15em;
+  --embed-border-left: 1px solid var(--background-modifier-border);
+  --embed-border-right: 1px solid var(--background-modifier-border);
+  --embed-border-top: 1px solid var(--background-modifier-border);
+  --embed-border-bottom: 1px solid var(--background-modifier-border);
+  --embed-padding: var(--bc-gap-4) var(--bc-gap-5);
   --embed-font-style: inherit;
   --embed-block-shadow-hover: none;
 
@@ -27,53 +28,60 @@ body {
   --code-tag: var(--color-red);
   --code-value: var(--color-blue);
 
+  /* Notion sets inline code in red on a grey chip — the one place it spends
+     a colour inside body text. The Ink option below turns it off. */
+  --bc-code-inline-color: #eb5757;
+  --bc-code-inline-background: rgba(135, 131, 120, 0.15);
+
   --callout-border-width: 0px;
   --callout-border-opacity: 0.2;
-  --callout-padding: var(--bc-gap-4) var(--bc-gap-5);
+  --callout-padding: var(--bc-gap-5);
   --callout-blend-mode: normal;
-  --callout-title-color: inherit;
+  --callout-title-color: var(--text-normal);
   --callout-title-padding: 0;
   --callout-title-size: inherit;
   --callout-title-weight: var(--font-semibold);
   --callout-content-padding: 0;
   --callout-content-background: transparent;
 
+  /* Notion's table is a full grid: every cell bordered, the header row on the
+     chrome tone. */
   --table-background: transparent;
   --table-border-width: 1px;
-  --table-border-color: var(--background-modifier-border);
+  --table-border-color: var(--background-modifier-border-hover);
   --table-white-space: normal;
-  --table-header-background: transparent;
+  --table-header-background: var(--background-secondary);
   --table-header-background-hover: var(--background-modifier-hover);
   --table-header-border-width: 1px;
   --table-header-border-color: var(--background-modifier-border-hover);
   --table-row-background-hover: var(--background-modifier-hover);
   --table-row-alt-background: transparent;
-  --table-row-last-border-width: 0px;
+  --table-row-last-border-width: 1px;
   --table-selection: var(--bc-ac-a10);
   --table-selection-border-color: var(--bc-ac-500);
-  --table-column-first-border-width: 0px;
-  --table-column-last-border-width: 0px;
+  --table-column-first-border-width: 1px;
+  --table-column-last-border-width: 1px;
   --table-drag-handle-background-active: var(--bc-select-bg);
   --table-drag-handle-color-active: var(--bc-select-fg);
 
   --metadata-background: transparent;
   --metadata-divider-color: var(--background-modifier-border);
-  --metadata-gap: var(--bc-gap-2);
+  --metadata-gap: var(--bc-gap-1);
   --metadata-padding: var(--bc-gap-3) 0;
   --metadata-property-padding: var(--bc-gap-1) 0;
-  --metadata-property-radius: var(--radius-s);
+  --metadata-property-radius: var(--radius-m);
   --metadata-property-background-hover: var(--background-modifier-hover);
   --metadata-label-background-hover: transparent;
   --metadata-label-font-size: var(--font-ui-small);
   --metadata-label-font-weight: var(--font-normal);
-  --metadata-label-text-color: var(--text-faint);
+  --metadata-label-text-color: var(--text-muted);
   --metadata-input-text-color: var(--text-normal);
   --metadata-input-font-size: var(--font-ui-small);
   --metadata-input-background: transparent;
   --metadata-input-background-hover: var(--background-modifier-hover);
   --metadata-input-background-active: var(--background-modifier-form-field);
-  --metadata-sidebar-label-color: var(--text-faint);
-  --metadata-sidebar-value-color: var(--text-muted);
+  --metadata-sidebar-label-color: var(--text-muted);
+  --metadata-sidebar-value-color: var(--text-normal);
 
   --indentation-guide-width: 1px;
   --indentation-guide-width-active: 1px;
@@ -81,13 +89,23 @@ body {
   --indentation-guide-color-active: var(--background-modifier-border-hover);
 }
 
+.theme-dark {
+  --bc-code-inline-color: #ff7369;
+  --bc-code-inline-background: rgba(135, 131, 120, 0.15);
+}
+
+body.bc-code-ink {
+  --bc-code-inline-color: var(--text-normal);
+}
+
 /* --- Code ---------------------------------------------------------------- */
 
 .markdown-rendered code,
 .cm-s-obsidian .cm-inline-code {
-  background-color: var(--bc-surface-sunken);
+  color: var(--bc-code-inline-color);
+  background-color: var(--bc-code-inline-background);
   border-radius: var(--radius-s);
-  padding: 0.12em 0.34em;
+  padding: 0.2em 0.4em;
   font-size: var(--code-size);
 }
 
@@ -100,11 +118,14 @@ body {
 .markdown-rendered pre {
   padding: var(--bc-gap-4) var(--bc-gap-5);
   border-radius: var(--code-radius);
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
+/* A block of code is not inline code: it takes the block's own colour and
+   fill, not the red chip. */
 .markdown-rendered pre > code {
   background: none;
+  color: var(--code-normal);
   padding: 0;
   font-size: 1em;
 }
@@ -123,21 +144,22 @@ body {
 
 .markdown-rendered .copy-code-button,
 .markdown-rendered pre:hover .copy-code-button {
-  background-color: var(--background-modifier-hover);
+  background-color: var(--bc-surface-raised);
   color: var(--text-muted);
   border: none;
-  border-radius: var(--radius-s);
+  box-shadow: var(--shadow-s);
+  border-radius: var(--radius-m);
   font-size: var(--font-ui-smaller);
 }
 
-/* --- Callouts ------------------------------------------------------------ */
-/* Soft fill by default: no border, low-alpha wash of the callout's own hue,
-   title in that hue, body in normal text. */
+/* --- Callouts ------------------------------------------------------------
+   Notion's callout: a solid tinted block with a 4px corner, an icon in the
+   block's colour and every word of text in ordinary ink. The tint is mixed in
+   oklab rather than composited as an alpha, because a 12% alpha of a dark
+   blue over white turns grey while the same amount of blue mixed perceptually
+   stays blue — which is what makes a set of callouts read as a family instead
+   of as smudges. */
 
-/* Mixing in oklab rather than compositing an alpha keeps the wash chromatic.
-   A 7% alpha of a dark blue over warm paper turns grey; the same amount of
-   blue mixed perceptually stays blue, which is what makes a set of callouts
-   read as a family instead of as smudges. */
 .callout {
   background-color: color-mix(
     in oklab,
@@ -148,10 +170,18 @@ body {
   border-radius: var(--callout-radius);
 }
 
+.theme-dark .callout {
+  background-color: color-mix(
+    in oklab,
+    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.8),
+    var(--background-primary)
+  );
+}
+
 .callout-title {
-  color: rgb(var(--callout-color));
-  align-items: center;
-  gap: var(--bc-gap-2);
+  color: var(--callout-title-color);
+  align-items: flex-start;
+  gap: var(--bc-gap-3);
 }
 
 .callout-icon {
@@ -171,19 +201,11 @@ body {
   margin-bottom: 0;
 }
 
-.theme-dark .callout {
-  background-color: color-mix(
-    in oklab,
-    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.3),
-    var(--background-primary)
-  );
-}
-
 /* Left-rule variant: no fill, one coloured hairline. */
 body.bc-callout-rule .callout {
   background-color: transparent;
   border-radius: 0;
-  border-inline-start: 2px solid rgb(var(--callout-color));
+  border-inline-start: 3px solid rgb(var(--callout-color));
   padding-inline: var(--bc-gap-4);
 }
 
@@ -191,7 +213,6 @@ body.bc-callout-rule .callout {
 
 input[type="checkbox"] {
   border-radius: var(--checkbox-radius);
-  border-width: 1.5px;
   transition: background-color var(--bc-speed) var(--bc-ease),
     border-color var(--bc-speed) var(--bc-ease);
 }
@@ -209,30 +230,31 @@ body.bc-no-fade-done {
   transition: color var(--bc-speed) var(--bc-ease);
 }
 
-/* --- Tables -------------------------------------------------------------- */
+/* --- Tables --------------------------------------------------------------
+   Notion's grid, with the header row on the chrome tone. */
 
 .markdown-rendered table {
   border-collapse: collapse;
+  border: 1px solid var(--table-border-color);
+  border-radius: var(--radius-s);
 }
 
 .markdown-rendered th,
 .markdown-rendered td {
   /* `start`, not `left`: a right-to-left table aligns itself. */
   text-align: start;
+  border: 1px solid var(--table-border-color);
 }
 
 .markdown-rendered th {
+  background-color: var(--table-header-background);
   text-transform: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .markdown-rendered td,
 .markdown-rendered th {
-  padding: var(--bc-gap-2) var(--bc-gap-4);
-}
-
-.markdown-rendered tr:last-child td {
-  border-bottom: none;
+  padding: var(--bc-gap-2) var(--bc-gap-3);
 }
 
 /* --- Lists --------------------------------------------------------------- */
@@ -242,7 +264,7 @@ body.bc-no-fade-done {
 }
 
 .markdown-rendered ol > li::marker {
-  color: var(--text-muted);
+  color: var(--text-normal);
   font-variant-numeric: tabular-nums;
 }
 
@@ -251,7 +273,7 @@ body.bc-no-fade-done {
 .markdown-rendered hr {
   border: none;
   border-top: var(--hr-thickness) solid var(--hr-color);
-  margin-block: 2em;
+  margin-block: 1.5em;
 }
 
 /* --- Properties / frontmatter -------------------------------------------- */
@@ -267,28 +289,26 @@ body.bc-no-fade-done {
 }
 
 .metadata-add-button {
-  color: var(--text-faint);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
 }
 
 /* --- Embeds and images --------------------------------------------------- */
 
 .markdown-rendered img,
 .markdown-rendered video {
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
 }
 
 .markdown-embed-title {
   font-weight: var(--font-medium);
-  color: var(--text-muted);
+  color: var(--text-normal);
 }
 
 .internal-embed .markdown-embed {
   margin-inline-start: 0;
-  border-left: none;
-  border-right: none;
-  border-inline-start: var(--embed-border-left);
-  padding: 0;
-  padding-inline-start: 1.15em;
+  border-radius: var(--radius-m);
+  padding: var(--embed-padding);
 }
 
 /* --- Selection ----------------------------------------------------------- */
@@ -323,7 +343,7 @@ body.bc-active-line .cm-editor .cm-active.cm-line {
 /* --- Footnotes and small print ------------------------------------------- */
 
 .markdown-rendered .footnotes {
-  font-size: 0.88em;
+  font-size: 0.875em;
   color: var(--text-muted);
   border-top: 1px solid var(--background-modifier-border);
   margin-top: 3em;

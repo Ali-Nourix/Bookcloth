@@ -1,0 +1,4 @@
+node_modules/
+preview/fonts/
+preview/shot-*.png
+package-lock.json

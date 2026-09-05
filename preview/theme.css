@@ -1,4 +1,4 @@
-/* Bookcloth 1.4.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.0.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -10,7 +10,7 @@ settings:
     -
         id: bc-info
         title: About
-        description: Pick your accent in Obsidian's own Appearance settings — the whole interface derives its tints from it. Everything below is optional fine-tuning, and the theme is complete with all of it left alone.
+        description: Bookcloth follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
         type: heading
         level: 1
         collapsed: true
@@ -23,16 +23,16 @@ settings:
     -
         id: accent
         title: Accent override
-        description: Only applies while Obsidian's own accent is set to Default.
+        description: Only applies while Obsidian's own accent is set to Default. The default is Notion's blue.
         type: variable-themed-color
         format: hsl-split
         opacity: false
-        default-light: '#c96442'
-        default-dark: '#d97757'
+        default-light: '#2383e2'
+        default-dark: '#2383e2'
     -
         id: bc-accent-intensity
         title: Accent intensity
-        description: How loudly the accent is used across the interface.
+        description: How loudly the accent is used across the interface. Notion keeps it to links, the caret, selection and one filled button — that is Normal.
         type: class-select
         allowEmpty: false
         default: bc-accent-normal
@@ -49,9 +49,9 @@ settings:
     -
         id: bc-tint
         title: Neutral warmth
-        description: How much of the accent hue bleeds into the greys. Zero gives pure neutral greys.
+        description: How much of the accent hue bleeds into the greys. Zero — the default — leaves Notion's own warm neutrals alone.
         type: variable-number-slider
-        default: 4
+        default: 0
         min: 0
         max: 14
         step: 1
@@ -70,20 +70,20 @@ settings:
         collapsed: true
     -
         id: bc-bg-primary
-        title: Editor background
+        title: Page background
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#fcfbf7'
-        default-dark: '#1f1f1e'
+        default-light: '#ffffff'
+        default-dark: '#191919'
     -
         id: bc-bg-secondary
-        title: Sidebar and chrome background
+        title: Sidebar and tab strip
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#f4f3ee'
-        default-dark: '#191918'
+        default-light: '#f7f7f5'
+        default-dark: '#202020'
     -
         id: bc-bg-raised
         title: Raised surfaces
@@ -92,16 +92,16 @@ settings:
         format: hex
         opacity: false
         default-light: '#ffffff'
-        default-dark: '#2a2a28'
+        default-dark: '#252525'
     -
         id: bc-bg-sunken
         title: Sunken surfaces
-        description: Code blocks and inline code.
+        description: Code blocks.
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#f7f6f1'
-        default-dark: '#171716'
+        default-light: '#f7f6f3'
+        default-dark: '#252525'
     -
         id: bc-border-strength
         title: Border strength
@@ -124,29 +124,29 @@ settings:
         format: hex
         opacity: false
         default-light: '#37352f'
-        default-dark: '#e6e4dd'
+        default-dark: '#d4d4d4'
     -
         id: bc-ink-muted
         title: Muted text
-        description: Filenames, tab titles, table headers, callout bodies.
+        description: Filenames, tab titles, table headers, property labels.
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#6f6d66'
-        default-dark: '#a2a099'
+        default-light: '#706f6b'
+        default-dark: '#9b9b9b'
     -
         id: bc-ink-faint
         title: Faint text
-        description: Status bar, counts, section labels. Non-essential information only.
+        description: Status bar, counts, icons at rest. Non-essential information only.
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#8b8a83'
-        default-dark: '#78766f'
+        default-light: '#9b9a97'
+        default-dark: '#6f6f6f'
     -
         id: bc-hue-head
         title: Semantic colours
-        description: Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
+        description: Notion's own palette. Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
         type: heading
         level: 1
         collapsed: true
@@ -156,64 +156,64 @@ settings:
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#b3453a'
-        default-dark: '#e08a7c'
+        default-light: '#d44c47'
+        default-dark: '#ff7369'
     -
         id: color-orange-rgb
         title: Orange
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#a75f2b'
-        default-dark: '#e0a171'
+        default-light: '#d9730d'
+        default-dark: '#ffa344'
     -
         id: color-yellow-rgb
         title: Yellow
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#8a6d12'
-        default-dark: '#d6be7c'
+        default-light: '#cb912f'
+        default-dark: '#ffdc49'
     -
         id: color-green-rgb
         title: Green
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#4f7a55'
-        default-dark: '#8fbf93'
+        default-light: '#448361'
+        default-dark: '#4dab9a'
     -
         id: color-cyan-rgb
         title: Cyan
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#377a7c'
-        default-dark: '#7ebcbe'
+        default-light: '#3a838c'
+        default-dark: '#5eb7c4'
     -
         id: color-blue-rgb
         title: Blue
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#3e6c9e'
-        default-dark: '#96add6'
+        default-light: '#337ea9'
+        default-dark: '#529cca'
     -
         id: color-purple-rgb
         title: Purple
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#765ca2'
-        default-dark: '#b29cdb'
+        default-light: '#9065b0'
+        default-dark: '#9a6dd7'
     -
         id: color-pink-rgb
         title: Pink
         type: variable-themed-color
         format: rgb-values
         opacity: false
-        default-light: '#a85280'
-        default-dark: '#db94b8'
+        default-light: '#c14c8a'
+        default-dark: '#e255a1'
     -
         id: bc-typo-head
         title: Typography
@@ -247,6 +247,7 @@ settings:
     -
         id: bc-h-scale
         title: Heading scale
+        description: Notion's headings are 30, 24 and 20px on a 16px page. This scales all three at once.
         type: variable-number-slider
         default: 1
         min: 0.85
@@ -266,29 +267,46 @@ settings:
         id: bc-line-height
         title: Line height
         type: variable-number-slider
-        default: 1.6
+        default: 1.5
         min: 1.3
         max: 2.1
         step: 0.05
     -
         id: bc-code-size
         title: Code font size
-        description: Relative to the surrounding text.
+        description: Relative to the surrounding text. Notion sets code at 85%.
         type: variable-number-slider
-        default: 0.875
+        default: 0.85
         min: 0.7
         max: 1.1
         step: 0.025
     -
-        id: bc-link-underline
-        title: Underline links at rest
-        description: Off by default — links underline on hover only.
+        id: bc-link-style
+        title: Link style
+        description: Notion underlines links where they sit. Plain underlines on hover only; Ink is Notion's own inline-link treatment — body colour with a faint rule.
+        type: class-select
+        allowEmpty: false
+        default: bc-link-underline
+        options:
+            -
+                label: Accent, underlined
+                value: bc-link-underline
+            -
+                label: Accent, plain
+                value: bc-link-plain
+            -
+                label: Ink, underlined
+                value: bc-link-ink
+    -
+        id: bc-code-ink
+        title: Inline code in body ink
+        description: Off by default — Notion sets inline code in red on a grey chip.
         type: class-toggle
         default: false
     -
         id: bc-rtl
         title: Persian / Arabic typography
-        description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading and tracking for Arabic script.
+        description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading, tracking and task alignment for Arabic script.
         type: class-toggle
         default: false
     -
@@ -298,19 +316,9 @@ settings:
         level: 1
         collapsed: true
     -
-        id: bc-pane-radius
-        title: Panel corner radius
-        description: The rounding on every panel — sidebars, the editor, modals and the command palette.
-        type: variable-number-slider
-        default: 10
-        min: 0
-        max: 24
-        step: 1
-        format: px
-    -
         id: bc-radius-scale
-        title: Interface corner rounding
-        description: Scales the smaller radii — rows, chips, buttons, inputs. 0 is fully square.
+        title: Corner rounding
+        description: Scales every radius — rows, chips, buttons, inputs, menus, modals. Notion sits at 1. Zero is fully square.
         type: variable-number-slider
         default: 1
         min: 0
@@ -322,6 +330,16 @@ settings:
         description: The square hit area behind every icon-only button.
         type: variable-number-slider
         default: 28
+        min: 22
+        max: 40
+        step: 1
+        format: px
+    -
+        id: bc-row-base
+        title: Sidebar row height
+        description: Notion's is 27px. Interface density scales it from here.
+        type: variable-number-slider
+        default: 27
         min: 22
         max: 40
         step: 1
@@ -345,15 +363,43 @@ settings:
     -
         id: bc-line-width
         title: Note width
+        description: Notion's text column is 44rem.
         type: variable-number
-        default: 42
+        default: 44
         format: rem
+    -
+        id: bc-borders
+        title: Visible panel borders
+        description: Off by default — panels are separated by tone, not by lines.
+        type: class-toggle
+        default: false
+    -
+        id: bc-float-head
+        title: Floating panels
+        description: Off by default. Notion's layout is flush; turning this on lifts every region onto its own rounded card, with a darker backdrop behind them.
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-float-panes
+        title: Float the panels
+        type: class-toggle
+        default: false
+    -
+        id: bc-pane-radius
+        title: Panel corner radius
+        type: variable-number-slider
+        default: 8
+        min: 0
+        max: 24
+        step: 1
+        format: px
     -
         id: bc-pane-gap
         title: Gap between panels
         description: The space every panel keeps from its neighbours and from the window edge.
         type: variable-number
-        default: 6
+        default: 8
         format: px
     -
         id: bc-backdrop
@@ -362,20 +408,8 @@ settings:
         type: variable-themed-color
         format: hex
         opacity: false
-        default-light: '#ebe9e2'
-        default-dark: '#101010'
-    -
-        id: bc-flush-panes
-        title: Flush panels
-        description: Turns off the floating layout and returns to Obsidian's edge-to-edge panels.
-        type: class-toggle
-        default: false
-    -
-        id: bc-borders
-        title: Visible panel borders
-        description: Off by default — panels are separated by tone, not by lines.
-        type: class-toggle
-        default: false
+        default-light: '#ebebea'
+        default-dark: '#131313'
     -
         id: bc-icon-head
         title: Icons
@@ -385,7 +419,7 @@ settings:
     -
         id: bc-icon-scale
         title: Icon size
-        description: Scales the whole icon set. Stroke weight adjusts with it.
+        description: Scales the whole set. Notion runs its chrome icons at 16px, which is 1.
         type: variable-number-slider
         default: 1
         min: 0.8
@@ -408,16 +442,26 @@ settings:
     -
         id: bc-tab-style
         title: Tab style
+        description: Merged is Notion's — the active tab is the page colour and runs into it. Pill floats it in the strip; Underline flattens it to a marker.
         type: class-select
         allowEmpty: false
-        default: bc-tabs-pill
+        default: bc-tabs-merged
         options:
+            -
+                label: Merged
+                value: bc-tabs-merged
             -
                 label: Pill
                 value: bc-tabs-pill
             -
                 label: Underline
                 value: bc-tabs-underline
+    -
+        id: bc-indent-guides
+        title: Show file tree indentation guides
+        description: Off by default — Notion draws none.
+        type: class-toggle
+        default: false
     -
         id: bc-hide-statusbar
         title: Hide status bar until hover
@@ -426,11 +470,6 @@ settings:
     -
         id: bc-hide-ribbon
         title: Hide ribbon until hover
-        type: class-toggle
-        default: false
-    -
-        id: bc-no-indent-guides
-        title: Hide file tree indentation guides
         type: class-toggle
         default: false
     -
@@ -455,9 +494,9 @@ settings:
     -
         id: bc-wash
         title: Callout colour strength
-        description: How much hue a callout carries.
+        description: How much hue a callout carries. Notion's fills land at about 12%.
         type: variable-number-slider
-        default: 10
+        default: 12
         min: 3
         max: 25
         step: 1
@@ -524,16 +563,22 @@ settings:
 /* ==========================================================================
    TOKENS
    The only place raw numbers live. Everything downstream reads from here.
+
+   The geometry is Notion's: a 4px unit, small radii on controls, a 14px
+   interface and a 16px page. Where Notion states a figure directly — a 27px
+   sidebar row, a 28px icon button, a 4px corner — that figure is used rather
+   than approximated, because the look is made of those exact numbers.
    ========================================================================== */
 
 body {
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
      which outranks these declarations. So these are defaults, not overrides:
-     pick an accent in Appearance settings and the whole ramp follows it. */
-  --accent-h: 15;
-  --accent-s: 56%;
-  --accent-l: 52%;
+     pick an accent in Appearance settings and the whole ramp follows it.
+     The default is Notion's blue, #2383e2. */
+  --accent-h: 210;
+  --accent-s: 77%;
+  --accent-l: 51%;
 
   /* Per-theme lightness shift, so one hue reads correctly on paper and on ink */
   --bc-ac-lift: 0%;
@@ -557,6 +602,19 @@ body {
   --bc-ac-700: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 15%));
   --bc-ac-800: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 24%));
 
+  /* Filled controls — buttons, toggles, checkboxes — read from this rather
+     than from the ramp. Two things separate it from --bc-ac-500: it ignores
+     the dark-mode lift, because a fill that is lifted for legibility on dark
+     ground stops being legible under white label text; and it is clamped at
+     45% lightness, which is where white text crosses 4.5:1 for the hues most
+     people pick. A very pale or yellow accent still needs --text-on-accent
+     overridden by hand — no amount of lightness maths fixes a yellow button. */
+  --bc-ac-fill-l: min(calc(var(--accent-l) - 7%), 45%);
+  --bc-ac-fill: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-fill-l));
+  --bc-ac-fill-hover: hsl(
+    var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-fill-l) - 8%)
+  );
+
   /* Transparent accent washes — used for selection, hover and active fills.
      Alpha beats a mixed hex here: it survives on any surface underneath. */
   --bc-ac-a03: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.03);
@@ -564,47 +622,60 @@ body {
   --bc-ac-a10: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.1);
   --bc-ac-a16: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.16);
   --bc-ac-a24: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.24);
+  --bc-ac-a28: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.28);
   --bc-ac-a40: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.4);
 
-  /* Warmth injected into the neutral ramp. 0% gives dead-neutral greys. */
-  --bc-tint: 4%;
+  /* Warmth injected into the neutral ramp. The palette is already warm —
+     Notion's greys are built on #37352f — so this stays at zero unless the
+     user asks for a tint. */
+  --bc-tint: 0%;
   /* Multiplier on every border alpha. 0 removes lines entirely. */
   --bc-border-strength: 1;
   /* How much colour a callout or wash carries. */
-  --bc-wash: 10%;
+  --bc-wash: 12%;
 
-  /* --- Shape ----------------------------------------------------------- */
-  /* Two independent radii. The interface scale is small — Notion and Slite
-     sit around 4-6px on rows, chips and buttons, and anything larger makes a
-     28px row read as a lozenge. Panels are a separate, bigger figure, because
-     a floating panel is a card and wants to look like one. */
+  /* --- Shape -----------------------------------------------------------
+     Notion's whole interface sits between 3px and 8px. Rows, chips, buttons
+     and inputs are 4px; menus and code blocks 6px; the few genuinely
+     card-like surfaces — modals, popovers — 8px. Nothing is a lozenge. */
   --bc-radius-scale: 1;
   --radius-s: calc(3px * var(--bc-radius-scale));
-  --radius-m: calc(5px * var(--bc-radius-scale));
-  --radius-l: calc(8px * var(--bc-radius-scale));
-  --radius-xl: calc(12px * var(--bc-radius-scale));
+  --radius-m: calc(4px * var(--bc-radius-scale));
+  --radius-l: calc(6px * var(--bc-radius-scale));
+  --radius-xl: calc(8px * var(--bc-radius-scale));
 
-  --bc-pane-radius: 10px;
+  /* The rounding on a floating panel, used only when the floating layout is
+     switched on. Notion's own layout is flush, so this idles at 0. */
+  --bc-pane-radius: 8px;
+  --bc-modal-radius: 8px;
+  --bc-menu-radius: 6px;
 
-  /* Square hit areas for every icon-only control, so a wide button can never
-     turn its background into a lozenge. */
+  /* Square hit areas for every icon-only control. Notion's toolbar buttons
+     are 28px squares with a 4px corner; so are these. */
   --bc-hit: 28px;
 
   /* The inset above and below every top-band control. Shared by the ribbon,
      both sidebar tab strips and the editor tab bar, because those four rows
      live in different containers and only line up if they are told to. */
-  --bc-band-pad: 4px;
+  --bc-band-pad: 6px;
+
+  /* Notion's sidebar row: 27px tall, 14px text, an 8px inset from the panel
+     edge and a 4px corner. Rows are the most repeated shape in the app, so
+     they get their own figures rather than borrowing the density scale. */
+  --bc-row-base: 27px;
+  --bc-row-height: calc(var(--bc-row-base) * var(--bc-density));
+  --bc-row-inset: 8px;
 
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
-  --modal-radius: var(--bc-pane-radius);
+  --modal-radius: var(--bc-modal-radius);
   --checkbox-radius: var(--radius-s);
-  --code-radius: var(--radius-l);
-  --callout-radius: var(--radius-l);
-  --tag-radius: calc(2em * var(--bc-radius-scale));
-  --tab-radius: var(--radius-m);
-  --tab-radius-active: var(--radius-m);
-  --menu-radius: var(--radius-l);
+  --code-radius: var(--radius-m);
+  --callout-radius: var(--radius-m);
+  --tag-radius: calc(3px * var(--bc-radius-scale));
+  --tab-radius: var(--radius-l);
+  --tab-radius-active: var(--radius-l);
+  --menu-radius: var(--bc-menu-radius);
   --swatch-radius: var(--radius-s);
   --border-width: 1px;
 
@@ -617,36 +688,42 @@ body {
   --bc-gap-5: calc(16px * var(--bc-density));
   --bc-gap-6: calc(24px * var(--bc-density));
 
-  /* --- Type ------------------------------------------------------------ */
+  /* --- Type ------------------------------------------------------------
+     Notion runs its interface at 14px and its pages at 16px, in a system
+     stack led by Inter. Both stacks end in the same emoji faces so an emoji
+     in a page title renders the same as one in the sidebar. */
   --bc-font-interface: Inter;
   --bc-font-text: Inter;
   --bc-font-mono: ui-monospace;
 
-  --bc-stack-ui: var(--bc-font-interface), "Söhne", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
-  --bc-stack-text: var(--bc-font-text), "Söhne", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
-  --bc-stack-serif: "Iowan Old Style", "Source Serif 4", "Source Serif Pro",
-    Charter, "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
-  --bc-stack-mono: var(--bc-font-mono), "SF Mono", "JetBrains Mono",
-    "IBM Plex Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --bc-stack-ui: var(--bc-font-interface), ui-sans-serif, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --bc-stack-text: var(--bc-font-text), ui-sans-serif, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --bc-stack-serif: Lyon-Text, "Iowan Old Style", "Source Serif 4", Georgia,
+    ui-serif, "Times New Roman", serif;
+  --bc-stack-mono: var(--bc-font-mono), "SFMono-Regular", "SF Mono", Menlo,
+    Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
 
   --font-interface-theme: var(--bc-stack-ui);
   --font-text-theme: var(--bc-stack-text);
   --font-monospace-theme: var(--bc-stack-mono);
 
-  --bc-code-size: 0.875;
-  --bc-pane-gap: 6px;
+  --bc-code-size: 0.85;
+  --bc-pane-gap: 8px;
   --bc-h-scale: 1;
   --bc-h-weight: 600;
-  --bc-line-height: 1.6;
-  --bc-line-width: 42rem;
+  --bc-line-height: 1.5;
+  /* Notion's text column is 708px inside a 900px page. */
+  --bc-line-width: 44rem;
 
-  /* --- Motion ---------------------------------------------------------- */
+  /* --- Motion ----------------------------------------------------------
+     Notion's transitions are short enough to read as instant feedback rather
+     than as animation. */
   --bc-ease: cubic-bezier(0.2, 0, 0, 1);
-  --bc-speed: 140ms;
+  --bc-speed: 100ms;
 }
 
 /* Accent intensity ------------------------------------------------------- */
@@ -659,114 +736,128 @@ body.bc-accent-vivid {
 
 /* Density ---------------------------------------------------------------- */
 body.bc-density-compact {
-  --bc-density: 0.75;
+  --bc-density: 0.8;
 }
 body.bc-density-comfortable {
-  --bc-density: 1.3;
+  --bc-density: 1.25;
 }
 
 /* ==========================================================================
-   LIGHT — warm paper
+   LIGHT — Notion's paper
+   White page, warm-grey chrome, ink at #37352f. Every value here is either
+   Notion's own or derived from it: the greys are alphas of the same ink, so
+   chrome tinted over any surface stays in the family.
    ========================================================================== */
 
 .theme-light {
   --bc-ac-lift: 0%;
 
-  /* Warm neutral ramp. Obsidian derives a lot from these, so anything this
-     theme forgets to style still lands somewhere sensible. */
-  /* Lighter and less chromatic than before. Notion and Slite both work on a
-     near-white page with a warm-grey ink; keeping the cream but raising the
-     value is what moves this from "tinted paper" to "clean document". */
-  --color-base-00: #fcfbf7;
-  --color-base-05: #f9f8f3;
-  --color-base-10: #f7f6f1;
-  --color-base-20: #f4f3ee;
-  --color-base-25: #eeece5;
-  --color-base-30: #e6e4db;
-  --color-base-35: #dcdad0;
-  --color-base-40: #c8c6bb;
-  --color-base-50: #aeaca2;
-  --color-base-60: #8a8881;
-  --color-base-70: #62615b;
+  /* Neutral ramp. Obsidian derives a lot from these, so anything this theme
+     forgets to style still lands somewhere sensible. */
+  --color-base-00: #ffffff;
+  --color-base-05: #fbfbfa;
+  --color-base-10: #f7f7f5;
+  --color-base-20: #f1f1ef;
+  --color-base-25: #ebebea;
+  --color-base-30: #e3e2e0;
+  --color-base-35: #dcdbd9;
+  --color-base-40: #d3d1cb;
+  --color-base-50: #b9b9b7;
+  --color-base-60: #9b9a97;
+  --color-base-70: #787774;
   --color-base-100: #37352f;
 
   --mono-rgb-0: 255, 255, 255;
   --mono-rgb-100: 55, 53, 47;
+  /* Obsidian hands the quote callout this triple and defines it nowhere. */
+  --color-base-60-rgb: 155, 154, 151;
 
-  /* Semantic hues, pulled toward earth so they sit inside the palette
-     rather than on top of it. Callouts, tags, syntax and most plugins
-     inherit from these. */
-  --color-red-rgb: 179, 69, 58;
-  --color-orange-rgb: 167, 95, 43;
-  --color-yellow-rgb: 138, 109, 18;
-  --color-green-rgb: 79, 122, 85;
-  --color-cyan-rgb: 55, 122, 124;
-  --color-blue-rgb: 62, 108, 158;
-  --color-purple-rgb: 118, 92, 162;
-  --color-pink-rgb: 168, 82, 128;
+  /* Notion's text hues. Callouts, tags, syntax and most plugins inherit
+     from these. */
+  --color-red-rgb: 212, 76, 71;
+  --color-orange-rgb: 217, 115, 13;
+  --color-yellow-rgb: 203, 145, 47;
+  --color-green-rgb: 68, 131, 97;
+  --color-cyan-rgb: 58, 131, 140;
+  --color-blue-rgb: 51, 126, 169;
+  --color-purple-rgb: 144, 101, 176;
+  --color-pink-rgb: 193, 76, 138;
 
   /* Surfaces ------------------------------------------------------------
-     The editor is the lightest plane; chrome recedes behind it. */
-  /* Overridable in Style Settings; everything else derives from these four. */
+     The page is white; chrome is the warm grey behind it. Overridable in
+     Style Settings — everything else derives from these four. */
   --bc-bg-primary: var(--color-base-00);
-  --bc-bg-secondary: var(--color-base-20);
+  --bc-bg-secondary: var(--color-base-10);
   --bc-bg-raised: #ffffff;
-  --bc-bg-sunken: var(--color-base-10);
+  --bc-bg-sunken: #f7f6f3;
 
   --background-primary: var(--bc-bg-primary);
-  --background-primary-alt: var(--color-base-10);
+  --background-primary-alt: var(--color-base-05);
   --background-secondary: var(--bc-bg-secondary);
-  --background-secondary-alt: var(--color-base-25);
+  --background-secondary-alt: var(--color-base-20);
   --bc-surface-raised: var(--bc-bg-raised);
   --bc-surface-sunken: var(--bc-bg-sunken);
 
-  --background-modifier-hover: rgba(55, 53, 47, 0.05);
-  --background-modifier-active-hover: var(--bc-ac-a16);
+  /* Notion's interaction greys, to the alpha. */
+  --background-modifier-hover: rgba(55, 53, 47, 0.06);
+  --background-modifier-active-hover: rgba(55, 53, 47, 0.08);
   --background-modifier-border: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.09));
-  --background-modifier-border-hover: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.18));
+  --background-modifier-border-hover: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.16));
   --background-modifier-border-focus: var(--bc-ac-a40);
-  --background-modifier-form-field: #ffffff;
-  --bc-control-border: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.28));
-  --background-modifier-message: rgba(55, 53, 47, 0.88);
+  --background-modifier-form-field: rgba(242, 241, 238, 0.6);
+  --bc-control-border: rgba(15, 15, 15, calc(var(--bc-border-strength) * 0.1));
+  --background-modifier-message: rgba(15, 15, 15, 0.88);
 
   --background-modifier-error-rgb: var(--color-red-rgb);
-  --background-modifier-error: rgba(var(--color-red-rgb), 0.1);
-  --background-modifier-error-hover: rgba(var(--color-red-rgb), 0.18);
+  --background-modifier-error: rgba(var(--color-red-rgb), 0.12);
+  --background-modifier-error-hover: rgba(var(--color-red-rgb), 0.2);
   --background-modifier-success-rgb: var(--color-green-rgb);
   --background-modifier-success: rgba(var(--color-green-rgb), 0.14);
 
-  /* Ink ------------------------------------------------------------------ */
+  /* Ink ------------------------------------------------------------------
+     Notion writes these as alphas of the ink. They are given here as the
+     solid colours those alphas resolve to on the page, so a value that lands
+     on a tinted surface — a callout, a selected row — doesn't shift. */
   --bc-ink-normal: #37352f;
-  --bc-ink-muted: #6f6d66;
-  --bc-ink-faint: #8b8a83;
+  --bc-ink-muted: #706f6b;
+  --bc-ink-faint: #9b9a97;
 
   --text-normal: var(--bc-ink-normal);
   --text-muted: var(--bc-ink-muted);
   --text-faint: var(--bc-ink-faint);
   --text-on-accent: #ffffff;
   --text-on-accent-inverted: #37352f;
-  --text-error: #a03d33;
-  --text-warning: #96650f;
-  --text-success: #43684a;
+  /* The three message colours are darkened past Notion's own: an error or a
+     warning is text you have to be able to read, and Notion's yellow lands at
+     2.8:1 on white. The hues themselves — used for callouts, tags and the
+     graph — stay exactly as Notion ships them. */
+  --text-error: #cb3f39;
+  --text-warning: #996611;
+  --text-success: #448361;
 
-  --text-selection: var(--bc-ac-a16);
-  --text-highlight-bg: rgba(var(--color-yellow-rgb), 0.28);
-  --text-highlight-bg-active: rgba(var(--color-orange-rgb), 0.42);
-  --text-blockquote: var(--text-muted);
+  --text-selection: var(--bc-ac-a28);
+  --text-highlight-bg: rgba(251, 243, 219, 1);
+  --text-highlight-bg-active: rgba(253, 236, 200, 1);
+  --text-blockquote: var(--text-normal);
 
-  --shadow-s: 0 1px 2px rgba(15, 15, 13, 0.05), 0 2px 6px rgba(15, 15, 13, 0.04);
-  --shadow-l: 0 2px 6px rgba(15, 15, 13, 0.06),
-    0 12px 32px rgba(15, 15, 13, 0.1);
+  /* Notion's two elevations, verbatim. The 1px ring is part of the shadow
+     rather than a border, so a floating surface never gains a pixel. */
+  --shadow-s: rgba(15, 15, 15, 0.1) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 2px 4px;
+  --shadow-l: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 3px 6px,
+    rgba(15, 15, 15, 0.2) 0 9px 24px;
 
   --scrollbar-bg: transparent;
-  --scrollbar-thumb-bg: rgba(55, 53, 47, 0.16);
-  --scrollbar-active-thumb-bg: rgba(55, 53, 47, 0.3);
+  --scrollbar-thumb-bg: rgba(55, 53, 47, 0.2);
+  --scrollbar-active-thumb-bg: rgba(55, 53, 47, 0.35);
 
-  --workspace-background-translucent: rgba(252, 251, 247, 0.72);
+  --workspace-background-translucent: rgba(255, 255, 255, 0.72);
 }
 
 /* ==========================================================================
-   DARK — warm ink
+   DARK — Notion's night
+   Page #191919, chrome #202020 — the chrome is the lighter plane here, which
+   is the reverse of Obsidian's default ordering and the whole reason the dark
+   theme reads as Notion rather than as a dimmed version of the light one.
    ========================================================================== */
 
 .theme-dark {
@@ -775,53 +866,52 @@ body.bc-density-comfortable {
      accent keeps both themes tied to the same single choice. */
   --bc-ac-lift: 8%;
 
-  --color-base-00: #191918;
-  --color-base-05: #1c1c1b;
-  --color-base-10: #1f1f1e;
-  --color-base-20: #242423;
-  --color-base-25: #2a2a28;
-  --color-base-30: #3a3a37;
-  --color-base-35: #454541;
-  --color-base-40: #56564f;
-  --color-base-50: #6b6a64;
-  --color-base-60: #97968f;
-  --color-base-70: #bfbeb6;
-  --color-base-100: #f5f4ee;
+  --color-base-00: #191919;
+  --color-base-05: #1d1d1d;
+  --color-base-10: #202020;
+  --color-base-20: #252525;
+  --color-base-25: #2f2f2f;
+  --color-base-30: #373737;
+  --color-base-35: #3f3f3f;
+  --color-base-40: #4a4a4a;
+  --color-base-50: #5a5a5a;
+  --color-base-60: #797979;
+  --color-base-70: #9b9b9b;
+  --color-base-100: #d4d4d4;
 
-  --mono-rgb-0: 20, 20, 19;
-  --mono-rgb-100: 245, 244, 238;
+  --mono-rgb-0: 25, 25, 25;
+  --mono-rgb-100: 255, 255, 255;
+  --color-base-60-rgb: 121, 121, 121;
 
-  --color-red-rgb: 224, 138, 124;
-  --color-orange-rgb: 224, 161, 113;
-  --color-yellow-rgb: 214, 190, 124;
-  --color-green-rgb: 143, 191, 147;
-  --color-cyan-rgb: 126, 188, 190;
-  --color-blue-rgb: 150, 173, 214;
-  --color-purple-rgb: 178, 156, 219;
-  --color-pink-rgb: 219, 148, 184;
+  --color-red-rgb: 255, 115, 105;
+  --color-orange-rgb: 255, 163, 68;
+  --color-yellow-rgb: 255, 220, 73;
+  --color-green-rgb: 77, 171, 154;
+  --color-cyan-rgb: 94, 183, 196;
+  --color-blue-rgb: 82, 156, 202;
+  --color-purple-rgb: 154, 109, 215;
+  --color-pink-rgb: 226, 85, 161;
 
-  /* Here the editor is the *lighter* plane and the chrome sits behind it,
-     which is the reverse of Obsidian's default dark ordering. */
-  --bc-bg-primary: var(--color-base-10);
-  --bc-bg-secondary: var(--color-base-00);
-  --bc-bg-raised: var(--color-base-25);
-  --bc-bg-sunken: #171716;
+  --bc-bg-primary: var(--color-base-00);
+  --bc-bg-secondary: var(--color-base-10);
+  --bc-bg-raised: var(--color-base-20);
+  --bc-bg-sunken: var(--color-base-20);
 
   --background-primary: var(--bc-bg-primary);
-  --background-primary-alt: var(--color-base-20);
+  --background-primary-alt: var(--color-base-05);
   --background-secondary: var(--bc-bg-secondary);
-  --background-secondary-alt: #141413;
+  --background-secondary-alt: var(--color-base-20);
   --bc-surface-raised: var(--bc-bg-raised);
   --bc-surface-sunken: var(--bc-bg-sunken);
 
-  --background-modifier-hover: rgba(245, 244, 238, 0.055);
-  --background-modifier-active-hover: var(--bc-ac-a24);
-  --background-modifier-border: rgba(245, 244, 238, calc(var(--bc-border-strength) * 0.1));
-  --background-modifier-border-hover: rgba(245, 244, 238, calc(var(--bc-border-strength) * 0.22));
+  --background-modifier-hover: rgba(255, 255, 255, 0.055);
+  --background-modifier-active-hover: rgba(255, 255, 255, 0.1);
+  --background-modifier-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.094));
+  --background-modifier-border-hover: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.18));
   --background-modifier-border-focus: var(--bc-ac-a40);
-  --background-modifier-form-field: rgba(245, 244, 238, 0.04);
-  --bc-control-border: rgba(245, 244, 238, calc(var(--bc-border-strength) * 0.3));
-  --background-modifier-message: rgba(10, 10, 9, 0.9);
+  --background-modifier-form-field: rgba(255, 255, 255, 0.055);
+  --bc-control-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.13));
+  --background-modifier-message: rgba(47, 47, 47, 0.95);
 
   --background-modifier-error-rgb: var(--color-red-rgb);
   --background-modifier-error: rgba(var(--color-red-rgb), 0.14);
@@ -829,32 +919,33 @@ body.bc-density-comfortable {
   --background-modifier-success-rgb: var(--color-green-rgb);
   --background-modifier-success: rgba(var(--color-green-rgb), 0.16);
 
-  --bc-ink-normal: #e6e4dd;
-  --bc-ink-muted: #a2a099;
-  --bc-ink-faint: #78766f;
+  --bc-ink-normal: #d4d4d4;
+  --bc-ink-muted: #9b9b9b;
+  --bc-ink-faint: #6f6f6f;
 
   --text-normal: var(--bc-ink-normal);
   --text-muted: var(--bc-ink-muted);
   --text-faint: var(--bc-ink-faint);
-  --text-on-accent: #17110e;
-  --text-on-accent-inverted: #f5f4ee;
-  --text-error: #e39184;
-  --text-warning: #d9bd7f;
-  --text-success: #93c497;
+  --text-on-accent: #ffffff;
+  --text-on-accent-inverted: #191919;
+  --text-error: #ff7369;
+  --text-warning: #ffdc49;
+  --text-success: #4dab9a;
 
-  --text-selection: var(--bc-ac-a24);
-  --text-highlight-bg: rgba(var(--color-yellow-rgb), 0.24);
-  --text-highlight-bg-active: rgba(var(--color-orange-rgb), 0.38);
-  --text-blockquote: var(--text-muted);
+  --text-selection: var(--bc-ac-a28);
+  --text-highlight-bg: rgba(86, 69, 47, 1);
+  --text-highlight-bg-active: rgba(92, 59, 35, 1);
+  --text-blockquote: var(--text-normal);
 
-  --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.2);
-  --shadow-l: 0 2px 8px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.45);
+  --shadow-s: rgba(15, 15, 15, 0.2) 0 0 0 1px, rgba(15, 15, 15, 0.4) 0 2px 4px;
+  --shadow-l: rgba(15, 15, 15, 0.1) 0 0 0 1px, rgba(15, 15, 15, 0.2) 0 3px 6px,
+    rgba(15, 15, 15, 0.4) 0 9px 24px;
 
   --scrollbar-bg: transparent;
-  --scrollbar-thumb-bg: rgba(245, 244, 238, 0.13);
-  --scrollbar-active-thumb-bg: rgba(245, 244, 238, 0.26);
+  --scrollbar-thumb-bg: rgba(255, 255, 255, 0.14);
+  --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.28);
 
-  --workspace-background-translucent: rgba(25, 25, 24, 0.72);
+  --workspace-background-translucent: rgba(25, 25, 25, 0.72);
 }
 
 /* Dark accents need a touch less saturation to stop them vibrating. */
@@ -872,25 +963,29 @@ body.theme-dark.bc-accent-vivid {
    ACCENT DISTRIBUTION
    One hue in, a whole interface out. Nothing below this line hard-codes a
    colour: every accented surface reads from the ramp built in 01-tokens.
+
+   Notion spends its accent narrowly — links, the caret, selection, one filled
+   button, the focus ring — and leaves everything else neutral. This file
+   follows that, so the chrome stays grey whichever accent is chosen.
    ========================================================================== */
 
-/* Warmth. Bleeds a little of the accent hue into the chrome so the greys
-   belong to the palette instead of sitting beside it. Written at body-level
-   specificity so it lands after the per-theme ramps. */
+/* Warmth. Bleeds a little of the accent hue into the chrome. The Notion
+   palette is already warm, so this idles at 0%; the control exists for anyone
+   who wants their greys pulled toward their accent. */
 body.theme-light {
   --background-secondary: color-mix(
     in srgb,
-    var(--color-base-20),
+    var(--color-base-10),
     var(--bc-ac-500) var(--bc-tint)
   );
   --background-secondary-alt: color-mix(
     in srgb,
-    var(--color-base-25),
+    var(--color-base-20),
     var(--bc-ac-500) var(--bc-tint)
   );
   --bc-surface-sunken: color-mix(
     in srgb,
-    var(--color-base-10),
+    var(--bc-bg-sunken),
     var(--bc-ac-500) var(--bc-tint)
   );
 }
@@ -898,17 +993,17 @@ body.theme-light {
 body.theme-dark {
   --background-secondary: color-mix(
     in srgb,
-    var(--color-base-00),
+    var(--color-base-10),
     var(--bc-ac-500) var(--bc-tint)
   );
   --background-secondary-alt: color-mix(
     in srgb,
-    #1a1a19,
+    var(--color-base-20),
     var(--bc-ac-500) var(--bc-tint)
   );
   --bc-surface-sunken: color-mix(
     in srgb,
-    #1c1b1a,
+    var(--bc-bg-sunken),
     var(--bc-ac-500) var(--bc-tint)
   );
 }
@@ -935,10 +1030,13 @@ body {
   /* Interactive */
   --interactive-normal: var(--background-modifier-form-field);
   --interactive-hover: var(--background-modifier-hover);
-  /* Filled controls sit one step down the ramp in light mode so white label
-     text clears 4.5:1; dark mode uses the base step against dark ink. */
-  --interactive-accent: var(--bc-ac-600);
-  --interactive-accent-hover: var(--bc-ac-700);
+  /* Notion fills its primary button with the accent at full strength, which
+     puts white label text at 3.9:1. --bc-ac-fill is one step down and clamped,
+     which puts it at 5.0:1 — a shade nobody will notice and a contrast failure
+     everybody would. The same token serves both themes, so a filled button is
+     the one surface that does not move between light and dark. */
+  --interactive-accent: var(--bc-ac-fill);
+  --interactive-accent-hover: var(--bc-ac-fill-hover);
   --interactive-accent-hsl: var(--accent-h), var(--bc-ac-s), var(--bc-ac-l);
 
   /* Text and links */
@@ -960,14 +1058,11 @@ body {
 
   --caret-color: var(--bc-ac-500);
 
-  /* Selection tokens used by chrome — nav rows, tabs, list items.
-     Neutral by default. In Notion and Slite the selected page in the sidebar
-     is a plain grey slab with ordinary dark text; colouring it is what makes
-     a sidebar look like a dashboard. The accent is kept for links, the caret,
-     checkboxes and focus, where it actually carries meaning. Accent
-     intensity → Vivid puts the colour back. */
-  --bc-select-bg: rgba(var(--mono-rgb-100), 0.055);
-  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.085);
+  /* Selection tokens used by chrome — nav rows, tabs, list items. Neutral,
+     because in Notion the selected page in the sidebar is a plain grey slab
+     with ordinary dark text. Accent intensity → Vivid puts the colour back. */
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.06);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.08);
   --bc-select-fg: var(--text-normal);
 
   /* Form controls */
@@ -981,36 +1076,33 @@ body {
   --checklist-done-color: var(--text-faint);
   --checklist-done-decoration: line-through;
 
-  --toggle-border-width: 1px;
+  --toggle-border-width: 0px;
   --toggle-thumb-color: #ffffff;
   --toggle-thumb-radius: 50%;
   --toggle-radius: 2em;
 
-  --slider-thumb-border-color: var(--background-modifier-border-hover);
+  --slider-thumb-border-color: var(--bc-control-border);
   --slider-thumb-border-width: 1px;
   --slider-thumb-radius: 50%;
   --slider-track-background: var(--background-modifier-border);
   --slider-track-height: 3px;
 
-  /* Icons */
-  --icon-color: var(--text-muted);
+  /* Icons. Chrome icons sit a step below the text they label — the row is the
+     content, the icon is a marker. Notion's are rgba(55,53,47,0.45) at rest,
+     which is this theme's faint ink. */
+  --icon-color: var(--text-faint);
   --icon-color-hover: var(--text-normal);
   --icon-color-active: var(--bc-select-fg);
   --icon-color-focused: var(--text-normal);
   --icon-opacity: 1;
   --icon-opacity-hover: 1;
   --icon-opacity-active: 1;
-  --icon-stroke: 1.6px;
 
-  /* Chrome icons sit a step below the text they label — the row is the
-     content, the icon is a marker. */
-  --icon-color: var(--text-faint);
   --collapse-icon-color: var(--text-faint);
-  /* A rust arrow beside a plain folder name is noise: rotation already says
-     collapsed, so the chevron stays neutral. */
+  /* Rotation already says collapsed, so the chevron stays neutral. */
   --collapse-icon-color-collapsed: var(--text-muted);
 
-  /* Tags */
+  /* Tags — Notion's inline pill: a grey chip, 3px corner, no border. */
   --tag-color: var(--text-muted);
   --tag-color-hover: var(--text-normal);
   --tag-background: rgba(var(--mono-rgb-100), 0.06);
@@ -1019,10 +1111,10 @@ body {
   --tag-border-color: transparent;
   --tag-decoration: none;
   --tag-decoration-hover: none;
-  --tag-padding-x: 0.55em;
-  --tag-padding-y: 0.2em;
-  --tag-size: 0.82em;
-  --tag-weight: var(--font-medium);
+  --tag-padding-x: 0.45em;
+  --tag-padding-y: 0.15em;
+  --tag-size: 0.85em;
+  --tag-weight: var(--font-normal);
 
   /* Graph */
   --graph-line: var(--background-modifier-border-hover);
@@ -1041,16 +1133,14 @@ body {
   --link-color-hover: var(--bc-ac-300);
   --link-external-color: var(--bc-ac-400);
   --link-external-color-hover: var(--bc-ac-300);
-  --bc-select-bg: rgba(var(--mono-rgb-100), 0.07);
-  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.11);
-  --toggle-thumb-color: #f5f4ee;
-  --interactive-accent: var(--bc-ac-500);
-  --interactive-accent-hover: var(--bc-ac-400);
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.055);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.1);
+  --toggle-thumb-color: #ffffff;
 }
 
 /* Accent intensity -------------------------------------------------------
-   Subtle drops the selected row to a whisper; Vivid is the old behaviour,
-   with the accent washing through the chrome. */
+   Subtle drops the selected row to a whisper; Vivid washes the accent through
+   the chrome. */
 body.bc-accent-subtle {
   --bc-select-bg: rgba(var(--mono-rgb-100), 0.035);
   --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.055);
@@ -1074,8 +1164,10 @@ body.theme-dark.bc-accent-vivid {
 
 /* ==========================================================================
    TYPOGRAPHY
-   Sizes are relative to --font-text-size so Obsidian's own font-size slider
-   keeps working. Nothing here fixes a pixel value on body text.
+   Notion's scale: a 14px interface, a 16px page, three heading levels that
+   step 20 → 24 → 30, and a 40px page title above them. Sizes are relative to
+   --font-text-size so Obsidian's own font-size slider keeps working; nothing
+   here fixes a pixel value on body text.
    ========================================================================== */
 
 body {
@@ -1087,30 +1179,34 @@ body {
   --line-height-normal: var(--bc-line-height);
   --line-height-tight: 1.3;
 
-  /* Notion and Slite both run their interface at 14px with a 12px secondary
-     step. Obsidian's default 13px reads cramped next to them, and a 12px nav
-     row is where the sidebar starts looking like a settings dialog. */
+  /* Notion runs at 14px throughout — sidebar, menus, buttons, settings — with
+     a 12px step for hints, hotkeys and counts. Obsidian's --font-ui-small is
+     the size it gives menu items and buttons, so that is the one that has to
+     be 14px for the interface to read as Notion's. */
   --font-ui-smaller: 12px;
-  --font-ui-small: 13px;
+  --font-ui-small: 14px;
   --font-ui-medium: 14px;
   --font-ui-large: 16px;
 
   --file-line-width: var(--bc-line-width);
-  --file-margins: var(--bc-gap-6) max(var(--bc-gap-6), 5vw) var(--bc-gap-6);
+  /* Notion leaves a screenful of room under the last block, so there is
+     always somewhere to click and keep writing. */
+  --file-margins: var(--bc-gap-5) max(var(--bc-gap-6), 4vw) 20vh;
 
-  --p-spacing: 0.9em;
+  --p-spacing: 0.5em;
   --p-spacing-empty: 0em;
 
   /* Headings ------------------------------------------------------------
-     A quiet 1.2-ish scale. h1 is a heading, not a billboard — the note title
-     is already doing that job above it. Colour stays at --text-normal:
-     hierarchy comes from size, weight and the space around it. */
-  --h1-size: calc(1.8em * var(--bc-h-scale));
-  --h2-size: calc(1.44em * var(--bc-h-scale));
-  --h3-size: calc(1.2em * var(--bc-h-scale));
-  --h4-size: calc(1.02em * var(--bc-h-scale));
-  --h5-size: calc(0.95em * var(--bc-h-scale));
-  --h6-size: calc(0.88em * var(--bc-h-scale));
+     Notion has exactly three, at 30/24/20px on a 16px page, all at 600. The
+     three Obsidian adds below them continue the ramp rather than inventing a
+     new one. Colour stays at --text-normal: hierarchy comes from size, weight
+     and the space around it. */
+  --h1-size: calc(1.875em * var(--bc-h-scale));
+  --h2-size: calc(1.5em * var(--bc-h-scale));
+  --h3-size: calc(1.25em * var(--bc-h-scale));
+  --h4-size: calc(1.0625em * var(--bc-h-scale));
+  --h5-size: calc(1em * var(--bc-h-scale));
+  --h6-size: calc(0.9375em * var(--bc-h-scale));
 
   --h1-weight: var(--bc-h-weight);
   --h2-weight: var(--bc-h-weight);
@@ -1126,9 +1222,9 @@ body {
   --h5-color: var(--text-normal);
   --h6-color: var(--text-muted);
 
-  --h1-line-height: 1.22;
-  --h2-line-height: 1.28;
-  --h3-line-height: 1.34;
+  --h1-line-height: 1.3;
+  --h2-line-height: 1.3;
+  --h3-line-height: 1.3;
   --h4-line-height: 1.4;
   --h5-line-height: 1.4;
   --h6-line-height: 1.4;
@@ -1142,73 +1238,78 @@ body {
 
   --h6-variant: normal;
 
+  /* The page title: 40px at 700, the one piece of display type in the app. */
   --inline-title-color: var(--text-normal);
-  --inline-title-size: calc(2em * var(--bc-h-scale));
-  --inline-title-weight: var(--bc-h-weight);
+  --inline-title-size: calc(2.5em * var(--bc-h-scale));
+  --inline-title-weight: 700;
   --inline-title-line-height: 1.2;
   --inline-title-font: inherit;
 
-  --bold-weight: 650;
+  --bold-weight: 600;
   --bold-color: var(--text-normal);
   --italic-color: inherit;
 
-  --blockquote-border-thickness: 2px;
-  --blockquote-border-color: var(--bc-control-border);
+  /* Notion's quote: a 3px rule in the ink colour, text at full contrast. */
+  --blockquote-border-thickness: 3px;
+  --blockquote-border-color: var(--text-normal);
   --blockquote-font-style: normal;
-  --blockquote-color: var(--text-muted);
+  --blockquote-color: var(--text-normal);
   --blockquote-background-color: transparent;
 
-  --hr-color: var(--background-modifier-border);
+  --hr-color: var(--background-modifier-border-hover);
   --hr-thickness: 1px;
 
-  --list-indent: 1.6em;
-  --list-spacing: 0.1em;
-  --list-marker-color: var(--text-faint);
-  --list-marker-color-hover: var(--text-muted);
+  --list-indent: 1.5em;
+  --list-spacing: 0.125em;
+  --list-marker-color: var(--text-normal);
+  --list-marker-color-hover: var(--text-normal);
   --list-marker-color-collapsed: var(--text-accent);
-  --list-bullet-size: 0.32em;
+  --list-bullet-size: 0.3em;
   --list-bullet-radius: 50%;
 
   --code-size: calc(1em * var(--bc-code-size));
   --code-white-space: pre-wrap;
 
-  --table-text-size: 0.92em;
-  --table-line-height: 1.45;
-  --table-header-size: 0.82em;
-  --table-header-weight: var(--font-semibold);
+  --table-text-size: 0.875em;
+  --table-line-height: 1.5;
+  --table-header-size: 0.875em;
+  --table-header-weight: var(--font-medium);
   --table-header-color: var(--text-muted);
 }
 
-/* Optical tightening. Large type wants less tracking than small type;
-   leaving both at 0 is what makes headings look pasted on. */
-.markdown-rendered h1,
-.markdown-rendered h2,
-.HyperMD-header-1,
-.HyperMD-header-2,
+/* Optical tightening. Inter at 40px wants less tracking than Inter at 16px;
+   leaving both at 0 is what makes a title look pasted on. Applied to display
+   sizes only. */
 .inline-title,
-.view-header-title,
-.modal-title {
-  letter-spacing: -0.018em;
+.markdown-rendered h1,
+.HyperMD-header-1 {
+  letter-spacing: -0.02em;
 }
 
-.markdown-rendered h3,
-.markdown-rendered h4,
-.HyperMD-header-3,
-.HyperMD-header-4 {
-  letter-spacing: -0.008em;
+.markdown-rendered h2,
+.HyperMD-header-2 {
+  letter-spacing: -0.01em;
 }
 
 /* Space above a heading belongs to the heading; space below belongs to the
-   content it introduces. Obsidian's defaults give both the same value, which
-   is why long notes read as an undifferentiated column. */
+   content it introduces. Notion's proportion is roughly 8:1, which is what
+   makes a long page read as sections rather than as one column. */
 .markdown-rendered h1,
 .markdown-rendered h2,
+.markdown-source-view.mod-cm6 .HyperMD-header-1,
+.markdown-source-view.mod-cm6 .HyperMD-header-2 {
+  margin-block-start: 1.9em;
+  margin-block-end: 0.25em;
+}
+
 .markdown-rendered h3,
 .markdown-rendered h4,
 .markdown-rendered h5,
-.markdown-rendered h6 {
-  margin-block-start: 1.9em;
-  margin-block-end: 0.55em;
+.markdown-rendered h6,
+.markdown-source-view.mod-cm6 .HyperMD-header-3,
+.markdown-source-view.mod-cm6 .HyperMD-header-4 {
+  margin-block-start: 1.5em;
+  margin-block-end: 0.2em;
 }
 
 .markdown-rendered h1:first-child,
@@ -1223,7 +1324,7 @@ body {
 }
 
 .inline-title {
-  margin-bottom: 0.45em;
+  margin-bottom: 0.3em;
 }
 
 /* Headings stay body-ink by default; hierarchy comes from size and space.
@@ -1234,29 +1335,51 @@ body.bc-accent-headings {
   --inline-title-color: var(--text-accent);
 }
 
-body.bc-link-underline {
+/* Link style -------------------------------------------------------------
+   Default is Notion's: the accent, underlined at rest, because in a document
+   a link that only reveals itself on hover is a link you have to hunt for.
+   The Ink option is Notion's own inline-link treatment — body colour with a
+   faint underline — for anyone who wants links to disappear into the prose. */
+body {
   --link-decoration: underline;
   --link-external-decoration: underline;
+}
+
+body.bc-link-plain {
+  --link-decoration: none;
+  --link-external-decoration: none;
+  --link-decoration-hover: underline;
+  --link-external-decoration-hover: underline;
+}
+
+body.bc-link-ink {
+  --link-color: var(--text-normal);
+  --link-color-hover: var(--text-normal);
+  --link-external-color: var(--text-normal);
+  --link-external-color-hover: var(--text-normal);
+}
+
+body.bc-link-ink .markdown-rendered a,
+body.bc-link-ink .cm-s-obsidian .cm-link,
+body.bc-link-ink .cm-s-obsidian .cm-hmd-internal-link {
+  text-decoration-color: var(--background-modifier-border-hover);
 }
 
 /* Serif body option — editor only. The interface stays sans so the note
    stands apart from the app around it. */
 body.bc-serif-body {
   --font-text-theme: var(--bc-stack-serif);
-  --bc-line-height: 1.7;
-}
-
-/* Serif sets slightly narrower: the same measure in characters. */
-body.bc-serif-body {
+  --bc-line-height: 1.6;
+  /* Serif sets slightly narrower: the same measure in characters. */
   --file-line-width: calc(var(--bc-line-width) - 2rem);
 }
 
-/* Links: underline on hover only, so a note dense with links still reads as
-   prose rather than as a form. */
+/* Links sit inside prose, so the underline is offset off the baseline rather
+   than through the descenders. */
 .markdown-rendered a,
 .cm-s-obsidian .cm-link,
 .cm-s-obsidian .cm-hmd-internal-link {
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.16em;
   text-decoration-thickness: 1px;
   transition: color var(--bc-speed) var(--bc-ease);
 }
@@ -1266,32 +1389,48 @@ body.bc-serif-body {
   text-decoration-color: var(--background-modifier-border-hover);
 }
 
-/* Blockquotes: a hairline rule, no italics, no background. Written with
-   logical properties so the rule lands on the correct side in a
-   right-to-left note without a second set of rules to maintain. */
+/* Blockquotes: Notion's 3px rule, no italics, no background, full-contrast
+   text. Written with logical properties so the rule lands on the correct side
+   in a right-to-left note without a second set of rules to maintain. */
 .markdown-rendered blockquote {
   border-left: none;
   border-right: none;
   border-inline-start: var(--blockquote-border-thickness) solid
     var(--blockquote-border-color);
   padding: 0;
-  padding-inline-start: 1.15em;
+  padding-inline-start: 0.875em;
   margin-inline-start: 0;
+  margin-block: 0.5em;
 }
 
+/* Notion's highlight is a solid pastel band, not a translucent wash, so the
+   text on top of it keeps its contrast. */
 .markdown-rendered mark {
   border-radius: var(--radius-s);
-  padding: 0.08em 0.14em;
+  padding: 0.1em 0.1em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 /* ==========================================================================
    CHROME
-   Sidebar, ribbon, tabs, header, status bar. The rule for all of it: recede.
-   Chrome is separated from the editor by tone, never by a drawn line.
+   Sidebar, ribbon, tabs, header, status bar.
+
+   Notion's shell is three flush regions: a warm-grey sidebar, a grey tab
+   strip, and the white page. Nothing is boxed and nothing is separated by a
+   drawn line — the tone change is the seam. The one rule for all of it is
+   that every control in the top band sits on the same centre line, whichever
+   of the four containers it happens to live in.
    ========================================================================== */
 
 body {
-  --header-height: 40px;
+  /* The band across the top of the window: the sidebar tab strips, the
+     editor tab strip and the ribbon's first icon all measure from this. */
+  --bc-topbar-height: 40px;
+  /* The editor tab, bottom-flush against the page so the two merge. */
+  --bc-tab-height: 34px;
+
+  --header-height: 45px;
   --divider-width: 1px;
   --divider-width-hover: 3px;
   --divider-color: transparent;
@@ -1300,15 +1439,15 @@ body {
 
   --ribbon-background: var(--background-secondary);
   --ribbon-background-collapsed: var(--background-secondary);
-  --ribbon-width: 44px;
-  --ribbon-padding: var(--bc-band-pad) var(--bc-gap-2);
+  --ribbon-width: 40px;
+  --ribbon-padding: var(--bc-band-pad) var(--bc-gap-1);
 
   --sidebar-markdown-font-size: 0.9em;
   --sidebar-tab-text-display: none;
 
-  --vault-name-font-size: var(--font-ui-small);
-  --vault-name-font-weight: var(--font-medium);
-  --vault-name-color: var(--text-muted);
+  --vault-name-font-size: var(--font-ui-medium);
+  --vault-name-font-weight: var(--font-semibold);
+  --vault-name-color: var(--text-normal);
 
   --status-bar-background: transparent;
   --status-bar-border-color: transparent;
@@ -1324,7 +1463,7 @@ body {
   --titlebar-text-color-focused: var(--text-muted);
   --titlebar-text-weight: var(--font-medium);
 
-  --file-header-font-size: var(--font-ui-small);
+  --file-header-font-size: var(--font-ui-medium);
   --file-header-font-weight: var(--font-medium);
   --file-header-border: none;
   --file-header-justify: flex-start;
@@ -1337,42 +1476,49 @@ body {
   --tab-outline-width: 0px;
   --tab-curve: 0px;
   --tab-font-size: var(--font-ui-medium);
-  --tab-font-weight: var(--font-medium);
+  --tab-font-weight: var(--font-normal);
   --tab-text-color: var(--text-faint);
   --tab-text-color-active: var(--text-muted);
   --tab-text-color-focused: var(--text-muted);
   --tab-text-color-focused-active: var(--text-normal);
   --tab-text-color-focused-highlighted: var(--bc-select-fg);
   --tab-text-color-focused-active-current: var(--text-normal);
-  --tab-max-width: 240px;
+  --tab-max-width: 220px;
 
-  /* Navigation ---------------------------------------------------------- */
+  /* Navigation ----------------------------------------------------------
+     Notion's sidebar row: 27px tall, 14px at medium weight, a 4px corner and
+     an 8px inset from the panel edge. */
   --nav-item-size: var(--font-ui-medium);
-  --nav-item-weight: var(--font-normal);
-  --nav-item-weight-hover: var(--font-normal);
+  --nav-item-weight: var(--font-medium);
+  --nav-item-weight-hover: var(--font-medium);
   --nav-item-weight-active: var(--font-medium);
   --nav-item-color: var(--text-muted);
   --nav-item-color-hover: var(--text-normal);
   --nav-item-color-active: var(--bc-select-fg);
   --nav-item-color-selected: var(--bc-select-fg);
   --nav-item-background-hover: var(--background-modifier-hover);
-  --nav-item-background-active: var(--bc-select-bg);
+  --nav-item-background-active: var(--bc-select-bg-strong);
   --nav-item-background-selected: var(--bc-select-bg-strong);
-  --nav-item-padding: calc(var(--bc-gap-2) + 1px) var(--bc-gap-3);
+  --nav-item-padding: var(--bc-gap-2) var(--bc-gap-3);
   --nav-item-radius: var(--radius-m);
   --nav-item-parent-padding: var(--nav-item-padding);
   --nav-item-children-padding-left: var(--bc-gap-4);
-  --nav-item-children-margin-left: var(--bc-gap-3);
+  --nav-item-children-margin-left: var(--bc-gap-4);
   --nav-item-white-space: nowrap;
 
   --nav-indentation-guide-width: 1px;
-  --nav-indentation-guide-color: var(--background-modifier-border);
+  /* Notion draws none. The setting puts them back. */
+  --nav-indentation-guide-color: transparent;
 
-  --nav-heading-color: var(--text-faint);
-  --nav-heading-color-hover: var(--text-muted);
-  --nav-heading-color-collapsed: var(--text-faint);
-  --nav-heading-weight: var(--font-semibold);
-  --nav-heading-weight-hover: var(--font-semibold);
+  --nav-heading-color: var(--text-muted);
+  --nav-heading-color-hover: var(--text-normal);
+  --nav-heading-color-collapsed: var(--text-muted);
+  --nav-heading-weight: var(--font-medium);
+  --nav-heading-weight-hover: var(--font-medium);
+}
+
+body.bc-indent-guides {
+  --nav-indentation-guide-color: var(--background-modifier-border);
 }
 
 /* --- Workspace shell ----------------------------------------------------- */
@@ -1381,27 +1527,15 @@ body {
   background-color: var(--background-secondary);
 }
 
-/* Give the editor pane its own rounded plane floating on the backdrop. This
-   is the single structural idea in the theme, so nothing else needs a border.
-   Corners go on the pane's two end pieces rather than on a clipping
-   container: `overflow: hidden` here would swallow anything a plugin renders
-   past its own bounds — Kanban date pickers, Excalidraw panels, Dataview
-   menus. Pane geometry and the backdrop behind it live in 13-panes. */
-.workspace-split.mod-root .workspace-tab-header-container {
-  border-start-start-radius: var(--bc-pane-radius);
-  border-start-end-radius: var(--bc-pane-radius);
-}
-
-.workspace-split.mod-root .workspace-leaf-content {
-  background-color: var(--background-primary);
-  border-end-start-radius: var(--bc-pane-radius);
-  border-end-end-radius: var(--bc-pane-radius);
-}
-
-/* --- Ribbon -------------------------------------------------------------- */
+/* --- Ribbon --------------------------------------------------------------
+   Notion has no icon rail, so this one is dissolved into the sidebar: same
+   tone, no border, no divider. It reads as the top of the sidebar rather than
+   as a fourth region. */
 
 .workspace-ribbon {
   border: none;
+  align-items: center;
+  gap: var(--bc-gap-1);
 }
 
 .workspace-ribbon.mod-left::before,
@@ -1413,10 +1547,6 @@ body {
    gives the sidebar-toggle button a different container from the plugin
    actions below it, so left to itself the top icon sits off the column the
    rest of them share. Sizing them all identically is what lines them up. */
-.workspace-ribbon {
-  align-items: center;
-}
-
 .side-dock-ribbon-action,
 .workspace-ribbon .clickable-icon,
 .workspace-ribbon .sidebar-toggle-button {
@@ -1439,6 +1569,14 @@ body {
   background-color: var(--background-modifier-hover);
 }
 
+/* The active ribbon glyph is marked by a grey slab, not by recolouring the
+   glyph — one accented shape per region is enough, and in Notion that shape
+   is never in the chrome. */
+.side-dock-ribbon-action.is-active {
+  background-color: var(--bc-select-bg-strong);
+  color: var(--text-normal);
+}
+
 body.bc-hide-ribbon .workspace-ribbon.mod-left {
   opacity: 0;
   transition: opacity 200ms var(--bc-ease);
@@ -1454,13 +1592,14 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
    containers: the ribbon column, the left tab strip, the editor tab bar and
    the right tab strip. Each brings its own padding, so the sidebar-toggle
    button ends up a few pixels above the tabs beside it and the row reads as
-   three rows. Giving all of them the same band padding and the same control
-   height puts every icon on one centre line. */
+   three rows. One band height and one control height put every icon on the
+   same centre line. */
 
 .workspace-tab-header-container {
   align-items: center;
-  min-height: calc(var(--bc-hit) + var(--bc-band-pad) * 2);
+  min-height: var(--bc-topbar-height);
   padding-block: var(--bc-band-pad);
+  border-bottom: none;
 }
 
 .workspace-tab-header,
@@ -1493,13 +1632,9 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   box-shadow: none;
 }
 
-.workspace-tab-header-container {
-  border-bottom: none;
-}
-
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container {
-  padding-inline: var(--bc-gap-2);
+  padding-inline: var(--bc-gap-3);
   gap: var(--bc-gap-1);
 }
 
@@ -1546,22 +1681,25 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   color: var(--text-normal);
 }
 
+/* Sidebar panes take Notion's 8px inset, so a row's rounded corner clears the
+   panel edge. Only the list panes: giving a plugin pane horizontal padding is
+   how a theme breaks the ones that lay out their own. */
 .workspace-leaf-content[data-type="file-explorer"] .view-content,
 .workspace-leaf-content[data-type="search"] .view-content,
 .workspace-leaf-content[data-type="bookmarks"] .view-content,
 .workspace-leaf-content[data-type="tag"] .view-content,
-.workspace-leaf-content[data-type="outline"] .view-content {
-  padding-inline: var(--bc-gap-2);
+.workspace-leaf-content[data-type="outline"] .view-content,
+.workspace-leaf-content[data-type="backlink"] .view-content,
+.workspace-leaf-content[data-type="outgoing-link"] .view-content,
+.workspace-leaf-content[data-type="all-properties"] .view-content {
+  padding-inline: var(--bc-row-inset);
 }
 
-/* The active ribbon glyph is marked by a tinted slab, not by recolouring the
-   glyph itself — one accented shape per region is enough. */
-.side-dock-ribbon-action.is-active {
-  background-color: var(--bc-select-bg);
-}
-
-/* Nav rows: a soft rounded slab, inset from the panel edge. */
+/* Nav rows: Notion's 27px slab. The height is set rather than left to the
+   text, so a row with an icon, a row with a chevron and a row with neither
+   are all the same height. */
 .tree-item-self {
+  min-height: var(--bc-row-height);
   border-radius: var(--nav-item-radius);
   transition: background-color var(--bc-speed) var(--bc-ease),
     color var(--bc-speed) var(--bc-ease);
@@ -1589,8 +1727,18 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   padding-bottom: var(--bc-gap-5);
 }
 
-body.bc-no-indent-guides {
-  --nav-indentation-guide-color: transparent;
+/* The pane's own action row lines up with the rows beneath it: same inset,
+   same left edge. */
+.nav-header {
+  padding-inline: var(--bc-row-inset);
+}
+
+.nav-header .nav-buttons-container {
+  gap: var(--bc-gap-1);
+}
+
+.tree-item-self.mod-collapsible .tree-item-inner {
+  font-weight: inherit;
 }
 
 /* Drop target while dragging a note into a folder. */
@@ -1606,10 +1754,9 @@ body.bc-no-indent-guides {
   font-size: var(--font-ui-smaller);
 }
 
-/* Containment. A pane that has been inset by a gap is narrower than before,
-   so every row in it needs somewhere to give. Without a min-width of zero a
-   flex child refuses to shrink below its content and the text runs under the
-   rounded corner instead of ellipsising. */
+/* Containment. Every row in a sidebar needs somewhere to give: without a
+   min-width of zero a flex child refuses to shrink below its content and the
+   text runs past the panel instead of ellipsising. */
 .workspace-leaf-content,
 .workspace-tabs,
 .view-content,
@@ -1636,8 +1783,7 @@ body.bc-no-indent-guides {
 
 /* Room at the foot of every scrolling pane. Without it the last item in a
    sidebar list sits underneath the status bar and is read as cut off — which
-   it is. Only the block end is padded: giving plugin panes horizontal padding
-   is how a theme breaks the ones that lay out their own. */
+   it is. Only the block end is padded. */
 .workspace-split.mod-left-split .view-content,
 .workspace-split.mod-right-split .view-content {
   padding-block-end: var(--bc-gap-6);
@@ -1648,83 +1794,128 @@ body.bc-no-indent-guides {
   scroll-padding-block-end: var(--bc-gap-5);
 }
 
-/* Vault name reads as a label, not a title. */
+/* Vault name reads as Notion's workspace switcher: a name, not a title. */
 .workspace-drawer-vault-name,
 .nav-header .vault-name {
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
-/* --- Root tabs ----------------------------------------------------------- */
+/* --- Root tabs -----------------------------------------------------------
+   Browser-shaped: the active tab is the page colour, bottom-flush against the
+   editor so the two are one surface. Inactive tabs are transparent on the
+   grey strip. */
 
 .workspace-split.mod-root .workspace-tab-header-container {
-  background-color: var(--background-secondary);
-  padding-inline: var(--bc-gap-2);
+  background-color: var(--tab-container-background);
+  height: var(--bc-topbar-height);
+  min-height: var(--bc-topbar-height);
+  align-items: flex-end;
+  padding-block: 0;
   gap: var(--bc-gap-1);
+  /* On a frameless window this row also holds the window controls, and
+     Obsidian reserves their width in --frame-*-space. Taking the larger of
+     that and the theme's own inset means the first tab never ends up under
+     the traffic lights, and the fallback keeps the rule working on the
+     builds that define neither. */
+  padding-inline-start: max(var(--bc-gap-3), var(--frame-left-space, 0px));
+  padding-inline-end: max(var(--bc-gap-3), var(--frame-right-space, 0px));
 }
 
 .workspace-split.mod-root .workspace-tab-header {
-  border-radius: var(--radius-m);
+  height: var(--bc-tab-height);
+  align-self: flex-end;
+  border-radius: var(--tab-radius) var(--tab-radius) 0 0;
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
 .workspace-split.mod-root .workspace-tab-header-inner {
   display: flex;
   align-items: center;
-  height: var(--bc-hit);
+  height: 100%;
   padding-block: 0;
   padding-inline: var(--bc-gap-3);
-  border-radius: var(--radius-m);
+  border-radius: inherit;
 }
 
 .workspace-split.mod-root .workspace-tab-header:not(.is-active):hover {
   background-color: var(--background-modifier-hover);
 }
 
+/* The row's icon-only controls stay centred in the band even though the tabs
+   beside them are aligned to its bottom edge. */
+.workspace-split.mod-root .workspace-tab-header-new-tab,
+.workspace-split.mod-root .workspace-tab-header-status-container {
+  align-self: center;
+}
+
+.workspace-tab-header-status-container {
+  padding-inline-end: var(--bc-gap-1);
+}
+
+/* Pill variant: a floating rounded tab, centred in the band. */
+body.bc-tabs-pill .workspace-split.mod-root .workspace-tab-header-container {
+  align-items: center;
+  padding-block: var(--bc-band-pad);
+}
+
+body.bc-tabs-pill .workspace-split.mod-root .workspace-tab-header {
+  height: var(--bc-hit);
+  align-self: center;
+  border-radius: var(--radius-l);
+}
+
 /* Underline variant: flat tabs with a hairline marker instead of a slab. */
+body.bc-tabs-underline .workspace-split.mod-root .workspace-tab-header {
+  border-radius: 0;
+}
+
 body.bc-tabs-underline
   .workspace-split.mod-root
   .workspace-tab-header.is-active {
   background-color: transparent;
-  box-shadow: inset 0 -2px 0 0 var(--bc-ac-500);
-  border-radius: 0;
+  box-shadow: inset 0 -2px 0 0 var(--text-normal);
 }
 
 .workspace-tab-header-new-tab {
   border-radius: var(--radius-m);
 }
 
-.workspace-tab-header-status-container {
-  padding-inline-end: var(--bc-gap-2);
-}
-
 /* --- View header ---------------------------------------------------------
-   Only the chrome is restyled here. Padding is left to Obsidian so a plugin
-   view that lays out its own header keeps working. */
+   Notion's page topbar: the title as a quiet breadcrumb on the left, actions
+   on the right, no rule beneath. Padding is left to Obsidian so a plugin view
+   that lays out its own header keeps working. */
 
 .view-header {
   background-color: transparent;
   border-bottom: none;
+  /* Set rather than added to, so the inset is the same whatever Obsidian's
+     own padding happens to be in the version underneath. */
+  padding-inline: var(--bc-gap-4);
+  gap: var(--bc-gap-1);
 }
 
 .view-header-title {
   font-size: var(--font-ui-medium);
   font-weight: var(--font-medium);
-  color: var(--text-muted);
+  color: var(--text-normal);
 }
 
 .view-header-icon,
 .view-action {
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
 }
 
 .view-header-breadcrumb {
+  color: var(--text-muted);
+}
+
+.view-header-breadcrumb-separator {
   color: var(--text-faint);
 }
 
 /* --- Status bar ----------------------------------------------------------
-   The status bar floats over the bottom of whatever pane is beneath it, so
-   panes reserve room for it rather than letting their last row be sliced in
-   half by it. The reserve lives on the panes, below. */
+   Notion has no status bar. This one keeps out of the way: no fill, no rule,
+   faint 12px text at the bottom right. */
 
 .status-bar {
   border-top: none;
@@ -1751,12 +1942,12 @@ body.bc-hide-statusbar .status-bar:hover {
   transition: background-color 120ms var(--bc-ease);
 }
 
-/* --- Scrollbars ---------------------------------------------------------- */
-/* Thumb only, no track, and it stays out of the way until the pane is used. */
+/* --- Scrollbars ----------------------------------------------------------
+   Thumb only, no track, and it stays out of the way until the pane is used. */
 
 ::-webkit-scrollbar {
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-corner {
@@ -1786,12 +1977,13 @@ body.bc-hide-statusbar .status-bar:hover {
    ========================================================================== */
 
 body {
+  /* Notion's embedded page: a bordered card, not a quote. */
   --embed-background: transparent;
-  --embed-border-left: 2px solid var(--bc-control-border);
-  --embed-border-right: none;
-  --embed-border-top: none;
-  --embed-border-bottom: none;
-  --embed-padding: 0 0 0 1.15em;
+  --embed-border-left: 1px solid var(--background-modifier-border);
+  --embed-border-right: 1px solid var(--background-modifier-border);
+  --embed-border-top: 1px solid var(--background-modifier-border);
+  --embed-border-bottom: 1px solid var(--background-modifier-border);
+  --embed-padding: var(--bc-gap-4) var(--bc-gap-5);
   --embed-font-style: inherit;
   --embed-block-shadow-hover: none;
 
@@ -1808,53 +2000,60 @@ body {
   --code-tag: var(--color-red);
   --code-value: var(--color-blue);
 
+  /* Notion sets inline code in red on a grey chip — the one place it spends
+     a colour inside body text. The Ink option below turns it off. */
+  --bc-code-inline-color: #eb5757;
+  --bc-code-inline-background: rgba(135, 131, 120, 0.15);
+
   --callout-border-width: 0px;
   --callout-border-opacity: 0.2;
-  --callout-padding: var(--bc-gap-4) var(--bc-gap-5);
+  --callout-padding: var(--bc-gap-5);
   --callout-blend-mode: normal;
-  --callout-title-color: inherit;
+  --callout-title-color: var(--text-normal);
   --callout-title-padding: 0;
   --callout-title-size: inherit;
   --callout-title-weight: var(--font-semibold);
   --callout-content-padding: 0;
   --callout-content-background: transparent;
 
+  /* Notion's table is a full grid: every cell bordered, the header row on the
+     chrome tone. */
   --table-background: transparent;
   --table-border-width: 1px;
-  --table-border-color: var(--background-modifier-border);
+  --table-border-color: var(--background-modifier-border-hover);
   --table-white-space: normal;
-  --table-header-background: transparent;
+  --table-header-background: var(--background-secondary);
   --table-header-background-hover: var(--background-modifier-hover);
   --table-header-border-width: 1px;
   --table-header-border-color: var(--background-modifier-border-hover);
   --table-row-background-hover: var(--background-modifier-hover);
   --table-row-alt-background: transparent;
-  --table-row-last-border-width: 0px;
+  --table-row-last-border-width: 1px;
   --table-selection: var(--bc-ac-a10);
   --table-selection-border-color: var(--bc-ac-500);
-  --table-column-first-border-width: 0px;
-  --table-column-last-border-width: 0px;
+  --table-column-first-border-width: 1px;
+  --table-column-last-border-width: 1px;
   --table-drag-handle-background-active: var(--bc-select-bg);
   --table-drag-handle-color-active: var(--bc-select-fg);
 
   --metadata-background: transparent;
   --metadata-divider-color: var(--background-modifier-border);
-  --metadata-gap: var(--bc-gap-2);
+  --metadata-gap: var(--bc-gap-1);
   --metadata-padding: var(--bc-gap-3) 0;
   --metadata-property-padding: var(--bc-gap-1) 0;
-  --metadata-property-radius: var(--radius-s);
+  --metadata-property-radius: var(--radius-m);
   --metadata-property-background-hover: var(--background-modifier-hover);
   --metadata-label-background-hover: transparent;
   --metadata-label-font-size: var(--font-ui-small);
   --metadata-label-font-weight: var(--font-normal);
-  --metadata-label-text-color: var(--text-faint);
+  --metadata-label-text-color: var(--text-muted);
   --metadata-input-text-color: var(--text-normal);
   --metadata-input-font-size: var(--font-ui-small);
   --metadata-input-background: transparent;
   --metadata-input-background-hover: var(--background-modifier-hover);
   --metadata-input-background-active: var(--background-modifier-form-field);
-  --metadata-sidebar-label-color: var(--text-faint);
-  --metadata-sidebar-value-color: var(--text-muted);
+  --metadata-sidebar-label-color: var(--text-muted);
+  --metadata-sidebar-value-color: var(--text-normal);
 
   --indentation-guide-width: 1px;
   --indentation-guide-width-active: 1px;
@@ -1862,13 +2061,23 @@ body {
   --indentation-guide-color-active: var(--background-modifier-border-hover);
 }
 
+.theme-dark {
+  --bc-code-inline-color: #ff7369;
+  --bc-code-inline-background: rgba(135, 131, 120, 0.15);
+}
+
+body.bc-code-ink {
+  --bc-code-inline-color: var(--text-normal);
+}
+
 /* --- Code ---------------------------------------------------------------- */
 
 .markdown-rendered code,
 .cm-s-obsidian .cm-inline-code {
-  background-color: var(--bc-surface-sunken);
+  color: var(--bc-code-inline-color);
+  background-color: var(--bc-code-inline-background);
   border-radius: var(--radius-s);
-  padding: 0.12em 0.34em;
+  padding: 0.2em 0.4em;
   font-size: var(--code-size);
 }
 
@@ -1881,11 +2090,14 @@ body {
 .markdown-rendered pre {
   padding: var(--bc-gap-4) var(--bc-gap-5);
   border-radius: var(--code-radius);
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
+/* A block of code is not inline code: it takes the block's own colour and
+   fill, not the red chip. */
 .markdown-rendered pre > code {
   background: none;
+  color: var(--code-normal);
   padding: 0;
   font-size: 1em;
 }
@@ -1904,21 +2116,22 @@ body {
 
 .markdown-rendered .copy-code-button,
 .markdown-rendered pre:hover .copy-code-button {
-  background-color: var(--background-modifier-hover);
+  background-color: var(--bc-surface-raised);
   color: var(--text-muted);
   border: none;
-  border-radius: var(--radius-s);
+  box-shadow: var(--shadow-s);
+  border-radius: var(--radius-m);
   font-size: var(--font-ui-smaller);
 }
 
-/* --- Callouts ------------------------------------------------------------ */
-/* Soft fill by default: no border, low-alpha wash of the callout's own hue,
-   title in that hue, body in normal text. */
+/* --- Callouts ------------------------------------------------------------
+   Notion's callout: a solid tinted block with a 4px corner, an icon in the
+   block's colour and every word of text in ordinary ink. The tint is mixed in
+   oklab rather than composited as an alpha, because a 12% alpha of a dark
+   blue over white turns grey while the same amount of blue mixed perceptually
+   stays blue — which is what makes a set of callouts read as a family instead
+   of as smudges. */
 
-/* Mixing in oklab rather than compositing an alpha keeps the wash chromatic.
-   A 7% alpha of a dark blue over warm paper turns grey; the same amount of
-   blue mixed perceptually stays blue, which is what makes a set of callouts
-   read as a family instead of as smudges. */
 .callout {
   background-color: color-mix(
     in oklab,
@@ -1929,10 +2142,18 @@ body {
   border-radius: var(--callout-radius);
 }
 
+.theme-dark .callout {
+  background-color: color-mix(
+    in oklab,
+    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.8),
+    var(--background-primary)
+  );
+}
+
 .callout-title {
-  color: rgb(var(--callout-color));
-  align-items: center;
-  gap: var(--bc-gap-2);
+  color: var(--callout-title-color);
+  align-items: flex-start;
+  gap: var(--bc-gap-3);
 }
 
 .callout-icon {
@@ -1952,19 +2173,11 @@ body {
   margin-bottom: 0;
 }
 
-.theme-dark .callout {
-  background-color: color-mix(
-    in oklab,
-    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.3),
-    var(--background-primary)
-  );
-}
-
 /* Left-rule variant: no fill, one coloured hairline. */
 body.bc-callout-rule .callout {
   background-color: transparent;
   border-radius: 0;
-  border-inline-start: 2px solid rgb(var(--callout-color));
+  border-inline-start: 3px solid rgb(var(--callout-color));
   padding-inline: var(--bc-gap-4);
 }
 
@@ -1972,7 +2185,6 @@ body.bc-callout-rule .callout {
 
 input[type="checkbox"] {
   border-radius: var(--checkbox-radius);
-  border-width: 1.5px;
   transition: background-color var(--bc-speed) var(--bc-ease),
     border-color var(--bc-speed) var(--bc-ease);
 }
@@ -1990,30 +2202,31 @@ body.bc-no-fade-done {
   transition: color var(--bc-speed) var(--bc-ease);
 }
 
-/* --- Tables -------------------------------------------------------------- */
+/* --- Tables --------------------------------------------------------------
+   Notion's grid, with the header row on the chrome tone. */
 
 .markdown-rendered table {
   border-collapse: collapse;
+  border: 1px solid var(--table-border-color);
+  border-radius: var(--radius-s);
 }
 
 .markdown-rendered th,
 .markdown-rendered td {
   /* `start`, not `left`: a right-to-left table aligns itself. */
   text-align: start;
+  border: 1px solid var(--table-border-color);
 }
 
 .markdown-rendered th {
+  background-color: var(--table-header-background);
   text-transform: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .markdown-rendered td,
 .markdown-rendered th {
-  padding: var(--bc-gap-2) var(--bc-gap-4);
-}
-
-.markdown-rendered tr:last-child td {
-  border-bottom: none;
+  padding: var(--bc-gap-2) var(--bc-gap-3);
 }
 
 /* --- Lists --------------------------------------------------------------- */
@@ -2023,7 +2236,7 @@ body.bc-no-fade-done {
 }
 
 .markdown-rendered ol > li::marker {
-  color: var(--text-muted);
+  color: var(--text-normal);
   font-variant-numeric: tabular-nums;
 }
 
@@ -2032,7 +2245,7 @@ body.bc-no-fade-done {
 .markdown-rendered hr {
   border: none;
   border-top: var(--hr-thickness) solid var(--hr-color);
-  margin-block: 2em;
+  margin-block: 1.5em;
 }
 
 /* --- Properties / frontmatter -------------------------------------------- */
@@ -2048,28 +2261,26 @@ body.bc-no-fade-done {
 }
 
 .metadata-add-button {
-  color: var(--text-faint);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
 }
 
 /* --- Embeds and images --------------------------------------------------- */
 
 .markdown-rendered img,
 .markdown-rendered video {
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
 }
 
 .markdown-embed-title {
   font-weight: var(--font-medium);
-  color: var(--text-muted);
+  color: var(--text-normal);
 }
 
 .internal-embed .markdown-embed {
   margin-inline-start: 0;
-  border-left: none;
-  border-right: none;
-  border-inline-start: var(--embed-border-left);
-  padding: 0;
-  padding-inline-start: 1.15em;
+  border-radius: var(--radius-m);
+  padding: var(--embed-padding);
 }
 
 /* --- Selection ----------------------------------------------------------- */
@@ -2104,7 +2315,7 @@ body.bc-active-line .cm-editor .cm-active.cm-line {
 /* --- Footnotes and small print ------------------------------------------- */
 
 .markdown-rendered .footnotes {
-  font-size: 0.88em;
+  font-size: 0.875em;
   color: var(--text-muted);
   border-top: 1px solid var(--background-modifier-border);
   margin-top: 3em;
@@ -2117,70 +2328,80 @@ body.bc-active-line .cm-editor .cm-active.cm-line {
 
 /* ==========================================================================
    COMPONENTS
-   Everything that floats. This is the only place shadows are allowed.
+   Everything that floats, and every control that isn't an icon.
+
+   Notion builds its controls out of inset box-shadows rather than borders, so
+   a focused input never gains a pixel and never nudges its neighbours. That
+   technique is used here too: `border: none` plus an inset ring.
    ========================================================================== */
 
 body {
   --modal-background: var(--bc-surface-raised);
-  --modal-border-width: 1px;
-  --modal-border-color: var(--background-modifier-border);
-  --modal-max-height: 82vh;
+  --modal-border-width: 0px;
+  --modal-border-color: transparent;
+  --modal-max-height: 85vh;
   --modal-community-sidebar-width: 240px;
 
-  --prompt-border-width: 1px;
-  --prompt-border-color: var(--background-modifier-border);
-  --prompt-width: 660px;
+  --prompt-border-width: 0px;
+  --prompt-border-color: transparent;
+  --prompt-width: 600px;
   --prompt-max-width: 88vw;
 
-  --input-height: 32px;
+  /* Notion's control height. Inputs, dropdowns and text buttons all sit on
+     it, so a row of mixed controls lines up without per-control nudging. */
+  --bc-control-height: 32px;
+  --input-height: var(--bc-control-height);
   --input-font-weight: var(--font-normal);
-  --input-border-width: 1px;
+  --input-border-width: 0px;
 
   --popover-width: 420px;
   --popover-height: 340px;
-  --popover-font-size: 0.92em;
+  --popover-font-size: 0.94em;
   --popover-max-height: 60vh;
 
-  --menu-radius: var(--radius-l);
   --menu-padding: var(--bc-gap-2);
-  --menu-item-radius: var(--radius-s);
+  --menu-item-radius: var(--radius-m);
 
   --search-result-background: transparent;
   --search-clear-button-color: var(--text-faint);
 }
 
-/* --- Modals -------------------------------------------------------------- */
-
-/* Radius and shadow only. Padding stays Obsidian's, because plugin modals
-   lay out their own content inside this box and a theme that repads it
+/* --- Modals --------------------------------------------------------------
+   Radius and shadow only. Padding stays Obsidian's, because plugin modals lay
+   out their own content inside this box and a theme that repads it
    double-pads some and crops others. */
-.modal {
+
+.modal,
+.modal.mod-settings {
   border-radius: var(--modal-radius);
+  border: none;
   box-shadow: var(--shadow-l);
 }
 
 .modal-bg {
-  backdrop-filter: blur(2px);
-  background-color: rgba(var(--mono-rgb-100), 0.24);
+  background-color: rgba(15, 15, 15, 0.45);
+  backdrop-filter: none;
 }
 
 .theme-dark .modal-bg {
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(15, 15, 15, 0.6);
 }
 
 .modal-title {
   font-size: 1.15em;
   font-weight: var(--font-semibold);
+  letter-spacing: -0.01em;
 }
 
 .modal-close-button {
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
 }
 
 /* --- Command palette and quick switcher ---------------------------------- */
 
 .prompt {
   border-radius: var(--modal-radius);
+  border: none;
   box-shadow: var(--shadow-l);
   background-color: var(--bc-surface-raised);
 }
@@ -2191,6 +2412,7 @@ body {
   font-size: 1.05em;
   border: none;
   background: transparent;
+  box-shadow: none;
 }
 
 .prompt .prompt-input:focus {
@@ -2205,14 +2427,15 @@ body {
 }
 
 .suggestion-container {
-  border-radius: var(--radius-l);
+  border-radius: var(--menu-radius);
+  border: none;
   box-shadow: var(--shadow-l);
-  border: 1px solid var(--background-modifier-border);
   background-color: var(--bc-surface-raised);
 }
 
 .suggestion-item {
   border-radius: var(--radius-m);
+  font-size: var(--font-ui-small);
 }
 
 .suggestion-item.is-selected {
@@ -2222,8 +2445,7 @@ body {
 
 .suggestion-item.is-selected .suggestion-note,
 .suggestion-item.is-selected .suggestion-aux {
-  color: inherit;
-  opacity: 0.75;
+  color: var(--text-faint);
 }
 
 .suggestion-hotkey,
@@ -2232,22 +2454,26 @@ body {
 }
 
 .suggestion-highlight {
-  color: var(--text-accent);
+  color: var(--text-normal);
   font-weight: var(--font-semibold);
   text-decoration: none;
 }
 
-/* --- Menus --------------------------------------------------------------- */
+/* --- Menus ---------------------------------------------------------------
+   A 6px card with a 1px ring baked into the shadow, 4px of padding, and rows
+   that highlight inside that padding rather than bleeding to the edge. */
 
 .menu {
   border-radius: var(--menu-radius);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   box-shadow: var(--shadow-l);
   background-color: var(--bc-surface-raised);
 }
 
 .menu-item {
   border-radius: var(--menu-item-radius);
+  font-size: var(--font-ui-small);
+  min-height: var(--bc-hit);
 }
 
 .menu-item:not(.is-disabled):hover,
@@ -2262,7 +2488,7 @@ body {
 
 .menu-separator {
   border-top: 1px solid var(--background-modifier-border);
-  margin-block: var(--bc-gap-1);
+  margin-block: var(--bc-gap-2);
 }
 
 .menu-item-icon {
@@ -2272,14 +2498,14 @@ body {
 /* --- Popovers ------------------------------------------------------------ */
 
 .popover.hover-popover {
-  border-radius: var(--radius-l);
-  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-xl);
+  border: none;
   box-shadow: var(--shadow-l);
   overflow: hidden;
 }
 
 .tooltip {
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
   font-size: var(--font-ui-smaller);
   box-shadow: var(--shadow-s);
 }
@@ -2288,22 +2514,35 @@ body {
   display: none;
 }
 
-/* --- Inputs and buttons -------------------------------------------------- */
+/* --- Inputs --------------------------------------------------------------
+   Notion's field: a faint fill, a 1px inset ring, a 4px corner, and a two-ring
+   focus state — the inner ring tightens to the accent, the outer one glows. */
 
 input[type="text"],
 input[type="search"],
 input[type="email"],
 input[type="password"],
 input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
 textarea,
 select,
 .dropdown {
+  height: var(--bc-control-height);
+  padding-inline: var(--bc-gap-3);
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
   border-radius: var(--input-radius);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   background-color: var(--background-modifier-form-field);
-  box-shadow: none;
-  transition: border-color var(--bc-speed) var(--bc-ease),
-    box-shadow var(--bc-speed) var(--bc-ease);
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
+  transition: box-shadow var(--bc-speed) var(--bc-ease);
+}
+
+textarea {
+  height: auto;
+  padding-block: var(--bc-gap-3);
+  line-height: var(--line-height-normal);
 }
 
 input[type="text"]:focus,
@@ -2314,43 +2553,76 @@ input[type="number"]:focus,
 textarea:focus,
 select:focus,
 .dropdown:focus {
-  border-color: var(--bc-ac-500);
-  box-shadow: 0 0 0 3px var(--bc-ac-a16);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500), 0 0 0 2px var(--bc-ac-a24);
   outline: none;
 }
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+/* --- Buttons -------------------------------------------------------------
+   Two shapes only: a filled accent button and a quiet outlined one. Icon-only
+   buttons are excluded here rather than un-styled later, because `:not()`
+   chains outrank almost anything a later rule could reasonably use and the
+   fix has to hold without a specificity arms race. */
 
 button,
 .clickable-icon {
   border-radius: var(--button-radius);
   box-shadow: none;
+  font-family: inherit;
   transition: background-color var(--bc-speed) var(--bc-ease),
+    box-shadow var(--bc-speed) var(--bc-ease),
     color var(--bc-speed) var(--bc-ease);
 }
 
-/* Only buttons that carry a text label get the box. A button whose whole
-   content is an icon is excluded here rather than un-styled later, because
-   `:not()` chains outrank almost anything a later rule could reasonably use
-   and the fix has to hold without a specificity arms race. */
-button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)) {
-  background-color: var(--background-modifier-form-field);
-  border: 1px solid var(--background-modifier-border);
+button:not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
+  height: var(--bc-control-height);
+  padding: 0 var(--bc-gap-4);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
+  background-color: transparent;
+  border: none;
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
   color: var(--text-normal);
 }
 
-button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):hover {
+button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)):hover {
   background-color: var(--background-modifier-hover);
-  border-color: var(--background-modifier-border-hover);
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
 }
 
 button.mod-cta {
   background-color: var(--interactive-accent);
   color: var(--text-on-accent);
   border: none;
+  box-shadow: none;
   font-weight: var(--font-medium);
 }
 
 button.mod-cta:hover {
   background-color: var(--interactive-accent-hover);
+}
+
+button.mod-warning {
+  background-color: var(--text-error);
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+  font-weight: var(--font-medium);
+}
+
+button:disabled,
+button.mod-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .clickable-icon:hover {
@@ -2359,33 +2631,59 @@ button.mod-cta:hover {
 }
 
 .clickable-icon.is-active {
-  background-color: var(--bc-select-bg);
-  color: var(--bc-select-fg);
+  background-color: var(--bc-select-bg-strong);
+  color: var(--text-normal);
 }
 
 /* Keyboard focus must always be visible, including on custom controls. */
 :focus-visible {
   outline: 2px solid var(--bc-ac-500);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
+/* --- Toggles -------------------------------------------------------------
+   Notion's switch is 26×16 with a 12px thumb. Obsidian's is half again as
+   big, so the size, the thumb and the travel are all restated here — moving
+   one without the other two is what leaves a thumb hanging off its track. */
+
 .checkbox-container {
-  border-radius: 2em;
+  width: 26px;
+  height: 16px;
+  border-radius: var(--toggle-radius);
+  background-color: var(--background-modifier-border-hover);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.checkbox-container::after {
+  width: 12px;
+  height: 12px;
+  top: 2px;
+  left: 2px;
+  box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
 .checkbox-container.is-enabled {
   background-color: var(--interactive-accent);
 }
 
-/* --- Notices ------------------------------------------------------------- */
+.checkbox-container.is-enabled::after {
+  transform: translate3d(10px, 0, 0);
+}
+
+/* --- Notices -------------------------------------------------------------
+   Notion's toast: a dark pill in the corner, the same in both themes. */
 
 .notice {
   border-radius: var(--radius-l);
   box-shadow: var(--shadow-l);
-  border: 1px solid var(--background-modifier-border);
-  background-color: var(--bc-surface-raised);
-  color: var(--text-normal);
+  border: none;
+  background-color: var(--background-modifier-message);
+  color: #ffffff;
   font-size: var(--font-ui-small);
+}
+
+.notice .notice-close {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* --- Settings ------------------------------------------------------------ */
@@ -2398,11 +2696,19 @@ button.mod-cta:hover {
 .modal.mod-settings .vertical-tab-nav-item {
   border-radius: var(--radius-m);
   margin-inline: var(--bc-gap-2);
+  padding-block: var(--bc-gap-2);
   border: none;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.modal.mod-settings .vertical-tab-nav-item:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
 }
 
 .modal.mod-settings .vertical-tab-nav-item.is-active {
-  background-color: var(--bc-select-bg);
+  background-color: var(--bc-select-bg-strong);
   color: var(--bc-select-fg);
   font-weight: var(--font-medium);
 }
@@ -2412,16 +2718,18 @@ button.mod-cta:hover {
 }
 
 .setting-item-name {
+  font-size: var(--font-ui-small);
   font-weight: var(--font-medium);
+  color: var(--text-normal);
 }
 
 .setting-item-description {
   color: var(--text-muted);
-  font-size: var(--font-ui-small);
+  font-size: var(--font-ui-smaller);
 }
 
 .setting-item-heading .setting-item-name {
-  font-size: 1.05em;
+  font-size: var(--font-ui-large);
   font-weight: var(--font-semibold);
 }
 
@@ -2461,8 +2769,12 @@ body {
 
 /* --- Search -------------------------------------------------------------- */
 
+/* Notion's search field: full-width, quiet, and the same height as every
+   other control in the app. */
 .search-input-container input {
   border-radius: var(--input-radius);
+  height: var(--bc-control-height);
+  font-size: var(--font-ui-small);
 }
 
 .search-result-file-title {
@@ -2489,7 +2801,7 @@ body {
 }
 
 .search-result-file-matched-text {
-  background-color: var(--bc-ac-a24);
+  background-color: var(--text-highlight-bg);
   color: var(--text-normal);
   border-radius: 2px;
   padding: 0 1px;
@@ -2523,9 +2835,9 @@ body {
 
 .graph-controls {
   border-radius: var(--radius-l);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   background-color: var(--bc-surface-raised);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-l);
   padding: var(--bc-gap-3);
 }
 
@@ -2548,20 +2860,32 @@ body {
 .canvas-card-menu,
 .canvas-control-group {
   border-radius: var(--radius-l);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   background-color: var(--bc-surface-raised);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-l);
 }
 
 .canvas-control-item {
   border-radius: var(--radius-s);
 }
 
-/* --- Bases / table views -------------------------------------------------- */
+/* --- Bases / table views --------------------------------------------------
+   Obsidian's database view is the closest thing it has to a Notion table, so
+   it gets Notion's grid: hairlines on every cell and a header on the chrome
+   tone. */
 
 .bases-toolbar,
 .bases-table-container {
   border-radius: var(--radius-m);
+}
+
+.bases-table-header-cell,
+.bases-tr .bases-td {
+  border-color: var(--table-border-color);
+}
+
+.bases-table-header {
+  background-color: var(--table-header-background);
 }
 
 .bases-table-header-cell {
@@ -2605,30 +2929,32 @@ body {
 
 /* ==========================================================================
    ICONS
-   Obsidian ships Lucide, which is drawn on a 24-unit grid with a 2px stroke.
-   Scale that artwork down without adjusting the stroke and it goes spindly;
-   scale it up and it goes clumsy. So stroke weight is defined per size, not
-   once globally.
+   Obsidian ships Lucide, drawn on a 24-unit grid with a 2px stroke. Scale
+   that artwork down without adjusting the stroke and it goes spindly; scale
+   it up and it goes clumsy — a 2px stroke rendered at 14px is 1.17px on
+   screen, at 28px it is 2.33px. So stroke weight is defined per size, tuned
+   to land at a constant ~1.4px on screen, which is what puts Lucide's outline
+   artwork at the visual weight of Notion's solid set.
    ========================================================================== */
 
 body {
   --bc-icon-scale: 1;
 
-  --icon-xs: calc(13px * var(--bc-icon-scale));
-  --icon-s: calc(15px * var(--bc-icon-scale));
-  --icon-m: calc(17px * var(--bc-icon-scale));
+  --icon-xs: calc(14px * var(--bc-icon-scale));
+  --icon-s: calc(16px * var(--bc-icon-scale));
+  --icon-m: calc(18px * var(--bc-icon-scale));
   --icon-l: calc(20px * var(--bc-icon-scale));
   --icon-xl: calc(28px * var(--bc-icon-scale));
 
   --bc-icon-weight: 1;
-  --icon-xs-stroke-width: calc(2.1px * var(--bc-icon-weight));
-  --icon-s-stroke-width: calc(1.95px * var(--bc-icon-weight));
-  --icon-m-stroke-width: calc(1.8px * var(--bc-icon-weight));
-  --icon-l-stroke-width: calc(1.7px * var(--bc-icon-weight));
+  --icon-xs-stroke-width: calc(2.3px * var(--bc-icon-weight));
+  --icon-s-stroke-width: calc(2.15px * var(--bc-icon-weight));
+  --icon-m-stroke-width: calc(1.9px * var(--bc-icon-weight));
+  --icon-l-stroke-width: calc(1.75px * var(--bc-icon-weight));
   --icon-xl-stroke-width: calc(1.4px * var(--bc-icon-weight));
 
-  --icon-size: var(--icon-m);
-  --icon-stroke: var(--icon-m-stroke-width);
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
 }
 
 /* Every icon that sits at a given size gets that size's stroke. Without this
@@ -2650,14 +2976,17 @@ body {
   --icon-stroke: var(--icon-xs-stroke-width);
 }
 
-/* Panel actions: nav header buttons, view actions, tab bar. Sidebar buttons
-   sit one step down from the main toolbar so they don't shout over the
-   filenames they sit above. */
+/* Panel actions: nav header buttons, view actions, tab bar, menu rows. Notion
+   runs all of these at 16px. */
 .nav-buttons-container .clickable-icon .svg-icon,
 .nav-action-button .svg-icon,
 .workspace-tab-header-inner-icon .svg-icon,
+.workspace-tab-header-inner-close-button .svg-icon,
 .view-action .svg-icon,
+.view-header-icon .svg-icon,
 .workspace-tab-header-new-tab .svg-icon,
+.workspace-tab-header-status-container .svg-icon,
+.sidebar-toggle-button .svg-icon,
 .menu-item-icon .svg-icon,
 .callout-icon .svg-icon {
   --icon-size: var(--icon-s);
@@ -2667,17 +2996,21 @@ body {
 /* A callout title is set at 600; a hairline icon beside it looks unfinished.
    The icon is nudged one notch heavier to match the text it labels. */
 .callout-icon .svg-icon {
-  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.12);
+  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.1);
 }
 
 .callout-title {
-  gap: var(--bc-gap-2);
+  gap: var(--bc-gap-3);
 }
 
 .callout-icon {
   display: flex;
   align-items: center;
-  align-self: center;
+  align-self: flex-start;
+  /* Optically centred on the first line of the title rather than on the
+     title box, which is what keeps a two-line callout title from dragging
+     its icon down the block. */
+  margin-block-start: 0.1em;
 }
 
 /* Ribbon glyphs are the largest persistent icons in the app, so they take the
@@ -2689,11 +3022,11 @@ body {
 
 /* --- Icon buttons --------------------------------------------------------
    Plugins build their pane headers out of real <button> elements wrapping an
-   icon. The generic button treatment gives each one a fill and a border, and
-   in a narrow sidebar header those boxes take every spare pixel from the
-   label beside them — Notebook Navigator's folder name collapses to a single
-   letter and an ellipsis. Icon buttons opt out of the box and stay flat, so
-   the text next to them keeps its width. */
+   icon. The generic button treatment gives each one a fill and a ring, and in
+   a narrow sidebar header those boxes take every spare pixel from the label
+   beside them — Notebook Navigator's folder name collapses to a single letter
+   and an ellipsis. Icon buttons opt out of the box and stay flat, so the text
+   next to them keeps its width. */
 button.clickable-icon,
 button:has(> svg),
 button:has(> .svg-icon),
@@ -2737,11 +3070,12 @@ button:has(> .svg-icon):hover,
 .view-actions button:hover {
   background-color: var(--background-modifier-hover);
   border: none;
+  box-shadow: none;
   color: var(--icon-color-hover);
 }
 
-/* An icon never grows to push a sibling label out of the pane, and a label
-   is always allowed to shrink before it is allowed to overflow. */
+/* An icon never grows to push a sibling label out of the pane, and a label is
+   always allowed to shrink before it is allowed to overflow. */
 .clickable-icon,
 .nav-action-button,
 .side-dock-ribbon-action {
@@ -2755,8 +3089,8 @@ button:has(> .svg-icon):hover,
 }
 
 /* Pointer targets are Obsidian's business on a mouse. Forcing a minimum
-   square here is what widened every button in a dense plugin toolbar in the
-   first place; touch sizing is handled in the mobile layer instead. */
+   square here is what widens every button in a dense plugin toolbar; touch
+   sizing is handled in the mobile layer instead. */
 
 .collapse-icon {
   display: flex;
@@ -2766,17 +3100,18 @@ button:has(> .svg-icon):hover,
 }
 
 /* --- Checkboxes ----------------------------------------------------------
-   The tick is Lucide's check, drawn at a weight that reads at 16px. The mask
-   is written out here rather than inherited so the theme controls the shape,
-   the optical centring and the amount of the box it fills. */
+   Notion's checkbox: a 16px box with a 3px corner, filled with the accent and
+   marked with a white tick. The mask is written out here rather than
+   inherited so the theme controls the shape, the optical centring and the
+   amount of the box it fills. */
 
 body {
-  --checkbox-size: calc(1.05em * var(--bc-icon-scale));
+  --checkbox-size: calc(1em * var(--bc-icon-scale));
   --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
 }
 
 input[type="checkbox"] {
-  border-width: 1.5px;
+  border-width: 1px;
   border-color: var(--checkbox-border-color);
 }
 
@@ -2817,50 +3152,28 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
 
 /* ==========================================================================
    PANES
-   Every region of the app — ribbon, both sidebars, the editor — sits as its
-   own surface on a deeper backdrop, with an even gap between them. The gap is
-   only legible if the backdrop is darker than the panes, so the two are
-   defined together: change one and the other has to move with it.
+   Notion's layout is flush: a warm-grey sidebar meeting a white page, with
+   no gap, no card and no drawn line between them. That is the default here.
+
+   The floating layout — every region as its own rounded surface on a darker
+   backdrop — is kept as an option, because it is the one piece of the old
+   theme worth keeping and it costs nothing to leave in.
    ========================================================================== */
-
-/* Overridable in Style Settings. Keep it darker than --background-secondary
-   or the gaps stop reading as gaps. */
-.theme-light {
-  --bc-backdrop: #ebe9e2;
-}
-
-.theme-dark {
-  --bc-backdrop: #101010;
-}
 
 .app-container,
 .horizontal-main-container,
 .workspace {
-  background-color: var(--bc-backdrop);
+  background-color: var(--background-secondary);
 }
 
-/* Gap on the container rather than margins on the children, so the space
-   between two panes is the same as the space at the window edge instead of
-   double it. */
-.workspace {
-  padding: var(--bc-pane-gap);
-  gap: var(--bc-pane-gap);
-}
-
-/* The ribbon is part of the frame, not a pane: it stays on the backdrop. */
+/* The ribbon is dissolved into the sidebar: same tone, no seam. */
 .workspace-ribbon {
   background-color: transparent;
 }
 
-/* Sidebars ---------------------------------------------------------------
-   The rounded surface is painted on the split itself and the children are
-   made transparent, so the corners survive without `overflow: hidden`.
-   Clipping here would swallow anything a sidebar plugin renders past its own
-   edge. */
 .workspace-split.mod-left-split,
 .workspace-split.mod-right-split {
   background-color: var(--background-secondary);
-  border-radius: var(--bc-pane-radius);
   border: none;
   box-shadow: none;
 }
@@ -2870,84 +3183,124 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
 .workspace-split.mod-left-split .workspace-leaf-content,
 .workspace-split.mod-right-split .workspace-leaf-content,
 .workspace-split.mod-left-split .workspace-tab-header-container,
-.workspace-split.mod-right-split .workspace-tab-header-container {
-  background-color: transparent;
-}
-
-/* A sidebar can hold two stacked leaves; only the outer corners round. */
+.workspace-split.mod-right-split .workspace-tab-header-container,
 .workspace-split.mod-left-split .workspace-leaf,
 .workspace-split.mod-right-split .workspace-leaf {
   background-color: transparent;
 }
 
-/* Editor ------------------------------------------------------------------
-   Corners are applied to the pane and its two end pieces, again without
-   clipping. The tab strip keeps the secondary tone, so the pane reads as one
-   card with a header rather than as two stacked bands. */
+/* The page. The tab strip keeps the chrome tone and the leaf below it is the
+   page colour, so the active tab and the page read as one surface. */
 .workspace-split.mod-root .workspace-tabs {
-  border-radius: var(--bc-pane-radius);
   background-color: var(--tab-container-background);
 }
 
+.workspace-split.mod-root .workspace-leaf-content {
+  background-color: var(--background-primary);
+}
+
+/* Split editor panes: a hairline between them, never a gap. */
 .workspace-split.mod-root .workspace-split {
-  gap: var(--bc-pane-gap);
   background-color: transparent;
 }
 
-/* Split editor panes get the same gap between them as everything else. */
-.workspace-split.mod-root .workspace-leaf-resize-handle {
-  background-color: transparent;
-}
-
-body.bc-borders .workspace-split.mod-left-split,
-body.bc-borders .workspace-split.mod-right-split,
-body.bc-borders .workspace-split.mod-root .workspace-tabs {
-  box-shadow: 0 0 0 1px var(--background-modifier-border);
-}
-
-/* Status bar sits on the backdrop below the panes. */
 .status-bar {
   background-color: transparent;
 }
 
-/* Flush option ------------------------------------------------------------
-   Returns to Obsidian's edge-to-edge layout for anyone who wants the density
-   back. */
-body.bc-flush-panes .workspace {
-  padding: 0;
-  gap: 0;
+/* Optional hairlines, for anyone who wants the regions drawn rather than
+   toned. */
+body.bc-borders .workspace-split.mod-left-split {
+  box-shadow: inset -1px 0 0 0 var(--background-modifier-border);
 }
 
-body.bc-flush-panes .workspace-split.mod-left-split,
-body.bc-flush-panes .workspace-split.mod-right-split,
-body.bc-flush-panes .workspace-split.mod-root .workspace-tabs,
-body.bc-flush-panes .workspace-split.mod-root .workspace-tab-header-container,
-body.bc-flush-panes .workspace-split.mod-root .workspace-leaf-content {
-  border-radius: 0;
+body.bc-borders .workspace-split.mod-right-split {
+  box-shadow: inset 1px 0 0 0 var(--background-modifier-border);
 }
 
-body.bc-flush-panes .workspace-ribbon {
-  background-color: var(--background-secondary);
+body.bc-borders .workspace-split.mod-root .workspace-tab-header-container {
+  box-shadow: inset 0 -1px 0 0 var(--background-modifier-border);
 }
 
-body.bc-flush-panes .app-container,
-body.bc-flush-panes .horizontal-main-container,
-body.bc-flush-panes .workspace {
-  background-color: var(--background-secondary);
+/* Floating layout ---------------------------------------------------------
+   Every region becomes its own rounded surface on a backdrop that has to stay
+   darker than the panes, or the gaps stop reading as gaps. Pane geometry and
+   backdrop are defined together: change one and the other has to move with
+   it. Corners go on the pane and its two end pieces rather than on a clipping
+   container — `overflow: hidden` here would swallow anything a plugin renders
+   past its own bounds. */
+
+.theme-light {
+  --bc-backdrop: #ebebea;
+}
+
+.theme-dark {
+  --bc-backdrop: #131313;
+}
+
+body.bc-float-panes .app-container,
+body.bc-float-panes .horizontal-main-container,
+body.bc-float-panes .workspace {
+  background-color: var(--bc-backdrop);
+}
+
+/* Gap on the container rather than margins on the children, so the space
+   between two panes is the same as the space at the window edge instead of
+   double it. */
+body.bc-float-panes .workspace {
+  padding: var(--bc-pane-gap);
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split,
+body.bc-float-panes .workspace-split.mod-right-split,
+body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes
+  .workspace-split.mod-root
+  .workspace-tab-header-container {
+  border-start-start-radius: var(--bc-pane-radius);
+  border-start-end-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-split {
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-resize-handle {
+  background-color: transparent;
+}
+
+body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
+body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
+body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
+  box-shadow: 0 0 0 1px var(--background-modifier-border);
 }
 
 /* ==========================================================================
    MOBILE
    Bigger targets, no hover-dependent affordances, safe areas respected.
+   Notion's phone app keeps the same 4px geometry for controls and reserves
+   the large corners for sheets, which is what this does.
    ========================================================================== */
 
 body.is-mobile {
-  --bc-density: 1.25;
+  --bc-density: 1.2;
+  --bc-row-base: 30px;
   --nav-item-size: 15px;
-  --font-ui-small: 14px;
+  --font-ui-small: 15px;
   --font-ui-medium: 15px;
-  --file-margins: var(--bc-gap-5) var(--bc-gap-5) 40vh;
-  --radius-l: calc(14px * var(--bc-radius-scale));
+  --file-margins: var(--bc-gap-4) var(--bc-gap-4) 30vh;
+  --bc-hit: 34px;
+  /* Sheets and dialogs only. Rows, buttons and inputs keep their 4px. */
+  --bc-modal-radius: 14px;
 }
 
 /* Nothing on a touch screen may hide behind :hover. */
@@ -2962,22 +3315,23 @@ body.is-mobile ::-webkit-scrollbar-thumb {
 
 /* Floating panes are a desktop idea. On a phone the pane is the whole screen,
    so the gap would only eat into it. */
-body.is-mobile .workspace {
+body.is-mobile.bc-float-panes .workspace {
   padding: 0;
   gap: 0;
 }
 
-body.is-mobile .workspace-split.mod-root .workspace-tabs,
-body.is-mobile .workspace-split.mod-root .workspace-leaf,
-body.is-mobile .workspace-split.mod-root .workspace-leaf-content,
-body.is-mobile .workspace-split.mod-left-split,
-body.is-mobile .workspace-split.mod-right-split {
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tabs,
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf,
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf-content,
+body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tab-header-container,
+body.is-mobile.bc-float-panes .workspace-split.mod-left-split,
+body.is-mobile.bc-float-panes .workspace-split.mod-right-split {
   border-radius: 0;
 }
 
-body.is-mobile .app-container,
-body.is-mobile .horizontal-main-container,
-body.is-mobile .workspace {
+body.is-mobile.bc-float-panes .app-container,
+body.is-mobile.bc-float-panes .horizontal-main-container,
+body.is-mobile.bc-float-panes .workspace {
   background-color: var(--background-secondary);
 }
 
@@ -3006,9 +3360,8 @@ body.is-mobile .suggestion-item {
   align-items: center;
 }
 
-body.is-mobile .modal,
-body.is-mobile .prompt {
-  border-radius: var(--radius-xl);
+body.is-mobile button:not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
+  height: 40px;
 }
 
 /* Toolbar above the keyboard */
@@ -3165,6 +3518,16 @@ body.bc-callout-rule [dir="rtl"] .callout {
 [dir="rtl"] .list-bullet,
 [dir="rtl"] .cm-formatting-list {
   unicode-bidi: isolate;
+}
+
+/* A task checkbox is aligned to the top of its line, and the offset that
+   centres it there is a function of the leading. Arabic script runs at 1.85,
+   not the 1.5 that offset was measured against, so left alone the box floats
+   a third of a line above the words it belongs to. Deriving it from the line
+   height puts it back on the first line at any leading. */
+body.bc-rtl .markdown-rendered .task-list-item-checkbox,
+body.bc-rtl .contains-task-list .task-list-item-checkbox {
+  margin-block-start: calc((var(--line-height-normal) - 1) * 0.5em);
 }
 
 /* --------------------------------------------------------------------------

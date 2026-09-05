@@ -1,69 +1,79 @@
 /* ==========================================================================
    COMPONENTS
-   Everything that floats. This is the only place shadows are allowed.
+   Everything that floats, and every control that isn't an icon.
+
+   Notion builds its controls out of inset box-shadows rather than borders, so
+   a focused input never gains a pixel and never nudges its neighbours. That
+   technique is used here too: `border: none` plus an inset ring.
    ========================================================================== */
 
 body {
   --modal-background: var(--bc-surface-raised);
-  --modal-border-width: 1px;
-  --modal-border-color: var(--background-modifier-border);
-  --modal-max-height: 82vh;
+  --modal-border-width: 0px;
+  --modal-border-color: transparent;
+  --modal-max-height: 85vh;
   --modal-community-sidebar-width: 240px;
 
-  --prompt-border-width: 1px;
-  --prompt-border-color: var(--background-modifier-border);
-  --prompt-width: 660px;
+  --prompt-border-width: 0px;
+  --prompt-border-color: transparent;
+  --prompt-width: 600px;
   --prompt-max-width: 88vw;
 
-  --input-height: 32px;
+  /* Notion's control height. Inputs, dropdowns and text buttons all sit on
+     it, so a row of mixed controls lines up without per-control nudging. */
+  --bc-control-height: 32px;
+  --input-height: var(--bc-control-height);
   --input-font-weight: var(--font-normal);
-  --input-border-width: 1px;
+  --input-border-width: 0px;
 
   --popover-width: 420px;
   --popover-height: 340px;
-  --popover-font-size: 0.92em;
+  --popover-font-size: 0.94em;
   --popover-max-height: 60vh;
 
-  --menu-radius: var(--radius-l);
   --menu-padding: var(--bc-gap-2);
-  --menu-item-radius: var(--radius-s);
+  --menu-item-radius: var(--radius-m);
 
   --search-result-background: transparent;
   --search-clear-button-color: var(--text-faint);
 }
 
-/* --- Modals -------------------------------------------------------------- */
-
-/* Radius and shadow only. Padding stays Obsidian's, because plugin modals
-   lay out their own content inside this box and a theme that repads it
+/* --- Modals --------------------------------------------------------------
+   Radius and shadow only. Padding stays Obsidian's, because plugin modals lay
+   out their own content inside this box and a theme that repads it
    double-pads some and crops others. */
-.modal {
+
+.modal,
+.modal.mod-settings {
   border-radius: var(--modal-radius);
+  border: none;
   box-shadow: var(--shadow-l);
 }
 
 .modal-bg {
-  backdrop-filter: blur(2px);
-  background-color: rgba(var(--mono-rgb-100), 0.24);
+  background-color: rgba(15, 15, 15, 0.45);
+  backdrop-filter: none;
 }
 
 .theme-dark .modal-bg {
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(15, 15, 15, 0.6);
 }
 
 .modal-title {
   font-size: 1.15em;
   font-weight: var(--font-semibold);
+  letter-spacing: -0.01em;
 }
 
 .modal-close-button {
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
 }
 
 /* --- Command palette and quick switcher ---------------------------------- */
 
 .prompt {
   border-radius: var(--modal-radius);
+  border: none;
   box-shadow: var(--shadow-l);
   background-color: var(--bc-surface-raised);
 }
@@ -74,6 +84,7 @@ body {
   font-size: 1.05em;
   border: none;
   background: transparent;
+  box-shadow: none;
 }
 
 .prompt .prompt-input:focus {
@@ -88,14 +99,15 @@ body {
 }
 
 .suggestion-container {
-  border-radius: var(--radius-l);
+  border-radius: var(--menu-radius);
+  border: none;
   box-shadow: var(--shadow-l);
-  border: 1px solid var(--background-modifier-border);
   background-color: var(--bc-surface-raised);
 }
 
 .suggestion-item {
   border-radius: var(--radius-m);
+  font-size: var(--font-ui-small);
 }
 
 .suggestion-item.is-selected {
@@ -105,8 +117,7 @@ body {
 
 .suggestion-item.is-selected .suggestion-note,
 .suggestion-item.is-selected .suggestion-aux {
-  color: inherit;
-  opacity: 0.75;
+  color: var(--text-faint);
 }
 
 .suggestion-hotkey,
@@ -115,22 +126,26 @@ body {
 }
 
 .suggestion-highlight {
-  color: var(--text-accent);
+  color: var(--text-normal);
   font-weight: var(--font-semibold);
   text-decoration: none;
 }
 
-/* --- Menus --------------------------------------------------------------- */
+/* --- Menus ---------------------------------------------------------------
+   A 6px card with a 1px ring baked into the shadow, 4px of padding, and rows
+   that highlight inside that padding rather than bleeding to the edge. */
 
 .menu {
   border-radius: var(--menu-radius);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   box-shadow: var(--shadow-l);
   background-color: var(--bc-surface-raised);
 }
 
 .menu-item {
   border-radius: var(--menu-item-radius);
+  font-size: var(--font-ui-small);
+  min-height: var(--bc-hit);
 }
 
 .menu-item:not(.is-disabled):hover,
@@ -145,7 +160,7 @@ body {
 
 .menu-separator {
   border-top: 1px solid var(--background-modifier-border);
-  margin-block: var(--bc-gap-1);
+  margin-block: var(--bc-gap-2);
 }
 
 .menu-item-icon {
@@ -155,14 +170,14 @@ body {
 /* --- Popovers ------------------------------------------------------------ */
 
 .popover.hover-popover {
-  border-radius: var(--radius-l);
-  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-xl);
+  border: none;
   box-shadow: var(--shadow-l);
   overflow: hidden;
 }
 
 .tooltip {
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
   font-size: var(--font-ui-smaller);
   box-shadow: var(--shadow-s);
 }
@@ -171,22 +186,35 @@ body {
   display: none;
 }
 
-/* --- Inputs and buttons -------------------------------------------------- */
+/* --- Inputs --------------------------------------------------------------
+   Notion's field: a faint fill, a 1px inset ring, a 4px corner, and a two-ring
+   focus state — the inner ring tightens to the accent, the outer one glows. */
 
 input[type="text"],
 input[type="search"],
 input[type="email"],
 input[type="password"],
 input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
 textarea,
 select,
 .dropdown {
+  height: var(--bc-control-height);
+  padding-inline: var(--bc-gap-3);
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
   border-radius: var(--input-radius);
-  border: 1px solid var(--background-modifier-border);
+  border: none;
   background-color: var(--background-modifier-form-field);
-  box-shadow: none;
-  transition: border-color var(--bc-speed) var(--bc-ease),
-    box-shadow var(--bc-speed) var(--bc-ease);
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
+  transition: box-shadow var(--bc-speed) var(--bc-ease);
+}
+
+textarea {
+  height: auto;
+  padding-block: var(--bc-gap-3);
+  line-height: var(--line-height-normal);
 }
 
 input[type="text"]:focus,
@@ -197,43 +225,76 @@ input[type="number"]:focus,
 textarea:focus,
 select:focus,
 .dropdown:focus {
-  border-color: var(--bc-ac-500);
-  box-shadow: 0 0 0 3px var(--bc-ac-a16);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500), 0 0 0 2px var(--bc-ac-a24);
   outline: none;
 }
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+/* --- Buttons -------------------------------------------------------------
+   Two shapes only: a filled accent button and a quiet outlined one. Icon-only
+   buttons are excluded here rather than un-styled later, because `:not()`
+   chains outrank almost anything a later rule could reasonably use and the
+   fix has to hold without a specificity arms race. */
 
 button,
 .clickable-icon {
   border-radius: var(--button-radius);
   box-shadow: none;
+  font-family: inherit;
   transition: background-color var(--bc-speed) var(--bc-ease),
+    box-shadow var(--bc-speed) var(--bc-ease),
     color var(--bc-speed) var(--bc-ease);
 }
 
-/* Only buttons that carry a text label get the box. A button whose whole
-   content is an icon is excluded here rather than un-styled later, because
-   `:not()` chains outrank almost anything a later rule could reasonably use
-   and the fix has to hold without a specificity arms race. */
-button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)) {
-  background-color: var(--background-modifier-form-field);
-  border: 1px solid var(--background-modifier-border);
+button:not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
+  height: var(--bc-control-height);
+  padding: 0 var(--bc-gap-4);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
+  background-color: transparent;
+  border: none;
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
   color: var(--text-normal);
 }
 
-button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):hover {
+button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)):hover {
   background-color: var(--background-modifier-hover);
-  border-color: var(--background-modifier-border-hover);
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
 }
 
 button.mod-cta {
   background-color: var(--interactive-accent);
   color: var(--text-on-accent);
   border: none;
+  box-shadow: none;
   font-weight: var(--font-medium);
 }
 
 button.mod-cta:hover {
   background-color: var(--interactive-accent-hover);
+}
+
+button.mod-warning {
+  background-color: var(--text-error);
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+  font-weight: var(--font-medium);
+}
+
+button:disabled,
+button.mod-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .clickable-icon:hover {
@@ -242,33 +303,59 @@ button.mod-cta:hover {
 }
 
 .clickable-icon.is-active {
-  background-color: var(--bc-select-bg);
-  color: var(--bc-select-fg);
+  background-color: var(--bc-select-bg-strong);
+  color: var(--text-normal);
 }
 
 /* Keyboard focus must always be visible, including on custom controls. */
 :focus-visible {
   outline: 2px solid var(--bc-ac-500);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
+/* --- Toggles -------------------------------------------------------------
+   Notion's switch is 26×16 with a 12px thumb. Obsidian's is half again as
+   big, so the size, the thumb and the travel are all restated here — moving
+   one without the other two is what leaves a thumb hanging off its track. */
+
 .checkbox-container {
-  border-radius: 2em;
+  width: 26px;
+  height: 16px;
+  border-radius: var(--toggle-radius);
+  background-color: var(--background-modifier-border-hover);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.checkbox-container::after {
+  width: 12px;
+  height: 12px;
+  top: 2px;
+  left: 2px;
+  box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
 .checkbox-container.is-enabled {
   background-color: var(--interactive-accent);
 }
 
-/* --- Notices ------------------------------------------------------------- */
+.checkbox-container.is-enabled::after {
+  transform: translate3d(10px, 0, 0);
+}
+
+/* --- Notices -------------------------------------------------------------
+   Notion's toast: a dark pill in the corner, the same in both themes. */
 
 .notice {
   border-radius: var(--radius-l);
   box-shadow: var(--shadow-l);
-  border: 1px solid var(--background-modifier-border);
-  background-color: var(--bc-surface-raised);
-  color: var(--text-normal);
+  border: none;
+  background-color: var(--background-modifier-message);
+  color: #ffffff;
   font-size: var(--font-ui-small);
+}
+
+.notice .notice-close {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* --- Settings ------------------------------------------------------------ */
@@ -281,11 +368,19 @@ button.mod-cta:hover {
 .modal.mod-settings .vertical-tab-nav-item {
   border-radius: var(--radius-m);
   margin-inline: var(--bc-gap-2);
+  padding-block: var(--bc-gap-2);
   border: none;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.modal.mod-settings .vertical-tab-nav-item:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
 }
 
 .modal.mod-settings .vertical-tab-nav-item.is-active {
-  background-color: var(--bc-select-bg);
+  background-color: var(--bc-select-bg-strong);
   color: var(--bc-select-fg);
   font-weight: var(--font-medium);
 }
@@ -295,16 +390,18 @@ button.mod-cta:hover {
 }
 
 .setting-item-name {
+  font-size: var(--font-ui-small);
   font-weight: var(--font-medium);
+  color: var(--text-normal);
 }
 
 .setting-item-description {
   color: var(--text-muted);
-  font-size: var(--font-ui-small);
+  font-size: var(--font-ui-smaller);
 }
 
 .setting-item-heading .setting-item-name {
-  font-size: 1.05em;
+  font-size: var(--font-ui-large);
   font-weight: var(--font-semibold);
 }
 

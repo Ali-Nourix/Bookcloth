@@ -1,29 +1,31 @@
 /* ==========================================================================
    ICONS
-   Obsidian ships Lucide, which is drawn on a 24-unit grid with a 2px stroke.
-   Scale that artwork down without adjusting the stroke and it goes spindly;
-   scale it up and it goes clumsy. So stroke weight is defined per size, not
-   once globally.
+   Obsidian ships Lucide, drawn on a 24-unit grid with a 2px stroke. Scale
+   that artwork down without adjusting the stroke and it goes spindly; scale
+   it up and it goes clumsy — a 2px stroke rendered at 14px is 1.17px on
+   screen, at 28px it is 2.33px. So stroke weight is defined per size, tuned
+   to land at a constant ~1.4px on screen, which is what puts Lucide's outline
+   artwork at the visual weight of Notion's solid set.
    ========================================================================== */
 
 body {
   --bc-icon-scale: 1;
 
-  --icon-xs: calc(13px * var(--bc-icon-scale));
-  --icon-s: calc(15px * var(--bc-icon-scale));
-  --icon-m: calc(17px * var(--bc-icon-scale));
+  --icon-xs: calc(14px * var(--bc-icon-scale));
+  --icon-s: calc(16px * var(--bc-icon-scale));
+  --icon-m: calc(18px * var(--bc-icon-scale));
   --icon-l: calc(20px * var(--bc-icon-scale));
   --icon-xl: calc(28px * var(--bc-icon-scale));
 
   --bc-icon-weight: 1;
-  --icon-xs-stroke-width: calc(2.1px * var(--bc-icon-weight));
-  --icon-s-stroke-width: calc(1.95px * var(--bc-icon-weight));
-  --icon-m-stroke-width: calc(1.8px * var(--bc-icon-weight));
-  --icon-l-stroke-width: calc(1.7px * var(--bc-icon-weight));
+  --icon-xs-stroke-width: calc(2.3px * var(--bc-icon-weight));
+  --icon-s-stroke-width: calc(2.15px * var(--bc-icon-weight));
+  --icon-m-stroke-width: calc(1.9px * var(--bc-icon-weight));
+  --icon-l-stroke-width: calc(1.75px * var(--bc-icon-weight));
   --icon-xl-stroke-width: calc(1.4px * var(--bc-icon-weight));
 
-  --icon-size: var(--icon-m);
-  --icon-stroke: var(--icon-m-stroke-width);
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
 }
 
 /* Every icon that sits at a given size gets that size's stroke. Without this
@@ -45,14 +47,17 @@ body {
   --icon-stroke: var(--icon-xs-stroke-width);
 }
 
-/* Panel actions: nav header buttons, view actions, tab bar. Sidebar buttons
-   sit one step down from the main toolbar so they don't shout over the
-   filenames they sit above. */
+/* Panel actions: nav header buttons, view actions, tab bar, menu rows. Notion
+   runs all of these at 16px. */
 .nav-buttons-container .clickable-icon .svg-icon,
 .nav-action-button .svg-icon,
 .workspace-tab-header-inner-icon .svg-icon,
+.workspace-tab-header-inner-close-button .svg-icon,
 .view-action .svg-icon,
+.view-header-icon .svg-icon,
 .workspace-tab-header-new-tab .svg-icon,
+.workspace-tab-header-status-container .svg-icon,
+.sidebar-toggle-button .svg-icon,
 .menu-item-icon .svg-icon,
 .callout-icon .svg-icon {
   --icon-size: var(--icon-s);
@@ -62,17 +67,21 @@ body {
 /* A callout title is set at 600; a hairline icon beside it looks unfinished.
    The icon is nudged one notch heavier to match the text it labels. */
 .callout-icon .svg-icon {
-  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.12);
+  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.1);
 }
 
 .callout-title {
-  gap: var(--bc-gap-2);
+  gap: var(--bc-gap-3);
 }
 
 .callout-icon {
   display: flex;
   align-items: center;
-  align-self: center;
+  align-self: flex-start;
+  /* Optically centred on the first line of the title rather than on the
+     title box, which is what keeps a two-line callout title from dragging
+     its icon down the block. */
+  margin-block-start: 0.1em;
 }
 
 /* Ribbon glyphs are the largest persistent icons in the app, so they take the
@@ -84,11 +93,11 @@ body {
 
 /* --- Icon buttons --------------------------------------------------------
    Plugins build their pane headers out of real <button> elements wrapping an
-   icon. The generic button treatment gives each one a fill and a border, and
-   in a narrow sidebar header those boxes take every spare pixel from the
-   label beside them — Notebook Navigator's folder name collapses to a single
-   letter and an ellipsis. Icon buttons opt out of the box and stay flat, so
-   the text next to them keeps its width. */
+   icon. The generic button treatment gives each one a fill and a ring, and in
+   a narrow sidebar header those boxes take every spare pixel from the label
+   beside them — Notebook Navigator's folder name collapses to a single letter
+   and an ellipsis. Icon buttons opt out of the box and stay flat, so the text
+   next to them keeps its width. */
 button.clickable-icon,
 button:has(> svg),
 button:has(> .svg-icon),
@@ -132,11 +141,12 @@ button:has(> .svg-icon):hover,
 .view-actions button:hover {
   background-color: var(--background-modifier-hover);
   border: none;
+  box-shadow: none;
   color: var(--icon-color-hover);
 }
 
-/* An icon never grows to push a sibling label out of the pane, and a label
-   is always allowed to shrink before it is allowed to overflow. */
+/* An icon never grows to push a sibling label out of the pane, and a label is
+   always allowed to shrink before it is allowed to overflow. */
 .clickable-icon,
 .nav-action-button,
 .side-dock-ribbon-action {
@@ -150,8 +160,8 @@ button:has(> .svg-icon):hover,
 }
 
 /* Pointer targets are Obsidian's business on a mouse. Forcing a minimum
-   square here is what widened every button in a dense plugin toolbar in the
-   first place; touch sizing is handled in the mobile layer instead. */
+   square here is what widens every button in a dense plugin toolbar; touch
+   sizing is handled in the mobile layer instead. */
 
 .collapse-icon {
   display: flex;
@@ -161,17 +171,18 @@ button:has(> .svg-icon):hover,
 }
 
 /* --- Checkboxes ----------------------------------------------------------
-   The tick is Lucide's check, drawn at a weight that reads at 16px. The mask
-   is written out here rather than inherited so the theme controls the shape,
-   the optical centring and the amount of the box it fills. */
+   Notion's checkbox: a 16px box with a 3px corner, filled with the accent and
+   marked with a white tick. The mask is written out here rather than
+   inherited so the theme controls the shape, the optical centring and the
+   amount of the box it fills. */
 
 body {
-  --checkbox-size: calc(1.05em * var(--bc-icon-scale));
+  --checkbox-size: calc(1em * var(--bc-icon-scale));
   --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
 }
 
 input[type="checkbox"] {
-  border-width: 1.5px;
+  border-width: 1px;
   border-color: var(--checkbox-border-color);
 }
 

@@ -1,16 +1,22 @@
 /* ==========================================================================
    TOKENS
    The only place raw numbers live. Everything downstream reads from here.
+
+   The geometry is Notion's: a 4px unit, small radii on controls, a 14px
+   interface and a 16px page. Where Notion states a figure directly — a 27px
+   sidebar row, a 28px icon button, a 4px corner — that figure is used rather
+   than approximated, because the look is made of those exact numbers.
    ========================================================================== */
 
 body {
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
      which outranks these declarations. So these are defaults, not overrides:
-     pick an accent in Appearance settings and the whole ramp follows it. */
-  --accent-h: 15;
-  --accent-s: 56%;
-  --accent-l: 52%;
+     pick an accent in Appearance settings and the whole ramp follows it.
+     The default is Notion's blue, #2383e2. */
+  --accent-h: 210;
+  --accent-s: 77%;
+  --accent-l: 51%;
 
   /* Per-theme lightness shift, so one hue reads correctly on paper and on ink */
   --bc-ac-lift: 0%;
@@ -34,6 +40,19 @@ body {
   --bc-ac-700: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 15%));
   --bc-ac-800: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 24%));
 
+  /* Filled controls — buttons, toggles, checkboxes — read from this rather
+     than from the ramp. Two things separate it from --bc-ac-500: it ignores
+     the dark-mode lift, because a fill that is lifted for legibility on dark
+     ground stops being legible under white label text; and it is clamped at
+     45% lightness, which is where white text crosses 4.5:1 for the hues most
+     people pick. A very pale or yellow accent still needs --text-on-accent
+     overridden by hand — no amount of lightness maths fixes a yellow button. */
+  --bc-ac-fill-l: min(calc(var(--accent-l) - 7%), 45%);
+  --bc-ac-fill: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-fill-l));
+  --bc-ac-fill-hover: hsl(
+    var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-fill-l) - 8%)
+  );
+
   /* Transparent accent washes — used for selection, hover and active fills.
      Alpha beats a mixed hex here: it survives on any surface underneath. */
   --bc-ac-a03: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.03);
@@ -41,47 +60,60 @@ body {
   --bc-ac-a10: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.1);
   --bc-ac-a16: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.16);
   --bc-ac-a24: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.24);
+  --bc-ac-a28: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.28);
   --bc-ac-a40: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.4);
 
-  /* Warmth injected into the neutral ramp. 0% gives dead-neutral greys. */
-  --bc-tint: 4%;
+  /* Warmth injected into the neutral ramp. The palette is already warm —
+     Notion's greys are built on #37352f — so this stays at zero unless the
+     user asks for a tint. */
+  --bc-tint: 0%;
   /* Multiplier on every border alpha. 0 removes lines entirely. */
   --bc-border-strength: 1;
   /* How much colour a callout or wash carries. */
-  --bc-wash: 10%;
+  --bc-wash: 12%;
 
-  /* --- Shape ----------------------------------------------------------- */
-  /* Two independent radii. The interface scale is small — Notion and Slite
-     sit around 4-6px on rows, chips and buttons, and anything larger makes a
-     28px row read as a lozenge. Panels are a separate, bigger figure, because
-     a floating panel is a card and wants to look like one. */
+  /* --- Shape -----------------------------------------------------------
+     Notion's whole interface sits between 3px and 8px. Rows, chips, buttons
+     and inputs are 4px; menus and code blocks 6px; the few genuinely
+     card-like surfaces — modals, popovers — 8px. Nothing is a lozenge. */
   --bc-radius-scale: 1;
   --radius-s: calc(3px * var(--bc-radius-scale));
-  --radius-m: calc(5px * var(--bc-radius-scale));
-  --radius-l: calc(8px * var(--bc-radius-scale));
-  --radius-xl: calc(12px * var(--bc-radius-scale));
+  --radius-m: calc(4px * var(--bc-radius-scale));
+  --radius-l: calc(6px * var(--bc-radius-scale));
+  --radius-xl: calc(8px * var(--bc-radius-scale));
 
-  --bc-pane-radius: 10px;
+  /* The rounding on a floating panel, used only when the floating layout is
+     switched on. Notion's own layout is flush, so this idles at 0. */
+  --bc-pane-radius: 8px;
+  --bc-modal-radius: 8px;
+  --bc-menu-radius: 6px;
 
-  /* Square hit areas for every icon-only control, so a wide button can never
-     turn its background into a lozenge. */
+  /* Square hit areas for every icon-only control. Notion's toolbar buttons
+     are 28px squares with a 4px corner; so are these. */
   --bc-hit: 28px;
 
   /* The inset above and below every top-band control. Shared by the ribbon,
      both sidebar tab strips and the editor tab bar, because those four rows
      live in different containers and only line up if they are told to. */
-  --bc-band-pad: 4px;
+  --bc-band-pad: 6px;
+
+  /* Notion's sidebar row: 27px tall, 14px text, an 8px inset from the panel
+     edge and a 4px corner. Rows are the most repeated shape in the app, so
+     they get their own figures rather than borrowing the density scale. */
+  --bc-row-base: 27px;
+  --bc-row-height: calc(var(--bc-row-base) * var(--bc-density));
+  --bc-row-inset: 8px;
 
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
-  --modal-radius: var(--bc-pane-radius);
+  --modal-radius: var(--bc-modal-radius);
   --checkbox-radius: var(--radius-s);
-  --code-radius: var(--radius-l);
-  --callout-radius: var(--radius-l);
-  --tag-radius: calc(2em * var(--bc-radius-scale));
-  --tab-radius: var(--radius-m);
-  --tab-radius-active: var(--radius-m);
-  --menu-radius: var(--radius-l);
+  --code-radius: var(--radius-m);
+  --callout-radius: var(--radius-m);
+  --tag-radius: calc(3px * var(--bc-radius-scale));
+  --tab-radius: var(--radius-l);
+  --tab-radius-active: var(--radius-l);
+  --menu-radius: var(--bc-menu-radius);
   --swatch-radius: var(--radius-s);
   --border-width: 1px;
 
@@ -94,36 +126,42 @@ body {
   --bc-gap-5: calc(16px * var(--bc-density));
   --bc-gap-6: calc(24px * var(--bc-density));
 
-  /* --- Type ------------------------------------------------------------ */
+  /* --- Type ------------------------------------------------------------
+     Notion runs its interface at 14px and its pages at 16px, in a system
+     stack led by Inter. Both stacks end in the same emoji faces so an emoji
+     in a page title renders the same as one in the sidebar. */
   --bc-font-interface: Inter;
   --bc-font-text: Inter;
   --bc-font-mono: ui-monospace;
 
-  --bc-stack-ui: var(--bc-font-interface), "Söhne", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
-  --bc-stack-text: var(--bc-font-text), "Söhne", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
-  --bc-stack-serif: "Iowan Old Style", "Source Serif 4", "Source Serif Pro",
-    Charter, "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
-  --bc-stack-mono: var(--bc-font-mono), "SF Mono", "JetBrains Mono",
-    "IBM Plex Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --bc-stack-ui: var(--bc-font-interface), ui-sans-serif, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --bc-stack-text: var(--bc-font-text), ui-sans-serif, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --bc-stack-serif: Lyon-Text, "Iowan Old Style", "Source Serif 4", Georgia,
+    ui-serif, "Times New Roman", serif;
+  --bc-stack-mono: var(--bc-font-mono), "SFMono-Regular", "SF Mono", Menlo,
+    Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
 
   --font-interface-theme: var(--bc-stack-ui);
   --font-text-theme: var(--bc-stack-text);
   --font-monospace-theme: var(--bc-stack-mono);
 
-  --bc-code-size: 0.875;
-  --bc-pane-gap: 6px;
+  --bc-code-size: 0.85;
+  --bc-pane-gap: 8px;
   --bc-h-scale: 1;
   --bc-h-weight: 600;
-  --bc-line-height: 1.6;
-  --bc-line-width: 42rem;
+  --bc-line-height: 1.5;
+  /* Notion's text column is 708px inside a 900px page. */
+  --bc-line-width: 44rem;
 
-  /* --- Motion ---------------------------------------------------------- */
+  /* --- Motion ----------------------------------------------------------
+     Notion's transitions are short enough to read as instant feedback rather
+     than as animation. */
   --bc-ease: cubic-bezier(0.2, 0, 0, 1);
-  --bc-speed: 140ms;
+  --bc-speed: 100ms;
 }
 
 /* Accent intensity ------------------------------------------------------- */
@@ -136,8 +174,8 @@ body.bc-accent-vivid {
 
 /* Density ---------------------------------------------------------------- */
 body.bc-density-compact {
-  --bc-density: 0.75;
+  --bc-density: 0.8;
 }
 body.bc-density-comfortable {
-  --bc-density: 1.3;
+  --bc-density: 1.25;
 }

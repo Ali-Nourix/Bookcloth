@@ -1,49 +1,27 @@
 /* ==========================================================================
    PANES
-   Every region of the app — ribbon, both sidebars, the editor — sits as its
-   own surface on a deeper backdrop, with an even gap between them. The gap is
-   only legible if the backdrop is darker than the panes, so the two are
-   defined together: change one and the other has to move with it.
+   Notion's layout is flush: a warm-grey sidebar meeting a white page, with
+   no gap, no card and no drawn line between them. That is the default here.
+
+   The floating layout — every region as its own rounded surface on a darker
+   backdrop — is kept as an option, because it is the one piece of the old
+   theme worth keeping and it costs nothing to leave in.
    ========================================================================== */
-
-/* Overridable in Style Settings. Keep it darker than --background-secondary
-   or the gaps stop reading as gaps. */
-.theme-light {
-  --bc-backdrop: #ebe9e2;
-}
-
-.theme-dark {
-  --bc-backdrop: #101010;
-}
 
 .app-container,
 .horizontal-main-container,
 .workspace {
-  background-color: var(--bc-backdrop);
+  background-color: var(--background-secondary);
 }
 
-/* Gap on the container rather than margins on the children, so the space
-   between two panes is the same as the space at the window edge instead of
-   double it. */
-.workspace {
-  padding: var(--bc-pane-gap);
-  gap: var(--bc-pane-gap);
-}
-
-/* The ribbon is part of the frame, not a pane: it stays on the backdrop. */
+/* The ribbon is dissolved into the sidebar: same tone, no seam. */
 .workspace-ribbon {
   background-color: transparent;
 }
 
-/* Sidebars ---------------------------------------------------------------
-   The rounded surface is painted on the split itself and the children are
-   made transparent, so the corners survive without `overflow: hidden`.
-   Clipping here would swallow anything a sidebar plugin renders past its own
-   edge. */
 .workspace-split.mod-left-split,
 .workspace-split.mod-right-split {
   background-color: var(--background-secondary);
-  border-radius: var(--bc-pane-radius);
   border: none;
   box-shadow: none;
 }
@@ -53,68 +31,103 @@
 .workspace-split.mod-left-split .workspace-leaf-content,
 .workspace-split.mod-right-split .workspace-leaf-content,
 .workspace-split.mod-left-split .workspace-tab-header-container,
-.workspace-split.mod-right-split .workspace-tab-header-container {
-  background-color: transparent;
-}
-
-/* A sidebar can hold two stacked leaves; only the outer corners round. */
+.workspace-split.mod-right-split .workspace-tab-header-container,
 .workspace-split.mod-left-split .workspace-leaf,
 .workspace-split.mod-right-split .workspace-leaf {
   background-color: transparent;
 }
 
-/* Editor ------------------------------------------------------------------
-   Corners are applied to the pane and its two end pieces, again without
-   clipping. The tab strip keeps the secondary tone, so the pane reads as one
-   card with a header rather than as two stacked bands. */
+/* The page. The tab strip keeps the chrome tone and the leaf below it is the
+   page colour, so the active tab and the page read as one surface. */
 .workspace-split.mod-root .workspace-tabs {
-  border-radius: var(--bc-pane-radius);
   background-color: var(--tab-container-background);
 }
 
+.workspace-split.mod-root .workspace-leaf-content {
+  background-color: var(--background-primary);
+}
+
+/* Split editor panes: a hairline between them, never a gap. */
 .workspace-split.mod-root .workspace-split {
-  gap: var(--bc-pane-gap);
   background-color: transparent;
 }
 
-/* Split editor panes get the same gap between them as everything else. */
-.workspace-split.mod-root .workspace-leaf-resize-handle {
-  background-color: transparent;
-}
-
-body.bc-borders .workspace-split.mod-left-split,
-body.bc-borders .workspace-split.mod-right-split,
-body.bc-borders .workspace-split.mod-root .workspace-tabs {
-  box-shadow: 0 0 0 1px var(--background-modifier-border);
-}
-
-/* Status bar sits on the backdrop below the panes. */
 .status-bar {
   background-color: transparent;
 }
 
-/* Flush option ------------------------------------------------------------
-   Returns to Obsidian's edge-to-edge layout for anyone who wants the density
-   back. */
-body.bc-flush-panes .workspace {
-  padding: 0;
-  gap: 0;
+/* Optional hairlines, for anyone who wants the regions drawn rather than
+   toned. */
+body.bc-borders .workspace-split.mod-left-split {
+  box-shadow: inset -1px 0 0 0 var(--background-modifier-border);
 }
 
-body.bc-flush-panes .workspace-split.mod-left-split,
-body.bc-flush-panes .workspace-split.mod-right-split,
-body.bc-flush-panes .workspace-split.mod-root .workspace-tabs,
-body.bc-flush-panes .workspace-split.mod-root .workspace-tab-header-container,
-body.bc-flush-panes .workspace-split.mod-root .workspace-leaf-content {
-  border-radius: 0;
+body.bc-borders .workspace-split.mod-right-split {
+  box-shadow: inset 1px 0 0 0 var(--background-modifier-border);
 }
 
-body.bc-flush-panes .workspace-ribbon {
-  background-color: var(--background-secondary);
+body.bc-borders .workspace-split.mod-root .workspace-tab-header-container {
+  box-shadow: inset 0 -1px 0 0 var(--background-modifier-border);
 }
 
-body.bc-flush-panes .app-container,
-body.bc-flush-panes .horizontal-main-container,
-body.bc-flush-panes .workspace {
-  background-color: var(--background-secondary);
+/* Floating layout ---------------------------------------------------------
+   Every region becomes its own rounded surface on a backdrop that has to stay
+   darker than the panes, or the gaps stop reading as gaps. Pane geometry and
+   backdrop are defined together: change one and the other has to move with
+   it. Corners go on the pane and its two end pieces rather than on a clipping
+   container — `overflow: hidden` here would swallow anything a plugin renders
+   past its own bounds. */
+
+.theme-light {
+  --bc-backdrop: #ebebea;
+}
+
+.theme-dark {
+  --bc-backdrop: #131313;
+}
+
+body.bc-float-panes .app-container,
+body.bc-float-panes .horizontal-main-container,
+body.bc-float-panes .workspace {
+  background-color: var(--bc-backdrop);
+}
+
+/* Gap on the container rather than margins on the children, so the space
+   between two panes is the same as the space at the window edge instead of
+   double it. */
+body.bc-float-panes .workspace {
+  padding: var(--bc-pane-gap);
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split,
+body.bc-float-panes .workspace-split.mod-right-split,
+body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes
+  .workspace-split.mod-root
+  .workspace-tab-header-container {
+  border-start-start-radius: var(--bc-pane-radius);
+  border-start-end-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-split {
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-resize-handle {
+  background-color: transparent;
+}
+
+body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
+body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
+body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
+  box-shadow: 0 0 0 1px var(--background-modifier-border);
 }
