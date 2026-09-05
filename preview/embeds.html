@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bookcloth — embeds inside callouts</title>
+<link rel="stylesheet" href="app-shim.css">
+<link rel="stylesheet" href="../theme.css">
+<script>
+  for (const id of (new URLSearchParams(location.search).get('plugin') || '').split(',')) {
+    if (/^[a-z0-9-]+$/.test(id)) document.write('<link rel="stylesheet" href="plugins/' + id + '.css">');
+  }
+</script>
+<style>
+  .stage { max-width: 860px; margin: 0 auto; }
+  .stage h1.label { font: 600 11px/1 var(--font-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin: 26px 0 10px; }
+</style>
+</head>
+<body class="theme-light mod-macos is-focused bc-rtl">
+<div class="markdown-reading-view">
+  <div class="markdown-preview-view markdown-rendered">
+    <div class="markdown-preview-sizer markdown-preview-section stage">
+
+      <h1 class="label">A section embed inside a callout — the reported case</h1>
+
+      <!-- Obsidian's DOM for `> [!warning] Weekly Planning` + `![[Note#Heading]]` -->
+      <div class="callout" data-callout="warning" style="--callout-color: 236, 117, 0">
+        <div class="callout-title">
+          <div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.7 18-9-15a1.9 1.9 0 0 0-3.4 0l-9 15A2 2 0 0 0 2 21h20a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+          <div class="callout-title-inner">Weekly Planning</div>
+        </div>
+        <div class="callout-content">
+          <p>
+            <span class="internal-embed markdown-embed inline-embed is-loaded" src="1405-05-W3#checklist">
+              <span class="markdown-embed-link"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+              <template class="embed-body"><div class="markdown-embed-content">
+                <div class="markdown-preview-view markdown-rendered" dir="rtl">
+                  <div class="markdown-preview-sizer markdown-preview-section" style="min-height: 654px; padding-bottom: 0px;">
+                    <h2 dir="rtl">✅ <strong>چک‌لیست هفتگی</strong></h2>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td><strong>بی چون و چرا این هفته :</strong></td>
+                          <td><strong>بازه این هفته</strong><br>از ۱۶ تا ۲۳</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h3 dir="rtl">🔺 ویژه</h3>
+                    <ul class="contains-task-list" dir="rtl">
+                      <li class="task-list-item" data-task="!"><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">مواردی که <strong>هر روز</strong> انجام میشن</span></li>
+                      <li class="task-list-item is-checked" data-task="x"><input class="task-list-item-checkbox" type="checkbox" checked><span class="task-list-item-text">دیجیکالا</span></li>
+                      <li class="task-list-item is-checked" data-task="x"><input class="task-list-item-checkbox" type="checkbox" checked><span class="task-list-item-text">۲۲ مرداد (آماده کردن فایل آپلود، موارد تغییر کرده و انجام کار های انریچمنت اگر موجود بود)</span></li>
+                      <li class="task-list-item is-checked" data-task="x"><input class="task-list-item-checkbox" type="checkbox" checked><span class="task-list-item-text">بهبود وکتور های Eyes On</span></li>
+                      <li class="task-list-item" data-task="/"><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">ساخت MVP (نمونه اولیه)</span></li>
+                    </ul>
+                    <p dir="rtl">یک پاراگراف فارسی که باید تا لبه‌ی کال‌اوت برسد و نه بیشتر، تا معلوم شود متن از سمت راست بریده نمی‌شود.</p>
+                  </div>
+                </div>
+              </div></template>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <h1 class="label">The same embed, not inside a callout</h1>
+      <p>
+        <span class="internal-embed markdown-embed inline-embed is-loaded" src="1405-05-W3#checklist">
+          <span class="markdown-embed-link"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+          <template class="embed-body"><div class="markdown-embed-content">
+            <div class="markdown-preview-view markdown-rendered" dir="rtl">
+              <div class="markdown-preview-sizer markdown-preview-section" style="min-height: 400px; padding-bottom: 0px;">
+                <h2 dir="rtl">✅ <strong>چک‌لیست هفتگی</strong></h2>
+                <p dir="rtl">یک پاراگراف فارسی برای سنجیدن حاشیه‌ها.</p>
+              </div>
+            </div>
+          </div></template>
+        </span>
+      </p>
+
+      <h1 class="label">Left-to-right, same structure</h1>
+      <div class="callout" data-callout="note" style="--callout-color: 8, 109, 221">
+        <div class="callout-title">
+          <div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+          <div class="callout-title-inner">Weekly Planning</div>
+        </div>
+        <div class="callout-content">
+          <p>
+            <span class="internal-embed markdown-embed inline-embed is-loaded" src="Week#checklist">
+              <span class="markdown-embed-link"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+              <template class="embed-body"><div class="markdown-embed-content">
+                <div class="markdown-preview-view markdown-rendered">
+                  <div class="markdown-preview-sizer markdown-preview-section" style="min-height: 300px; padding-bottom: 0px;">
+                    <h2>Weekly checklist</h2>
+                    <ul class="contains-task-list">
+                      <li class="task-list-item" data-task="/"><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">Ship the migration guide</span></li>
+                      <li class="task-list-item is-checked" data-task="x"><input class="task-list-item-checkbox" type="checkbox" checked><span class="task-list-item-text">Freeze the API surface</span></li>
+                    </ul>
+                    <p>A paragraph that should reach the callout's edge and no further.</p>
+                  </div>
+                </div>
+              </div></template>
+            </span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+  // Obsidian builds an embed by injecting its content into the .internal-embed
+  // span after the paragraph is parsed. Doing the same here keeps the nesting
+  // the app produces; writing it inline would have the parser eject the div.
+  for (const tpl of document.querySelectorAll('template.embed-body')) {
+    tpl.parentElement.appendChild(tpl.content.cloneNode(true));
+    tpl.remove();
+  }
+
+  const q = new URLSearchParams(location.search);
+  if (q.has('dark')) document.body.className = document.body.className.replace('theme-light', 'theme-dark');
+</script>
+</body>
+</html>

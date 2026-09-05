@@ -158,6 +158,9 @@ body {
 /* ---------- markdown ---------- */
 .markdown-preview-view { padding: var(--file-margins); font-family: var(--font-text); line-height: var(--line-height-normal); }
 .markdown-preview-sizer { max-width: var(--file-line-width); margin: 0 auto; }
+.internal-embed, .markdown-embed { position: relative; display: block; }
+.markdown-embed-link { position: absolute; top: 0; right: 0; color: var(--text-faint); cursor: pointer; }
+.markdown-embed-link .svg-icon { width: 16px; height: 16px; }
 .markdown-rendered { color: var(--text-normal); }
 .markdown-rendered p { margin-block: 0 var(--p-spacing); }
 .markdown-rendered h1 { font-size: var(--h1-size); font-weight: var(--h1-weight); color: var(--h1-color); line-height: var(--h1-line-height); }

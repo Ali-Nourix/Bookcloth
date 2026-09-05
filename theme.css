@@ -2513,6 +2513,65 @@ body.bc-no-fade-done {
   padding: var(--embed-padding);
 }
 
+/* An embed nests a whole preview view inside the note, and it arrives carrying
+   the furniture of a full page: --file-margins, whose bottom is 20vh, and a
+   sizer that centres itself at --file-line-width with an inline min-height
+   Obsidian sets for a scroller the embed does not have.
+
+   In a callout that is a page's worth of chrome inside a paragraph-sized box.
+   The sizer ends up wider than its container, so the text overflows it — which
+   is glaring in a right-to-left note, because there every line begins at the
+   clipped edge — and the min-height leaves several hundred pixels of empty tint
+   underneath. Both are stripped here: an embed should be the size of what it
+   contains. */
+.internal-embed .markdown-preview-view,
+.markdown-embed .markdown-preview-view {
+  padding: 0;
+  max-height: none;
+}
+
+/* padding and min-height are set inline by Obsidian, so they need the flag. */
+.internal-embed .markdown-preview-sizer,
+.markdown-embed .markdown-preview-sizer {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+/* The open-in-note affordance is absolutely positioned at the right in
+   Obsidian, which in a right-to-left note is exactly where the text starts.
+   Logical positioning moves it to whichever side the content ends on. */
+.markdown-embed-link {
+  inset-inline-end: var(--bc-gap-2);
+  inset-block-start: var(--bc-gap-2);
+  inset-inline-start: auto;
+  color: var(--text-faint);
+}
+
+.markdown-embed-link:hover {
+  color: var(--text-accent);
+}
+
+/* Inside a callout an embed is part of what the callout is saying, not a card
+   sitting in one. It drops the frame and flows in the callout's own padding —
+   two nested boxes with two paddings and two radii is the look the reported
+   screenshot had, and it reads as a mistake even once the overflow is gone. */
+.callout .internal-embed .markdown-embed,
+.callout .internal-embed.markdown-embed {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+/* A table or image inside an embed is bounded by the embed, not by the page. */
+.internal-embed table,
+.markdown-embed table {
+  max-width: 100%;
+}
+
 /* --- Selection ----------------------------------------------------------- */
 
 .cm-editor .cm-selectionBackground,
