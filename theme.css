@@ -1,4 +1,4 @@
-/* Bookcloth 2.2.3 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.3.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -1600,26 +1600,54 @@ body.bc-indent-guides {
   gap: var(--bc-icon-gap);
 }
 
-/* The sidebar collapse control belongs to the top band, not to the column of
-   ribbon actions under it — it acts on the window, and it has to land on the
-   same centre line as the sidebar tabs beside it.
+/* The ribbon's actual DOM, which is not what it looks like from outside:
 
-   Pinning it rather than relying on the ribbon's own stacking, because what
-   Obsidian puts above it in that column varies: a vault switcher, an app
-   menu, nothing at all, depending on platform and release. `order: -1` makes
-   it the first item whatever the DOM says, and giving it the band's full
-   height rather than a 28px hit area centres its icon at exactly half the
-   band — the same 20px every other control in that row returns. */
+     .workspace-ribbon.side-dock-ribbon.mod-left
+       .workspace-ribbon-collapse-btn     ← the collapse control
+       .side-dock-actions                 ← the plugin actions live in here
+         .side-dock-ribbon-action …
+       .side-dock-settings
+
+   Two things follow from that, and this theme had both of them wrong.
+
+   The collapse control is `.workspace-ribbon-collapse-btn`. It is not
+   `.sidebar-toggle-button` — that name does not appear once in 769 KB of
+   Minimal and Things, and every rule aimed at it here matched nothing at all
+   for six releases. Both names are carried now: the real one, and the one
+   some builds use for the same job over in the tab strip.
+
+   And the actions are not siblings of the collapse control — they are nested
+   inside .side-dock-actions, so the gap on .workspace-ribbon never reached
+   them. It has to be set on their own container. */
+
+.workspace-ribbon .workspace-ribbon-collapse-btn,
 .workspace-ribbon .sidebar-toggle-button {
+  /* First in the column whatever the DOM order is, because what a given
+     platform and release stacks above it varies. */
   order: -1;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+  /* The band's full height rather than a 28px hit area, so the icon centres
+     on half the band — the same 20px every other control in that row
+     returns. */
   height: var(--bc-topbar-height);
   min-height: var(--bc-topbar-height);
-  margin-block: 0;
-  padding-block: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-m);
+}
+
+.workspace-ribbon .side-dock-actions,
+.workspace-ribbon .side-dock-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bc-icon-gap);
+  padding: 0;
+  margin: 0;
 }
 
 /* The band starts at the very top of the ribbon, so the collapse control's
@@ -1644,7 +1672,7 @@ body.bc-indent-guides {
    that its icon lands on the band's centre line. The .clickable-icon inside
    it is still squared by the second selector here. */
 .side-dock-ribbon-action,
-.workspace-ribbon .clickable-icon {
+.workspace-ribbon .clickable-icon:not(.workspace-ribbon-collapse-btn):not(.sidebar-toggle-button) {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3256,6 +3284,7 @@ body {
 .clickable-icon:not(.mod-inline) svg,
 .side-dock-ribbon-action svg,
 .sidebar-toggle-button svg,
+.workspace-ribbon-collapse-btn svg,
 .workspace-ribbon svg,
 .workspace-tab-header-container .clickable-icon svg,
 .workspace-tab-header-inner-icon svg,
@@ -3360,7 +3389,8 @@ button:has(> :only-child svg) svg {
 
 /* The sidebar collapse control is centred on the ribbon's own axis, so it
    cannot sit half a pixel off the column of glyphs beneath it. */
-.workspace-ribbon .sidebar-toggle-button {
+.workspace-ribbon .sidebar-toggle-button,
+.workspace-ribbon .workspace-ribbon-collapse-btn {
   margin-inline: auto;
 }
 

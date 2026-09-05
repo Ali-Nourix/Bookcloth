@@ -62,6 +62,7 @@ body {
 .clickable-icon:not(.mod-inline) svg,
 .side-dock-ribbon-action svg,
 .sidebar-toggle-button svg,
+.workspace-ribbon-collapse-btn svg,
 .workspace-ribbon svg,
 .workspace-tab-header-container .clickable-icon svg,
 .workspace-tab-header-inner-icon svg,
@@ -166,7 +167,8 @@ button:has(> :only-child svg) svg {
 
 /* The sidebar collapse control is centred on the ribbon's own axis, so it
    cannot sit half a pixel off the column of glyphs beneath it. */
-.workspace-ribbon .sidebar-toggle-button {
+.workspace-ribbon .sidebar-toggle-button,
+.workspace-ribbon .workspace-ribbon-collapse-btn {
   margin-inline: auto;
 }
 

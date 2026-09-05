@@ -12,6 +12,7 @@ const extra = process.argv.slice(4);
 const DEFAULTS = [
   /* The collapse control first: it is the one that kept coming out on its own
      line, and it is the one with something unrelated stacked above it. */
+  '.workspace-ribbon-collapse-btn',
   '.sidebar-toggle-button .clickable-icon',
   '.workspace-tab-header-status-container .clickable-icon',
   '.workspace-ribbon .side-dock-ribbon-action',
@@ -20,6 +21,7 @@ const DEFAULTS = [
   '.workspace-split.mod-root .workspace-tab-header-container',
   '.workspace-split.mod-root .workspace-tab-header',
   '.workspace-split.mod-root .workspace-tab-header-new-tab',
+  '.workspace-ribbon-collapse-btn',
   '.sidebar-toggle-button .clickable-icon',
   '.tree-item-self.nav-file-title',
   '.view-header',

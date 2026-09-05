@@ -195,14 +195,25 @@ is its own setting because how far apart 28px squares sit is the one number
 that decides whether a toolbar reads as a row of buttons or as one bar with
 seams in it.
 
-The sidebar collapse control is the exception that proves it. It is the only
-item in that row that is *not* a 28px square: it takes the band's full height,
-so its icon centres on the band rather than on a hit area that happens to start
-wherever Obsidian stacked it. What sits above it in the ribbon varies by
-platform and release — a vault switcher, an app menu, nothing — so it is also
-ordered to the top rather than left where the DOM puts it. `node measure.mjs`
-checks it first, with an unrelated ribbon item deliberately above it: it and
-the three controls beside it all have to return a centre-y of 20. Measured rather than eyeballed: ribbon
+The sidebar collapse control is the exception that proves it, and it took six
+releases to get right for a reason worth writing down: **the class it was being
+styled with does not exist.** Obsidian calls it `.workspace-ribbon-collapse-btn`.
+`.sidebar-toggle-button` — the name this theme aimed at — does not appear once
+in 769 KB of Minimal and Things, so every rule written for it matched nothing
+at all, six times in a row, while the screenshots kept coming back identical.
+Both names are carried now.
+
+The same reading of the real DOM turned up a second one. The ribbon's actions
+are not siblings of the collapse control; they are nested inside
+`.side-dock-actions`, so a gap set on `.workspace-ribbon` never reached them.
+
+The control itself is the only item in that row that is *not* a 28px square: it
+takes the band's full height, so its icon centres on the band rather than on a
+hit area that happens to start wherever Obsidian stacked it, and it is ordered
+to the top because what sits above it varies by platform and release.
+`node measure.mjs` checks it first, in the real ribbon markup with a plugin item
+deliberately above it: it and the three controls beside it all have to return a
+centre-y of 20. Measured rather than eyeballed: ribbon
 action, both sidebar toggles, both sidebar tab strips and the new-tab button all
 return a centre of exactly 20px. The editor tabs are the deliberate exception —
 they are 34px and aligned to the bottom of the band, because they merge with the

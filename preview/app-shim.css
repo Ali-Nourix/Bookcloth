@@ -62,6 +62,9 @@ body {
   padding: var(--ribbon-padding);
   display: flex; flex-direction: column; align-items: center; gap: var(--size-2-2);
 }
+.workspace-ribbon .side-dock-actions,
+.workspace-ribbon .side-dock-settings { display: flex; flex-direction: column; }
+.workspace-ribbon .side-dock-settings { margin-top: auto; }
 .workspace-ribbon .side-dock-ribbon-action {
   display: flex; align-items: center; justify-content: center;
   color: var(--icon-color); cursor: pointer;
@@ -259,6 +262,7 @@ input.metadata-input-text, input.metadata-input-number {
 .setting-item-control .checkbox-container:after { width: 20px; height: 20px; top: 2px; left: 2px; }
 .setting-item-control .checkbox-container.is-enabled:after { transform: translate3d(18px, 0, 0); }
 .sidebar-toggle-button .clickable-icon svg { width: 12px; height: 12px; }
+.workspace-ribbon .workspace-ribbon-collapse-btn svg { width: 12px; height: 12px; }
 
 /* ---------- floating layers ---------- */
 .menu { position: absolute; min-width: 220px; z-index: 30; padding: var(--size-2-3); }
