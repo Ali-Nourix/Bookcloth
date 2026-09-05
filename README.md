@@ -410,6 +410,19 @@ outside a container that clips is not a preference to be outvoted — it is text
 the reader cannot see. Outside a callout the unflagged rule leaves a deliberate
 bleed alone.
 
+The padding was ragged in the one direction nobody declares. An embed's box is
+read as a card, so the gap above the first line is compared against the gap
+beside it — and measured across four embeds it came out anywhere between 12px
+and 63px while every side stayed at 16px. Two causes: `--embed-padding` was
+12px block against 16px inline, and the rule that clears the first block's top
+margin was aimed at `:first-child`. Obsidian opens a preview with two
+zero-height spacers, `.markdown-preview-pusher` and the view's own
+`.mod-header`, so `:first-child` lands on a spacer and the first heading — one
+place further down — keeps its margin. The padding is equal on all four sides
+now, both spacers are named, and `invariants.mjs` measures the gap above the
+first drawn thing against the gap beside it rather than trusting the
+declaration.
+
 Two smaller things came out of the same dump. The inner preview view keeps
 `overflow: auto` from being a page, which in a right-to-left note reserves an
 11px gutter down the left of every embed for a scrollbar with nothing to

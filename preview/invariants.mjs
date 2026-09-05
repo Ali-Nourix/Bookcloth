@@ -228,6 +228,36 @@ const result = await pg.evaluate(() => {
     if (!edged) fails.push('embed has no edge and sits in nothing that has one');
   }
 
+  /* 5d. an embed's padding is the same on the top as on the sides. Measured
+         rather than declared: the gap above the first drawn thing had been
+         anywhere between 12px and 63px while every side stayed at 16px,
+         because Obsidian opens a preview with two zero-height spacers and the
+         rule meant for the first heading was landing on one of them. */
+  for (const em of all('.markdown-embed')) {
+    const er = rect(em);
+    const es = getComputedStyle(em);
+    const rtl = es.direction === 'rtl';
+    const overlaid2 = (el) => {
+      if (el.ownerSVGElement) return true;
+      for (let n = el; n && n !== em; n = n.parentElement) {
+        const pos = getComputedStyle(n).position;
+        if (pos === 'absolute' || pos === 'fixed') return true;
+      }
+      return false;
+    };
+    const drawn = [...em.querySelectorAll('*')].filter((k) => shown(k) && !overlaid2(k));
+    if (!drawn.length) continue;
+    const top = Math.min(...drawn.map((k) => rect(k).top));
+    const side = rtl
+      ? er.right - Math.max(...drawn.map((k) => rect(k).right))
+      : Math.min(...drawn.map((k) => rect(k).left)) - er.left;
+    const gapTop = R(top - er.top);
+    const gapSide = R(side);
+    if (Math.abs(gapTop - gapSide) > 1) {
+      fails.push(`embed padding is ragged: ${gapTop}px above the first line, ${gapSide}px beside it`);
+    }
+  }
+
   /* 6. the in-progress box follows the accent. */
   const half = all('input[type=checkbox]').find(
     (e) => (e.getAttribute('data-task') ?? e.closest('[data-task]')?.getAttribute('data-task')) === '/'

@@ -15,7 +15,11 @@ body {
   --embed-border-right: none;
   --embed-border-top: none;
   --embed-border-bottom: none;
-  --embed-padding: var(--bc-gap-4) var(--bc-gap-5);
+  /* Equal on all four sides. It had been 12px block and 16px inline, and an
+     embed is a card: the eye reads the gap above the first line against the
+     gap beside it, and two different numbers read as a mistake in the one
+     construct whose whole job is to look deliberate. */
+  --embed-padding: var(--bc-gap-4);
   --embed-font-style: inherit;
   --embed-block-shadow-hover: none;
 
@@ -407,9 +411,26 @@ body.bc-no-fade-done {
   display: none;
 }
 
+/* Space above the first line is the padding's to set, so the first block does
+   not add a margin of its own on top of it.
+
+   :first-child is not enough, and that is why the top gap measured anywhere
+   between 12px and 63px while every side stayed at 16px. Obsidian opens a
+   preview with two zero-height spacers — .markdown-preview-pusher and the
+   view's own .mod-header — so :first-child lands on a spacer and the first
+   heading, one place further down, keeps its margin. Both spacers are named
+   here, and so is the block that follows each of them. */
 .markdown-embed > :first-child,
 .markdown-embed-content > :first-child,
-.markdown-embed .markdown-preview-sizer > :first-child {
+.markdown-embed .markdown-preview-sizer > :first-child,
+.markdown-embed .markdown-preview-pusher + *,
+.markdown-embed .mod-header + *,
+.markdown-embed .markdown-embed-title + *,
+.markdown-embed > :first-child > :first-child,
+.markdown-embed .markdown-preview-sizer > :first-child > :first-child,
+.markdown-embed .markdown-preview-pusher + * > :first-child,
+.markdown-embed .mod-header + * > :first-child,
+.markdown-embed .markdown-embed-title + * > :first-child {
   margin-block-start: 0;
 }
 
@@ -438,6 +459,7 @@ body.bc-no-fade-done {
      deliberate bleed alone. */
   margin: 0 !important;
   padding: var(--bc-gap-3);
+  /* symmetric here too — the ring is closer in, but it is still a box */
   background-color: transparent;
   box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
 }

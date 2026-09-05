@@ -238,6 +238,12 @@ body {
 }
 .el-h1, .el-h2, .el-h3 { position: relative; }
 
+/* Obsidian opens every preview with two zero-height spacers before the first
+   block. They are why `.markdown-preview-sizer > :first-child` lands on a
+   spacer instead of on the first heading. */
+.markdown-preview-pusher { width: 1px; height: 0; }
+.mod-header { height: 0; }
+
 .callout { padding: var(--callout-padding); margin-block: 1em; }
 .callout-title { display: flex; font-weight: var(--callout-title-weight); }
 .callout-icon { display: flex; align-items: center; }
