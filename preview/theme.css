@@ -1,4 +1,4 @@
-/* Bookcloth 2.0.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.1.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -316,14 +316,15 @@ settings:
         level: 1
         collapsed: true
     -
-        id: bc-radius-scale
-        title: Corner rounding
-        description: Scales every radius — rows, chips, buttons, inputs, menus, modals. Notion sits at 1. Zero is fully square.
+        id: bc-radius
+        title: Corner radius
+        description: One number for every corner in the theme. Rows, chips, buttons and inputs sit on it; menus and code at 1.5×; modals, popovers and floating panels at 2×; tags at 0.75×. Notion is 4px. Zero is fully square.
         type: variable-number-slider
-        default: 1
+        default: 4
         min: 0
-        max: 2.5
-        step: 0.1
+        max: 16
+        step: 1
+        format: px
     -
         id: bc-hit
         title: Icon button size
@@ -385,15 +386,6 @@ settings:
         title: Float the panels
         type: class-toggle
         default: false
-    -
-        id: bc-pane-radius
-        title: Panel corner radius
-        type: variable-number-slider
-        default: 8
-        min: 0
-        max: 24
-        step: 1
-        format: px
     -
         id: bc-pane-gap
         title: Gap between panels
@@ -501,6 +493,34 @@ settings:
         max: 25
         step: 1
         format: '%'
+    -
+        id: bc-check-size
+        title: Checkbox size
+        description: Relative to the text beside it. Below about 1 it stops reading as something you can click.
+        type: variable-number-slider
+        default: 1.15
+        min: 0.9
+        max: 1.6
+        step: 0.05
+        format: em
+    -
+        id: bc-task-progress
+        title: In-progress task colour
+        description: The half-filled box on a `- [/]` task.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#337ea9'
+        default-dark: '#529cca'
+    -
+        id: bc-task-attention
+        title: Needs-attention task colour
+        description: The exclamation box on a `- [!]` task.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#d9730d'
+        default-dark: '#ffa344'
     -
         id: bc-checkbox-style
         title: Checkbox style
@@ -635,20 +655,25 @@ body {
   --bc-wash: 12%;
 
   /* --- Shape -----------------------------------------------------------
-     Notion's whole interface sits between 3px and 8px. Rows, chips, buttons
-     and inputs are 4px; menus and code blocks 6px; the few genuinely
-     card-like surfaces — modals, popovers — 8px. Nothing is a lozenge. */
-  --bc-radius-scale: 1;
-  --radius-s: calc(3px * var(--bc-radius-scale));
-  --radius-m: calc(4px * var(--bc-radius-scale));
-  --radius-l: calc(6px * var(--bc-radius-scale));
-  --radius-xl: calc(8px * var(--bc-radius-scale));
+     One number. Every corner in the theme is a ratio of it, so moving it
+     moves the whole set in proportion rather than flattening a 27px row and
+     a 640px modal to the same figure. Notion sits at 4px: rows, chips,
+     buttons and inputs on the base; menus and code at 1.5×; modals, popovers
+     and floating panels at 2×; tags and the smallest chips at 0.75×.
 
-  /* The rounding on a floating panel, used only when the floating layout is
-     switched on. Notion's own layout is flush, so this idles at 0. */
-  --bc-pane-radius: 8px;
-  --bc-modal-radius: 8px;
-  --bc-menu-radius: 6px;
+     Set it to 0 for a fully square interface, or to 8 for something closer to
+     a modern macOS app — the ratios hold either way. */
+  --bc-radius: 4px;
+
+  --radius-s: calc(var(--bc-radius) * 0.75);
+  --radius-m: var(--bc-radius);
+  --radius-l: calc(var(--bc-radius) * 1.5);
+  --radius-xl: calc(var(--bc-radius) * 2);
+
+  --bc-pane-radius: calc(var(--bc-radius) * 2);
+  --bc-modal-radius: calc(var(--bc-radius) * 2);
+  --bc-menu-radius: calc(var(--bc-radius) * 1.5);
+  --bc-check-radius: calc(var(--bc-radius) * 1.25);
 
   /* Square hit areas for every icon-only control. Notion's toolbar buttons
      are 28px squares with a 4px corner; so are these. */
@@ -669,10 +694,10 @@ body {
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
   --modal-radius: var(--bc-modal-radius);
-  --checkbox-radius: var(--radius-s);
+  --checkbox-radius: var(--bc-check-radius);
   --code-radius: var(--radius-m);
   --callout-radius: var(--radius-m);
-  --tag-radius: calc(3px * var(--bc-radius-scale));
+  --tag-radius: var(--radius-s);
   --tab-radius: var(--radius-l);
   --tab-radius-active: var(--radius-l);
   --menu-radius: var(--bc-menu-radius);
@@ -1076,8 +1101,8 @@ body {
   --bc-select-fg: var(--text-normal);
 
   /* Form controls */
-  --checkbox-radius: var(--radius-s);
-  --checkbox-size: 1em;
+  --checkbox-radius: var(--bc-check-radius);
+  /* Set with the rest of the checkbox in 12-icons. */
   --checkbox-color: var(--interactive-accent);
   --checkbox-color-hover: var(--interactive-accent-hover);
   --checkbox-border-color: var(--bc-control-border);
@@ -2735,23 +2760,37 @@ button.mod-cta:disabled {
 }
 
 /* --- Toggles -------------------------------------------------------------
-   Notion's switch is 26×16 with a 12px thumb. Obsidian's is half again as
-   big, so the size, the thumb and the travel are all restated here — moving
-   one without the other two is what leaves a thumb hanging off its track. */
+   Notion's switch is 26×16 with a 12px thumb. Obsidian's is 40×22 with an
+   18px one, and the travel it applies is measured against *its* track. Change
+   the track without changing the travel and the thumb slides straight off the
+   end — which is what it was doing.
+
+   So all three numbers come from two tokens and the travel is derived, not
+   typed: it is exactly width − height, which is the only value that lands the
+   thumb inside the far edge with the same inset it started from. Change
+   either token and the switch stays correct. */
+
+body {
+  --bc-toggle-w: 26px;
+  --bc-toggle-h: 16px;
+  --bc-toggle-pad: 2px;
+  --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
+  --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));
+}
 
 .checkbox-container {
-  width: 26px;
-  height: 16px;
+  width: var(--bc-toggle-w);
+  height: var(--bc-toggle-h);
   border-radius: var(--toggle-radius);
   background-color: var(--background-modifier-border-hover);
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
 .checkbox-container::after {
-  width: 12px;
-  height: 12px;
-  top: 2px;
-  left: 2px;
+  width: var(--bc-toggle-thumb);
+  height: var(--bc-toggle-thumb);
+  top: var(--bc-toggle-pad);
+  left: var(--bc-toggle-pad);
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
@@ -2759,8 +2798,11 @@ button.mod-cta:disabled {
   background-color: var(--interactive-accent);
 }
 
-.checkbox-container.is-enabled::after {
-  transform: translate3d(10px, 0, 0);
+/* Carried on `body` so it outranks the travel Obsidian sets for its own
+   track size. Same declaration, one class heavier — the only way a later
+   sheet reliably wins a rule that is already at (0,2,1). */
+body .checkbox-container.is-enabled::after {
+  transform: translate3d(var(--bc-toggle-travel), 0, 0);
 }
 
 /* --- Notices -------------------------------------------------------------
@@ -3059,8 +3101,14 @@ body {
   stroke-linejoin: round;
 }
 
-/* Small chrome icons: file tree chevrons, property keys, inline flair, and
-   the tab's close button, which sits in a smaller square than the rest. */
+/* Three roles, three sizes, and every icon in a given row shares one of them —
+   which is the whole point. A control that is 16px beside a control that is
+   18px reads as a mistake even when neither is wrong on its own.
+
+   14px: inline markers. Chevrons, tree icons, property keys, the flair on a
+   suggestion, the glyph inside a search field, the tab's close button. These
+   sit inside text or inside a smaller square, and at any larger size they
+   start competing with the thing they mark. */
 .collapse-icon .svg-icon,
 .workspace-tab-header-inner-close-button .svg-icon,
 .tree-item-icon .svg-icon,
@@ -3071,20 +3119,29 @@ body {
   --icon-stroke: var(--icon-xs-stroke-width);
 }
 
-/* Panel actions: nav header buttons, view actions, tab bar, menu rows. Notion
-   runs all of these at 16px. */
+/* 16px: icons that label a line of text — a menu row, a callout title. They
+   are read with the words beside them, so they match the words' scale. */
+.menu-item-icon .svg-icon,
+.callout-icon .svg-icon {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+}
+
+/* 18px: every icon that is a button in the chrome. The ribbon, the sidebar
+   collapse control, sidebar tabs, pane header actions, view actions, the
+   tab-bar controls. They all sit in the same 28px square and they all sit in
+   rows with each other, so they are all one size. */
+.side-dock-ribbon-action .svg-icon,
+.sidebar-toggle-button .svg-icon,
 .nav-buttons-container .clickable-icon .svg-icon,
 .nav-action-button .svg-icon,
 .workspace-tab-header-inner-icon .svg-icon,
 .view-action .svg-icon,
 .view-header-icon .svg-icon,
 .workspace-tab-header-new-tab .svg-icon,
-.workspace-tab-header-status-container .svg-icon,
-.sidebar-toggle-button .svg-icon,
-.menu-item-icon .svg-icon,
-.callout-icon .svg-icon {
-  --icon-size: var(--icon-s);
-  --icon-stroke: var(--icon-s-stroke-width);
+.workspace-tab-header-status-container .svg-icon {
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
 }
 
 /* A callout title is set at 600; a hairline icon beside it looks unfinished.
@@ -3107,11 +3164,10 @@ body {
   margin-block-start: 0.1em;
 }
 
-/* Ribbon glyphs are the largest persistent icons in the app, so they take the
-   lightest stroke. */
-.side-dock-ribbon-action .svg-icon {
-  --icon-size: var(--icon-m);
-  --icon-stroke: var(--icon-m-stroke-width);
+/* The sidebar collapse control is centred on the ribbon's own axis, so it
+   cannot sit half a pixel off the column of glyphs beneath it. */
+.workspace-ribbon .sidebar-toggle-button {
+  margin-inline: auto;
 }
 
 /* --- Icon buttons --------------------------------------------------------
@@ -3220,14 +3276,33 @@ button:has(> :only-child svg):hover,
 }
 
 /* --- Checkboxes ----------------------------------------------------------
-   Notion's checkbox: a 16px box with a 3px corner, filled with the accent and
-   marked with a white tick. The mask is written out here rather than
-   inherited so the theme controls the shape, the optical centring and the
-   amount of the box it fills. */
+   A rounded square, filled with the accent and marked with a white tick. The
+   masks are written out here rather than inherited so the theme controls the
+   shape, the optical centring and how much of the box each mark fills.
+
+   Size is its own token rather than a flat 1em: a checkbox sits beside body
+   text but is read as a control, and at exactly the text size it disappears
+   into the line. 1.15em puts it a shade above the x-height of the words next
+   to it, which is where it reads as something you can click. */
 
 body {
-  --checkbox-size: calc(1em * var(--bc-icon-scale));
+  --bc-check-size: 1.15;
+  --checkbox-size: calc(var(--bc-check-size) * 1em * var(--bc-icon-scale));
+
   --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
+  --bc-check-mask-bang: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9"/><path d="M12 19h.01"/></svg>');
+
+  /* The two alternate states carry their own hues, because "in progress" and
+     "needs attention" are not the same signal as "done" and colouring all
+     three with the accent throws that away. Overridable in Style Settings,
+     so they are plain values rather than aliases of the semantic hues. */
+  --bc-task-progress: #337ea9;
+  --bc-task-attention: #d9730d;
+}
+
+.theme-dark {
+  --bc-task-progress: #529cca;
+  --bc-task-attention: #ffa344;
 }
 
 input[type="checkbox"] {
@@ -3258,7 +3333,7 @@ input[type="checkbox"]:checked::after {
    set to square comes back round. */
 input[type="checkbox"],
 body.bc-check-round input[type="checkbox"] {
-  border-radius: var(--radius-s);
+  border-radius: var(--bc-check-radius);
 }
 
 body.bc-check-circle input[type="checkbox"] {
@@ -3268,6 +3343,60 @@ body.bc-check-circle input[type="checkbox"] {
 body.bc-check-circle input[type="checkbox"]:checked::after {
   -webkit-mask-size: 62%;
   mask-size: 62%;
+}
+
+/* --- Alternate task states -----------------------------------------------
+   `- [/]` is in progress and `- [!]` needs attention. Obsidian marks the list
+   item with data-task and leaves the input unchecked, so both the mark and
+   the `content` that carries it have to be declared here — the ::after that
+   draws a tick only exists on :checked.
+
+   Live Preview puts data-task on the same .task-list-item, so one selector
+   covers both modes. */
+
+/* In progress: outlined in its own colour and filled to the halfway line. No
+   glyph. A mark inside a half-filled box is two signals competing for
+   eighteen pixels, and the amount of colour is the one that reads without
+   being looked at. */
+.task-list-item[data-task="/"] > input[type="checkbox"] {
+  position: relative;
+  border-color: var(--bc-task-progress);
+  background-color: transparent;
+  background-image: linear-gradient(
+    to right,
+    var(--bc-task-progress) 50%,
+    transparent 50%
+  );
+}
+
+/* Needs attention: filled, with the one glyph that means it. */
+.task-list-item[data-task="!"] > input[type="checkbox"] {
+  position: relative;
+  border-color: transparent;
+  background-color: var(--bc-task-attention);
+}
+
+.task-list-item[data-task="!"] > input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--checkbox-marker-color);
+  -webkit-mask-image: var(--bc-check-mask-bang);
+  mask-image: var(--bc-check-mask-bang);
+  -webkit-mask-size: 74%;
+  mask-size: 74%;
+  -webkit-mask-position: 50% 50%;
+  mask-position: 50% 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* The text of a task that is neither open nor done keeps full contrast — only
+   a completed one is dimmed. */
+.task-list-item[data-task="/"],
+.task-list-item[data-task="!"] {
+  color: var(--text-normal);
+  text-decoration: none;
 }
 
 /* ==========================================================================
@@ -3280,6 +3409,12 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
    theme worth keeping and it costs nothing to leave in.
    ========================================================================== */
 
+/* body is included deliberately. Obsidian paints it --background-primary,
+   which is white, and every pixel the app container does not cover — the gaps
+   in the floating layout, the moment during a resize, the outside of a
+   rounded corner — shows that white through. Painting body with the same
+   colour as the layer above it means anything that peeks is the backdrop. */
+body,
 .app-container,
 .horizontal-main-container,
 .workspace {
@@ -3298,6 +3433,10 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
   box-shadow: none;
 }
 
+/* Every layer inside a sidebar is transparent, so the panel's own colour is
+   the only one there is. .view-content is on the list because a pane that
+   paints its own background is a pane whose bottom corners are square
+   whatever the panel above it is rounded to. */
 .workspace-split.mod-left-split .workspace-tabs,
 .workspace-split.mod-right-split .workspace-tabs,
 .workspace-split.mod-left-split .workspace-leaf-content,
@@ -3305,7 +3444,9 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container,
 .workspace-split.mod-left-split .workspace-leaf,
-.workspace-split.mod-right-split .workspace-leaf {
+.workspace-split.mod-right-split .workspace-leaf,
+.workspace-split.mod-left-split .view-content,
+.workspace-split.mod-right-split .view-content {
   background-color: transparent;
 }
 
@@ -3358,6 +3499,7 @@ body.bc-borders .workspace-split.mod-root .workspace-tab-header-container {
   --bc-backdrop: #131313;
 }
 
+body.bc-float-panes,
 body.bc-float-panes .app-container,
 body.bc-float-panes .horizontal-main-container,
 body.bc-float-panes .workspace {
@@ -3386,6 +3528,39 @@ body.bc-float-panes
 }
 
 body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* Handing the corner down the chain -----------------------------------
+   A rounded parent does not clip its children. So a sidebar rounded at the
+   split will still square its own bottom corners the moment anything inside
+   it paints — a plugin footer, a vault-name bar, a view that fills its own
+   background. Clipping the pane would fix all of it in one line and is
+   exactly what this theme refuses to do: `overflow: hidden` on a sidebar
+   swallows the date pickers, colour swatches and drag previews that plugins
+   render past their own edge.
+
+   Instead the corner is handed to whichever element actually owns it. Only
+   the bottom two need handing down: the top pair belong to the tab strip,
+   which is transparent, so the split's own rounded background is already what
+   shows there. */
+
+body.bc-float-panes .workspace-split.mod-left-split > .workspace-tabs,
+body.bc-float-panes .workspace-split.mod-right-split > .workspace-tabs {
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .view-content,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .view-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* The editor's last row, for the same reason. */
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content .view-content {
   border-end-start-radius: var(--bc-pane-radius);
   border-end-end-radius: var(--bc-pane-radius);
 }
@@ -3419,8 +3594,10 @@ body.is-mobile {
   --font-ui-medium: 15px;
   --file-margins: var(--bc-gap-4) var(--bc-gap-4) 30vh;
   --bc-hit: 34px;
-  /* Sheets and dialogs only. Rows, buttons and inputs keep their 4px. */
-  --bc-modal-radius: 14px;
+  /* Sheets and dialogs only, and still a ratio of the global radius so the
+     one slider keeps working on a phone. Rows, buttons and inputs keep the
+     base. */
+  --bc-modal-radius: calc(var(--bc-radius) * 3.5);
 }
 
 /* Nothing on a touch screen may hide behind :hover. */

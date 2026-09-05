@@ -37,8 +37,14 @@ body {
   stroke-linejoin: round;
 }
 
-/* Small chrome icons: file tree chevrons, property keys, inline flair, and
-   the tab's close button, which sits in a smaller square than the rest. */
+/* Three roles, three sizes, and every icon in a given row shares one of them —
+   which is the whole point. A control that is 16px beside a control that is
+   18px reads as a mistake even when neither is wrong on its own.
+
+   14px: inline markers. Chevrons, tree icons, property keys, the flair on a
+   suggestion, the glyph inside a search field, the tab's close button. These
+   sit inside text or inside a smaller square, and at any larger size they
+   start competing with the thing they mark. */
 .collapse-icon .svg-icon,
 .workspace-tab-header-inner-close-button .svg-icon,
 .tree-item-icon .svg-icon,
@@ -49,20 +55,29 @@ body {
   --icon-stroke: var(--icon-xs-stroke-width);
 }
 
-/* Panel actions: nav header buttons, view actions, tab bar, menu rows. Notion
-   runs all of these at 16px. */
+/* 16px: icons that label a line of text — a menu row, a callout title. They
+   are read with the words beside them, so they match the words' scale. */
+.menu-item-icon .svg-icon,
+.callout-icon .svg-icon {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+}
+
+/* 18px: every icon that is a button in the chrome. The ribbon, the sidebar
+   collapse control, sidebar tabs, pane header actions, view actions, the
+   tab-bar controls. They all sit in the same 28px square and they all sit in
+   rows with each other, so they are all one size. */
+.side-dock-ribbon-action .svg-icon,
+.sidebar-toggle-button .svg-icon,
 .nav-buttons-container .clickable-icon .svg-icon,
 .nav-action-button .svg-icon,
 .workspace-tab-header-inner-icon .svg-icon,
 .view-action .svg-icon,
 .view-header-icon .svg-icon,
 .workspace-tab-header-new-tab .svg-icon,
-.workspace-tab-header-status-container .svg-icon,
-.sidebar-toggle-button .svg-icon,
-.menu-item-icon .svg-icon,
-.callout-icon .svg-icon {
-  --icon-size: var(--icon-s);
-  --icon-stroke: var(--icon-s-stroke-width);
+.workspace-tab-header-status-container .svg-icon {
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
 }
 
 /* A callout title is set at 600; a hairline icon beside it looks unfinished.
@@ -85,11 +100,10 @@ body {
   margin-block-start: 0.1em;
 }
 
-/* Ribbon glyphs are the largest persistent icons in the app, so they take the
-   lightest stroke. */
-.side-dock-ribbon-action .svg-icon {
-  --icon-size: var(--icon-m);
-  --icon-stroke: var(--icon-m-stroke-width);
+/* The sidebar collapse control is centred on the ribbon's own axis, so it
+   cannot sit half a pixel off the column of glyphs beneath it. */
+.workspace-ribbon .sidebar-toggle-button {
+  margin-inline: auto;
 }
 
 /* --- Icon buttons --------------------------------------------------------
@@ -198,14 +212,33 @@ button:has(> :only-child svg):hover,
 }
 
 /* --- Checkboxes ----------------------------------------------------------
-   Notion's checkbox: a 16px box with a 3px corner, filled with the accent and
-   marked with a white tick. The mask is written out here rather than
-   inherited so the theme controls the shape, the optical centring and the
-   amount of the box it fills. */
+   A rounded square, filled with the accent and marked with a white tick. The
+   masks are written out here rather than inherited so the theme controls the
+   shape, the optical centring and how much of the box each mark fills.
+
+   Size is its own token rather than a flat 1em: a checkbox sits beside body
+   text but is read as a control, and at exactly the text size it disappears
+   into the line. 1.15em puts it a shade above the x-height of the words next
+   to it, which is where it reads as something you can click. */
 
 body {
-  --checkbox-size: calc(1em * var(--bc-icon-scale));
+  --bc-check-size: 1.15;
+  --checkbox-size: calc(var(--bc-check-size) * 1em * var(--bc-icon-scale));
+
   --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
+  --bc-check-mask-bang: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9"/><path d="M12 19h.01"/></svg>');
+
+  /* The two alternate states carry their own hues, because "in progress" and
+     "needs attention" are not the same signal as "done" and colouring all
+     three with the accent throws that away. Overridable in Style Settings,
+     so they are plain values rather than aliases of the semantic hues. */
+  --bc-task-progress: #337ea9;
+  --bc-task-attention: #d9730d;
+}
+
+.theme-dark {
+  --bc-task-progress: #529cca;
+  --bc-task-attention: #ffa344;
 }
 
 input[type="checkbox"] {
@@ -236,7 +269,7 @@ input[type="checkbox"]:checked::after {
    set to square comes back round. */
 input[type="checkbox"],
 body.bc-check-round input[type="checkbox"] {
-  border-radius: var(--radius-s);
+  border-radius: var(--bc-check-radius);
 }
 
 body.bc-check-circle input[type="checkbox"] {
@@ -246,4 +279,58 @@ body.bc-check-circle input[type="checkbox"] {
 body.bc-check-circle input[type="checkbox"]:checked::after {
   -webkit-mask-size: 62%;
   mask-size: 62%;
+}
+
+/* --- Alternate task states -----------------------------------------------
+   `- [/]` is in progress and `- [!]` needs attention. Obsidian marks the list
+   item with data-task and leaves the input unchecked, so both the mark and
+   the `content` that carries it have to be declared here — the ::after that
+   draws a tick only exists on :checked.
+
+   Live Preview puts data-task on the same .task-list-item, so one selector
+   covers both modes. */
+
+/* In progress: outlined in its own colour and filled to the halfway line. No
+   glyph. A mark inside a half-filled box is two signals competing for
+   eighteen pixels, and the amount of colour is the one that reads without
+   being looked at. */
+.task-list-item[data-task="/"] > input[type="checkbox"] {
+  position: relative;
+  border-color: var(--bc-task-progress);
+  background-color: transparent;
+  background-image: linear-gradient(
+    to right,
+    var(--bc-task-progress) 50%,
+    transparent 50%
+  );
+}
+
+/* Needs attention: filled, with the one glyph that means it. */
+.task-list-item[data-task="!"] > input[type="checkbox"] {
+  position: relative;
+  border-color: transparent;
+  background-color: var(--bc-task-attention);
+}
+
+.task-list-item[data-task="!"] > input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--checkbox-marker-color);
+  -webkit-mask-image: var(--bc-check-mask-bang);
+  mask-image: var(--bc-check-mask-bang);
+  -webkit-mask-size: 74%;
+  mask-size: 74%;
+  -webkit-mask-position: 50% 50%;
+  mask-position: 50% 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* The text of a task that is neither open nor done keeps full contrast — only
+   a completed one is dimmed. */
+.task-list-item[data-task="/"],
+.task-list-item[data-task="!"] {
+  color: var(--text-normal);
+  text-decoration: none;
 }

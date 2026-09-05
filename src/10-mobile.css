@@ -13,8 +13,10 @@ body.is-mobile {
   --font-ui-medium: 15px;
   --file-margins: var(--bc-gap-4) var(--bc-gap-4) 30vh;
   --bc-hit: 34px;
-  /* Sheets and dialogs only. Rows, buttons and inputs keep their 4px. */
-  --bc-modal-radius: 14px;
+  /* Sheets and dialogs only, and still a ratio of the global radius so the
+     one slider keeps working on a phone. Rows, buttons and inputs keep the
+     base. */
+  --bc-modal-radius: calc(var(--bc-radius) * 3.5);
 }
 
 /* Nothing on a touch screen may hide behind :hover. */

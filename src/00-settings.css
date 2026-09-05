@@ -312,14 +312,15 @@ settings:
         level: 1
         collapsed: true
     -
-        id: bc-radius-scale
-        title: Corner rounding
-        description: Scales every radius — rows, chips, buttons, inputs, menus, modals. Notion sits at 1. Zero is fully square.
+        id: bc-radius
+        title: Corner radius
+        description: One number for every corner in the theme. Rows, chips, buttons and inputs sit on it; menus and code at 1.5×; modals, popovers and floating panels at 2×; tags at 0.75×. Notion is 4px. Zero is fully square.
         type: variable-number-slider
-        default: 1
+        default: 4
         min: 0
-        max: 2.5
-        step: 0.1
+        max: 16
+        step: 1
+        format: px
     -
         id: bc-hit
         title: Icon button size
@@ -381,15 +382,6 @@ settings:
         title: Float the panels
         type: class-toggle
         default: false
-    -
-        id: bc-pane-radius
-        title: Panel corner radius
-        type: variable-number-slider
-        default: 8
-        min: 0
-        max: 24
-        step: 1
-        format: px
     -
         id: bc-pane-gap
         title: Gap between panels
@@ -497,6 +489,34 @@ settings:
         max: 25
         step: 1
         format: '%'
+    -
+        id: bc-check-size
+        title: Checkbox size
+        description: Relative to the text beside it. Below about 1 it stops reading as something you can click.
+        type: variable-number-slider
+        default: 1.15
+        min: 0.9
+        max: 1.6
+        step: 0.05
+        format: em
+    -
+        id: bc-task-progress
+        title: In-progress task colour
+        description: The half-filled box on a `- [/]` task.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#337ea9'
+        default-dark: '#529cca'
+    -
+        id: bc-task-attention
+        title: Needs-attention task colour
+        description: The exclamation box on a `- [!]` task.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#d9730d'
+        default-dark: '#ffa344'
     -
         id: bc-checkbox-style
         title: Checkbox style

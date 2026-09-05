@@ -115,8 +115,8 @@ body {
   --bc-select-fg: var(--text-normal);
 
   /* Form controls */
-  --checkbox-radius: var(--radius-s);
-  --checkbox-size: 1em;
+  --checkbox-radius: var(--bc-check-radius);
+  /* Set with the rest of the checkbox in 12-icons. */
   --checkbox-color: var(--interactive-accent);
   --checkbox-color-hover: var(--interactive-accent-hover);
   --checkbox-border-color: var(--bc-control-border);

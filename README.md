@@ -39,6 +39,7 @@ Not a mood board. Where Notion states a figure, that figure is used:
 | Icon buttons | 28px square, 4px corner | same |
 | Chrome icons | 16px | 16px |
 | Menus / modals | 6px / 8px, three-layer shadow | same |
+| Toggle | 26 × 16, 12px thumb | same |
 | Hover / selected | `rgba(55,53,47,.06)` / `.08` | same |
 | Elevation | `0 0 0 1px, 0 3px 6px, 0 9px 24px` | same |
 
@@ -133,11 +134,11 @@ font-size slider keeps working:
 | Text colours | Body, muted and faint ink, separately per theme |
 | Semantic colours | All eight hues — red through pink — separately per theme |
 | Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
-| Shape and density | Corner rounding, icon button size, sidebar row height, density, note width, visible borders |
-| Floating panels | Float the panels, panel radius, gap, backdrop colour |
+| Shape and density | Corner radius, icon button size, sidebar row height, density, note width, visible borders |
+| Floating panels | Float the panels, gap, backdrop colour |
 | Icons | Icon size, stroke weight |
 | Interface | Tab style, indentation guides, hide status bar, hide ribbon |
-| Editor | Callout style and colour strength, checkbox style, task fading, active line |
+| Editor | Callout style and colour strength, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
 | Plugin support | Opt out of any of the bundled plugin styles |
 
 Every plugin style is **on by default** and the toggles turn them off, so
@@ -163,13 +164,26 @@ return a centre of exactly 20px. The editor tabs are the deliberate exception �
 they are 34px and aligned to the bottom of the band, because they merge with the
 page rather than float in the strip.
 
-## One radius scale
+## One radius, and everything is a ratio of it
 
-Notion's whole interface sits between 3px and 8px: rows, chips, buttons and
-inputs at 4px, menus and code at 6px, modals and popovers at 8px. **Corner
-rounding** scales all of it at once; 0 is fully square. The panel radius is a
-separate control because a floating panel is a card and wants to look like one,
-and it only applies when floating panels are switched on.
+Notion's whole interface sits between 3px and 8px, and the relationships
+between those figures matter more than the figures themselves — a 27px sidebar
+row and a 640px modal should not round to the same number.
+
+So there is one control, **Corner radius**, and every corner in the theme is a
+multiple of it:
+
+| | Ratio | At the default 4px |
+| --- | --- | --- |
+| Tags, the smallest chips | 0.75× | 3px |
+| Rows, buttons, inputs, code, callouts | 1× | 4px |
+| Menus, tabs, popovers | 1.5× | 6px |
+| Modals, floating panels | 2× | 8px |
+| Checkboxes | 1.25× | 5px |
+
+Move it to 0 and the interface is square; move it to 12 and it reads like a
+modern macOS app — the proportions hold either way, because nothing in the
+theme carries a radius of its own.
 
 Every icon-only control is a square of a single size, set by **Icon button
 size**. This matters more than it sounds: Obsidian's sidebar tabs are wider
@@ -194,9 +208,31 @@ solid set. Two sliders scale the whole thing: **Icon size** and **Icon stroke
 weight**. Pointer target minimums are enforced on touch only — forcing a minimum
 square on desktop is what widens every button in a dense plugin toolbar.
 
-The checkbox tick is drawn from Lucide's check at a weight that survives at
-16px, positioned to sit optically rather than mathematically centred. Its shape
-is set on the element for both options rather than leaving the square as "the
+Three sizes, three roles, and every icon in a given row shares one of them —
+which is the point. 14px for inline markers (chevrons, property keys, the tab's
+close button), 16px for icons that label a line of text (menu rows, callout
+titles), 18px for every icon that is a button in the chrome. A 16px control
+beside an 18px control reads as a mistake even when neither is wrong alone.
+
+## Tasks
+
+`- [x]` is a filled box with a white tick. `- [/]` is outlined in its own
+colour and filled to the halfway line — no glyph, because a mark inside a
+half-filled box is two signals competing for eighteen pixels and the amount of
+colour is the one that reads without being looked at. `- [!]` is filled with
+the one glyph that means it.
+
+Both alternate colours are separate controls, because "in progress" and "needs
+attention" are not the same signal as "done" and colouring all three with the
+accent throws that distinction away.
+
+The box itself is 1.15em rather than 1em: a checkbox sits beside body text but
+is read as a control, and at exactly the text size it disappears into the line.
+**Checkbox size** moves it.
+
+The tick is drawn from Lucide's check at a weight that survives at that size,
+positioned to sit optically rather than mathematically centred. Its shape is
+set on the element for both options rather than leaving the square as "the
 state with no rule", so a box set to square cannot be quietly rounded again by
 anything else that touches the radius.
 

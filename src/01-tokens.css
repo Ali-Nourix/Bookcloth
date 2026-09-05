@@ -73,20 +73,25 @@ body {
   --bc-wash: 12%;
 
   /* --- Shape -----------------------------------------------------------
-     Notion's whole interface sits between 3px and 8px. Rows, chips, buttons
-     and inputs are 4px; menus and code blocks 6px; the few genuinely
-     card-like surfaces — modals, popovers — 8px. Nothing is a lozenge. */
-  --bc-radius-scale: 1;
-  --radius-s: calc(3px * var(--bc-radius-scale));
-  --radius-m: calc(4px * var(--bc-radius-scale));
-  --radius-l: calc(6px * var(--bc-radius-scale));
-  --radius-xl: calc(8px * var(--bc-radius-scale));
+     One number. Every corner in the theme is a ratio of it, so moving it
+     moves the whole set in proportion rather than flattening a 27px row and
+     a 640px modal to the same figure. Notion sits at 4px: rows, chips,
+     buttons and inputs on the base; menus and code at 1.5×; modals, popovers
+     and floating panels at 2×; tags and the smallest chips at 0.75×.
 
-  /* The rounding on a floating panel, used only when the floating layout is
-     switched on. Notion's own layout is flush, so this idles at 0. */
-  --bc-pane-radius: 8px;
-  --bc-modal-radius: 8px;
-  --bc-menu-radius: 6px;
+     Set it to 0 for a fully square interface, or to 8 for something closer to
+     a modern macOS app — the ratios hold either way. */
+  --bc-radius: 4px;
+
+  --radius-s: calc(var(--bc-radius) * 0.75);
+  --radius-m: var(--bc-radius);
+  --radius-l: calc(var(--bc-radius) * 1.5);
+  --radius-xl: calc(var(--bc-radius) * 2);
+
+  --bc-pane-radius: calc(var(--bc-radius) * 2);
+  --bc-modal-radius: calc(var(--bc-radius) * 2);
+  --bc-menu-radius: calc(var(--bc-radius) * 1.5);
+  --bc-check-radius: calc(var(--bc-radius) * 1.25);
 
   /* Square hit areas for every icon-only control. Notion's toolbar buttons
      are 28px squares with a 4px corner; so are these. */
@@ -107,10 +112,10 @@ body {
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
   --modal-radius: var(--bc-modal-radius);
-  --checkbox-radius: var(--radius-s);
+  --checkbox-radius: var(--bc-check-radius);
   --code-radius: var(--radius-m);
   --callout-radius: var(--radius-m);
-  --tag-radius: calc(3px * var(--bc-radius-scale));
+  --tag-radius: var(--radius-s);
   --tab-radius: var(--radius-l);
   --tab-radius-active: var(--radius-l);
   --menu-radius: var(--bc-menu-radius);

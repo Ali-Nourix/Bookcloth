@@ -8,6 +8,12 @@
    theme worth keeping and it costs nothing to leave in.
    ========================================================================== */
 
+/* body is included deliberately. Obsidian paints it --background-primary,
+   which is white, and every pixel the app container does not cover — the gaps
+   in the floating layout, the moment during a resize, the outside of a
+   rounded corner — shows that white through. Painting body with the same
+   colour as the layer above it means anything that peeks is the backdrop. */
+body,
 .app-container,
 .horizontal-main-container,
 .workspace {
@@ -26,6 +32,10 @@
   box-shadow: none;
 }
 
+/* Every layer inside a sidebar is transparent, so the panel's own colour is
+   the only one there is. .view-content is on the list because a pane that
+   paints its own background is a pane whose bottom corners are square
+   whatever the panel above it is rounded to. */
 .workspace-split.mod-left-split .workspace-tabs,
 .workspace-split.mod-right-split .workspace-tabs,
 .workspace-split.mod-left-split .workspace-leaf-content,
@@ -33,7 +43,9 @@
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container,
 .workspace-split.mod-left-split .workspace-leaf,
-.workspace-split.mod-right-split .workspace-leaf {
+.workspace-split.mod-right-split .workspace-leaf,
+.workspace-split.mod-left-split .view-content,
+.workspace-split.mod-right-split .view-content {
   background-color: transparent;
 }
 
@@ -86,6 +98,7 @@ body.bc-borders .workspace-split.mod-root .workspace-tab-header-container {
   --bc-backdrop: #131313;
 }
 
+body.bc-float-panes,
 body.bc-float-panes .app-container,
 body.bc-float-panes .horizontal-main-container,
 body.bc-float-panes .workspace {
@@ -114,6 +127,39 @@ body.bc-float-panes
 }
 
 body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* Handing the corner down the chain -----------------------------------
+   A rounded parent does not clip its children. So a sidebar rounded at the
+   split will still square its own bottom corners the moment anything inside
+   it paints — a plugin footer, a vault-name bar, a view that fills its own
+   background. Clipping the pane would fix all of it in one line and is
+   exactly what this theme refuses to do: `overflow: hidden` on a sidebar
+   swallows the date pickers, colour swatches and drag previews that plugins
+   render past their own edge.
+
+   Instead the corner is handed to whichever element actually owns it. Only
+   the bottom two need handing down: the top pair belong to the tab strip,
+   which is transparent, so the split's own rounded background is already what
+   shows there. */
+
+body.bc-float-panes .workspace-split.mod-left-split > .workspace-tabs,
+body.bc-float-panes .workspace-split.mod-right-split > .workspace-tabs {
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .view-content,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .view-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* The editor's last row, for the same reason. */
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content .view-content {
   border-end-start-radius: var(--bc-pane-radius);
   border-end-end-radius: var(--bc-pane-radius);
 }

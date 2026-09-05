@@ -395,23 +395,37 @@ button.mod-cta:disabled {
 }
 
 /* --- Toggles -------------------------------------------------------------
-   Notion's switch is 26×16 with a 12px thumb. Obsidian's is half again as
-   big, so the size, the thumb and the travel are all restated here — moving
-   one without the other two is what leaves a thumb hanging off its track. */
+   Notion's switch is 26×16 with a 12px thumb. Obsidian's is 40×22 with an
+   18px one, and the travel it applies is measured against *its* track. Change
+   the track without changing the travel and the thumb slides straight off the
+   end — which is what it was doing.
+
+   So all three numbers come from two tokens and the travel is derived, not
+   typed: it is exactly width − height, which is the only value that lands the
+   thumb inside the far edge with the same inset it started from. Change
+   either token and the switch stays correct. */
+
+body {
+  --bc-toggle-w: 26px;
+  --bc-toggle-h: 16px;
+  --bc-toggle-pad: 2px;
+  --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
+  --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));
+}
 
 .checkbox-container {
-  width: 26px;
-  height: 16px;
+  width: var(--bc-toggle-w);
+  height: var(--bc-toggle-h);
   border-radius: var(--toggle-radius);
   background-color: var(--background-modifier-border-hover);
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
 .checkbox-container::after {
-  width: 12px;
-  height: 12px;
-  top: 2px;
-  left: 2px;
+  width: var(--bc-toggle-thumb);
+  height: var(--bc-toggle-thumb);
+  top: var(--bc-toggle-pad);
+  left: var(--bc-toggle-pad);
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
@@ -419,8 +433,11 @@ button.mod-cta:disabled {
   background-color: var(--interactive-accent);
 }
 
-.checkbox-container.is-enabled::after {
-  transform: translate3d(10px, 0, 0);
+/* Carried on `body` so it outranks the travel Obsidian sets for its own
+   track size. Same declaration, one class heavier — the only way a later
+   sheet reliably wins a rule that is already at (0,2,1). */
+body .checkbox-container.is-enabled::after {
+  transform: translate3d(var(--bc-toggle-travel), 0, 0);
 }
 
 /* --- Notices -------------------------------------------------------------
