@@ -409,9 +409,14 @@ colour — of every region the theme touches.
 bcProbe()                    every section
 bcProbe('ribbon','editor')   only those
 bcProbe('tree')              DOM skeleton with real class names
-await bcBaseline('tokens')   the same run with the theme off, then restored
-copy(__bc)                   last output to the clipboard
+await bcBaseline()           the same run with the theme off, then restored
+await bcSave()               write the result into the vault root as a file
 ```
+
+Take the output through `bcSave`. DevTools truncates a long string in
+`console.log`, and `copy()` is a command-line API that exists only at the top
+level of what you type — calling it from inside a function silently does
+nothing, which looks exactly like a successful copy.
 
 Sections: `env`, `tokens`, `frame`, `ribbon`, `leftsplit`, `rightsplit`, `root`,
 `editor`, `tasks`, `controls`, `overlays`, `icons`, `tree`.
@@ -422,6 +427,12 @@ ones the app computes with the theme switched off. It measures once with the
 default theme, once with Bookcloth, restores the theme, and prints both — and
 the difference between the two runs is exactly the theme's effect, with nothing
 inferred.
+
+`env` is the section to read first. It names the Obsidian build, the appearance
+settings that change geometry, every enabled plugin and CSS snippet, and where
+each loaded stylesheet came from. A vault with twenty plugins is not the app the
+harness draws, and knowing which of them injects CSS turns "the theme is broken"
+into "this plugin ships a 13px glyph".
 
 `icons` is worth running on its own: it groups every SVG on screen by rendered
 size and names what owns each one, which is how a plugin shipping a hardcoded

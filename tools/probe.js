@@ -7,7 +7,11 @@
  *   bcProbe('ribbon','editor')  only those sections
  *   bcProbe('tree')             DOM skeleton with real class names
  *   await bcBaseline()          the same run with the theme off, then restored
- *   copy(__bc)                  copy the last output to the clipboard
+ *   await bcSave()              write the last output into the vault root
+ *
+ * Always take the output through bcSave. DevTools truncates a long string in
+ * console.log, and copy() is a command-line API that only exists at the top
+ * level of what you type — calling it from inside a function does nothing.
  *
  * bcProbe only reads: getBoundingClientRect and getComputedStyle. Nothing is
  * changed. bcBaseline is the one exception — it switches to the default theme,
@@ -104,15 +108,52 @@
   S.env = () => {
     head('env');
     const app = window.app;
-    say(`obsidian  ${app?.appVersion || document.body.dataset.obsidianVersion || '?'}   installer ${app?.installerVersion || '?'}`);
-    say(`platform  ${navigator.platform}   dpr ${window.devicePixelRatio}   zoom ${px(cs(document.body).getPropertyValue('--zoom-factor')) || '1'}`);
-    say(`window    ${window.innerWidth}x${window.innerHeight}`);
+    const ua = navigator.userAgent;
+    const ver = (re) => (ua.match(re) || [, '?'])[1];
+    say(`obsidian  ${ver(/obsidian\/([\d.]+)/i)}   electron ${ver(/Electron\/([\d.]+)/)}   chrome ${ver(/Chrome\/([\d.]+)/)}`);
+    say(`platform  ${navigator.platform}   dpr ${window.devicePixelRatio}   window ${window.innerWidth}x${window.innerHeight}`);
     say(`html      ${document.documentElement.className || '(none)'}`);
     say(`body      ${document.body.className}`);
-    const theme = document.body.classList.contains('theme-dark') ? 'dark' : 'light';
-    say(`mode      ${theme}`);
-    const sheets = [...document.styleSheets].map((s) => (s.ownerNode?.id || s.href || 'inline')).join(', ');
-    say(`sheets    ${sheets}`);
+    say(`mode      ${document.body.classList.contains('theme-dark') ? 'dark' : 'light'}`);
+
+    /* appearance settings change geometry as much as any rule does */
+    const cfg = (k) => {
+      try {
+        const v = app?.vault?.getConfig?.(k);
+        return v === undefined ? null : JSON.stringify(v);
+      } catch {
+        return null;
+      }
+    };
+    const KEYS = ['cssTheme', 'accentColor', 'baseFontSize', 'interfaceFontFamily', 'textFontFamily',
+      'monospaceFontFamily', 'translucency', 'nativeMenus', 'showInlineTitle', 'showViewHeader',
+      'showRibbon', 'readableLineLength', 'strictLineBreaks', 'foldHeading', 'legacyEditor'];
+    const set = KEYS.map((k) => [k, cfg(k)]).filter(([, v]) => v !== null);
+    if (set.length) say(`config    ${set.map(([k, v]) => `${k}=${v}`).join('  ')}`);
+
+    /* every one of these can add rules and rewrite the DOM, so name them */
+    const snippets = [...(app?.customCss?.enabledSnippets || [])];
+    say(`snippets  ${snippets.length ? snippets.join(', ') : '(none)'}`);
+    const plugins = [...(app?.plugins?.enabledPlugins || [])].sort();
+    say(`plugins   ${plugins.length}: ${plugins.join(', ')}`);
+
+    /* an inline sheet is a snippet, a plugin, or the theme — say which */
+    const sheets = [...document.styleSheets].map((sh) => {
+      const n = sh.ownerNode;
+      if (!n) return 'detached';
+      if (n.id) return `#${n.id}`;
+      if (sh.href) return sh.href.replace(/^app:\/\/obsidian\.md\//, 'app:');
+      const first = (() => {
+        try {
+          return sh.cssRules[0]?.cssText?.slice(0, 40).replace(/\s+/g, ' ');
+        } catch {
+          return null;
+        }
+      })();
+      return `inline[${sh.cssRules?.length ?? '?'}]${first ? ` ${first}…` : ''}`;
+    });
+    say(`sheets    ${sheets.length}`);
+    sheets.forEach((x, i) => say(`  [${String(i).padStart(2)}] ${x}`));
   };
 
   S.tokens = () => {
@@ -363,6 +404,44 @@
     walk(root, 0);
   };
 
+  /* ------------------------------------------------------------- delivering
+     A 1400-line string does not survive console.log — DevTools truncates it —
+     and copy() is a command-line API that only exists at the top level of what
+     you type, so calling it from in here is a no-op. Writing a file in the
+     vault is the only route that reliably hands over the whole thing. */
+  const FILE = 'bookcloth-probe.txt';
+
+  window.bcSave = async (name = FILE) => {
+    const text = window.__bc;
+    if (!text) return 'nothing measured yet — run bcProbe() first';
+    const a = window.app?.vault?.adapter;
+    if (a?.write) {
+      await a.write(name, text);
+      const base = a.getBasePath ? a.getBasePath() : '<vault>';
+      return `wrote ${text.split('\n').length} lines to ${base}/${name}`;
+    }
+    /* no vault (or a mobile adapter that will not take a plain path): fall back
+       to a download, which Electron drops in the usual place */
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+    const el = document.createElement('a');
+    el.href = url;
+    el.download = name;
+    el.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return `downloaded ${name}`;
+  };
+
+  const deliver = (text) => {
+    const lines = text.split('\n');
+    console.log(lines.slice(0, 30).join('\n'));
+    console.log(`%c… ${lines.length - 30} more lines held in __bc`, 'color:#9b9a97');
+    navigator.clipboard?.writeText(text).then(
+      () => console.log('%c✓ copied to clipboard', 'color:#0b8a5c;font-weight:600'),
+      () => console.log('%c! clipboard refused — use  await bcSave()', 'color:#996611;font-weight:600')
+    );
+    console.log('%c→ await bcSave()   writes it into the vault root as a file', 'color:#0b8a5c;font-weight:600');
+  };
+
   /* ---------------------------------------------------------------- runner */
   const ORDER = ['env', 'tokens', 'frame', 'ribbon', 'leftsplit', 'rightsplit', 'root', 'editor', 'tasks', 'controls', 'overlays', 'icons'];
 
@@ -384,14 +463,8 @@
     }
     const text = out.join('\n');
     window.__bc = text;
-    console.log(text);
-    try {
-      copy(text);
-      console.log('\n%c✓ copied to clipboard', 'color:#0b8a5c;font-weight:600');
-    } catch {
-      console.log('\n%c→ run  copy(__bc)  to put it on the clipboard', 'color:#996611;font-weight:600');
-    }
-    return `${out.length} lines — see above, or copy(__bc)`;
+    deliver(text);
+    return `${out.length} lines in __bc`;
   };
 
   /* The preview harness has to reproduce Obsidian, not Bookcloth. So measure
@@ -416,19 +489,12 @@
     parts.push(`\n\n===== THEMED (${restore || 'default'}) =====\n${window.__bc}`);
     const text = parts.join('\n');
     window.__bc = text;
-    console.clear();
-    console.log(text);
-    try {
-      copy(text);
-      console.log('\n%c✓ both runs copied to clipboard', 'color:#0b8a5c;font-weight:600');
-    } catch {
-      console.log('\n%c→ run  copy(__bc)', 'color:#996611;font-weight:600');
-    }
-    return `theme restored to "${restore}" — ${text.split('\n').length} lines`;
+    deliver(text);
+    return `theme restored to "${restore}" — ${text.split('\n').length} lines in __bc`;
   };
 
   console.log(
-    `%cbookcloth probe ready%c\n  bcProbe()                  all sections\n  bcProbe('ribbon','editor')  some sections\n  bcProbe('tree')            DOM skeleton\n  await bcBaseline('tokens') same run with the theme off, then restored\n  copy(__bc)                 last output to the clipboard\n  sections: ${ORDER.join(', ')}, tree`,
+    `%cbookcloth probe ready%c\n  bcProbe()                   all sections\n  bcProbe('ribbon','editor')  some sections\n  bcProbe('tree')             DOM skeleton\n  await bcBaseline()          same run with the theme off, then restored\n  await bcSave()              write the result into the vault root\n  sections: ${ORDER.join(', ')}, tree`,
     'color:#0b8a5c;font-weight:600',
     'color:inherit'
   );
