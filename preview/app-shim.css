@@ -192,11 +192,51 @@ input[type="checkbox"]:checked::after {
 .task-list-item.is-checked .task-list-item-text { color: var(--checklist-done-color); text-decoration: var(--checklist-done-decoration); }
 ul.contains-task-list { padding-inline-start: 0.4em; }
 
-/* ---------- generic controls ---------- */
+/* ---------- generic controls ----------
+   These four mirror app.css closely, because they are the rules a theme most
+   often collides with: Obsidian sets height and padding here, and un-sets
+   them again for property fields further down. A harness that skips that
+   sequence cannot catch a theme that re-boxes a note's properties. */
 .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .clickable-icon { display: flex; align-items: center; justify-content: center; padding: var(--size-2-3); color: var(--icon-color); cursor: pointer; background: transparent; border: none; }
-button { font-family: inherit; font-size: var(--font-ui-small); padding: 0 var(--size-4-3); height: var(--input-height); cursor: pointer; }
-input[type="text"], input[type="search"] { font-family: inherit; font-size: var(--font-ui-small); height: var(--input-height); padding: 0 var(--size-4-2); color: var(--text-normal); }
+button {
+  font-family: inherit; font-size: var(--font-ui-small); cursor: pointer;
+  padding: var(--size-4-1) var(--size-4-4); height: var(--input-height);
+  background-color: var(--interactive-normal); color: var(--text-normal);
+  border: 0; border-radius: var(--button-radius); white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--size-4-2);
+}
+button:hover { background-color: var(--interactive-hover); }
+input[type="text"], input[type="search"], input[type="number"], textarea {
+  font-family: inherit; font-size: var(--font-ui-small); height: var(--input-height);
+  padding: var(--size-4-1) var(--size-4-2); color: var(--text-normal);
+  background-color: var(--background-modifier-form-field);
+  border: var(--input-border-width, 1px) solid var(--background-modifier-border);
+  border-radius: var(--input-radius);
+}
+/* A <select> paints its own chevron as a background image and reserves room
+   for it on the trailing edge. Any theme that overrides padding here runs the
+   label under the arrow. */
+select, .dropdown {
+  font-family: inherit; font-size: var(--font-ui-small); height: var(--input-height);
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+  padding: 0 var(--size-4-6) 0 var(--size-4-2);
+  background-color: var(--background-modifier-form-field);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+  background-repeat: no-repeat; background-position: right var(--size-4-2) top 50%; background-size: 14px;
+  border: var(--input-border-width, 1px) solid var(--background-modifier-border);
+  border-radius: var(--input-radius); color: var(--text-normal);
+}
+/* …and then Obsidian un-styles the property fields, before any theme loads. */
+.metadata-property-key-input, .metadata-input-longtext,
+input.metadata-input-text, input.metadata-input-number {
+  height: auto; border: none; box-shadow: none;
+  padding: var(--size-2-1) var(--size-2-3);
+  font-size: var(--metadata-input-font-size);
+  background-color: var(--metadata-input-background);
+  border-radius: var(--metadata-property-radius);
+  width: 100%;
+}
 .checkbox-container { width: 34px; height: 20px; background-color: var(--background-modifier-border); position: relative; cursor: pointer; display: inline-block; }
 .checkbox-container::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: var(--toggle-thumb-radius); background-color: var(--toggle-thumb-color); transition: transform 100ms; }
 .checkbox-container.is-enabled::after { transform: translateX(14px); }

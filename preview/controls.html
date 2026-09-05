@@ -1,0 +1,119 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="app-shim.css"><link rel="stylesheet" href="theme.css">
+<style>
+svg{display:block}
+.stage{min-height:100vh;background:var(--background-secondary);padding:20px;display:flex;flex-direction:column;gap:20px}
+.card{background:var(--background-primary);border-radius:var(--radius-l);padding:16px;box-shadow:var(--shadow-s)}
+.card h4{margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint)}
+.row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.row.sp{gap:12px}
+/* a plugin's own pane header markup — a label sharing a row with its buttons */
+.pp-header{display:flex;align-items:center;gap:4px;padding:6px 8px;background:var(--background-secondary);border-radius:var(--radius-m)}
+.pp-title{flex:1;min-width:0;font-size:var(--font-ui-small);font-weight:500;color:var(--text-normal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style></head>
+<body class="theme-light is-focused">
+<div class="stage">
+
+  <!-- 1. every way a plugin can wrap an icon in a button -->
+  <div class="card">
+    <h4>Plugin pane header — six button shapes, one row</h4>
+    <div class="pp-header">
+      <div class="pp-title">شهریور ماه</div>
+      <!-- bare svg child -->
+      <button aria-label="bare"><svg class="svg-icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg></button>
+      <!-- svg wrapped in a span: the case that used to get a ring -->
+      <button aria-label="wrapped"><span><svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></span></button>
+      <!-- svg wrapped two deep -->
+      <button aria-label="wrapped twice"><span><span><svg class="svg-icon" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span></span></button>
+      <!-- Obsidian's own class -->
+      <button class="clickable-icon" aria-label="clickable-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/></svg></button>
+      <!-- a div, not a button -->
+      <div class="clickable-icon" aria-label="div"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M12 10v6M9 13h6"/></svg></div>
+      <!-- icon plus label: must keep its width -->
+      <button aria-label="icon and label"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg>New</button>
+    </div>
+    <div class="pp-header" style="margin-top:8px">
+      <div class="pp-title">A very long plugin folder name that has to keep its width</div>
+      <button><span><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span></button>
+      <button><span><svg class="svg-icon" viewBox="0 0 24 24"><path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6z"/></svg></span></button>
+      <button><span><svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M10 18h4"/></svg></span></button>
+      <button><span><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 0 0 0 20 2 2 0 0 0 0-4 2 2 0 0 1 0-4h4a4 4 0 0 0 4-4 10 10 0 0 0-8-8Z"/></svg></span></button>
+    </div>
+  </div>
+
+  <!-- 2. a note's properties, in Obsidian's real markup -->
+  <div class="card">
+    <h4>Note properties — real inputs, not divs</h4>
+    <div class="metadata-container">
+      <div class="metadata-property">
+        <div class="metadata-property-key"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><input class="metadata-property-key-input" type="text" value="title"></div>
+        <div class="metadata-property-value"><input class="metadata-input-text" type="text" value="Bookcloth kitchen sink"></div>
+      </div>
+      <div class="metadata-property">
+        <div class="metadata-property-key"><svg class="svg-icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><input class="metadata-property-key-input" type="text" value="reviewed"></div>
+        <div class="metadata-property-value"><input class="metadata-input-text" type="text" value="2026-09-05"></div>
+      </div>
+      <div class="metadata-property">
+        <div class="metadata-property-key"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><input class="metadata-property-key-input" type="text" value="rating"></div>
+        <div class="metadata-property-value"><input class="metadata-input-number" type="number" value="4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. settings rows: the dropdown that clipped "Bookcloth" -->
+  <div class="card">
+    <h4>Settings controls</h4>
+    <div class="setting-item">
+      <div class="setting-item-info"><div class="setting-item-name">Themes</div><div class="setting-item-description">The dropdown reserves room for its own chevron.</div></div>
+      <div class="setting-item-control"><select class="dropdown"><option>Bookcloth</option><option>Default</option></select></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-item-info"><div class="setting-item-name">Interface font</div><div class="setting-item-description">A Style Settings text field.</div></div>
+      <div class="setting-item-control"><input type="text" value="Inter"></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-item-info"><div class="setting-item-name">Heading weight</div><div class="setting-item-description">A Style Settings select.</div></div>
+      <div class="setting-item-control"><select class="dropdown"><option>600</option></select></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-item-info"><div class="setting-item-name">Hide status bar until hover</div><div class="setting-item-description">A toggle beside its reset button.</div></div>
+      <div class="setting-item-control"><div class="checkbox-container is-enabled"></div><button class="clickable-icon" aria-label="reset"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-item-info"><div class="setting-item-name">Persian / Arabic typography</div><div class="setting-item-description">Another toggle, for the row rhythm.</div></div>
+      <div class="setting-item-control"><div class="checkbox-container"></div><button class="clickable-icon" aria-label="reset"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-item-info"><div class="setting-item-name">Reset</div><div class="setting-item-description">Buttons in a settings row keep the ring.</div></div>
+      <div class="setting-item-control"><button>Cancel</button><button class="mod-warning">Delete</button><button class="mod-cta">Save changes</button></div>
+    </div>
+  </div>
+
+  <!-- 4. tabs with close buttons -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <h4 style="padding:16px 16px 0">Tab strip</h4>
+    <div class="workspace-split mod-vertical mod-root">
+      <div class="workspace-tabs mod-top mod-active">
+        <div class="workspace-tab-header-container">
+          <div class="workspace-tab-header is-active"><div class="workspace-tab-header-inner">
+            <div class="workspace-tab-header-inner-icon"><svg class="svg-icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <div class="workspace-tab-header-inner-title">1405-06</div>
+            <div class="workspace-tab-header-inner-close-button"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div></div>
+          <div class="workspace-tab-header"><div class="workspace-tab-header-inner">
+            <div class="workspace-tab-header-inner-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg></div>
+            <div class="workspace-tab-header-inner-title">A tab with a very long name indeed</div>
+            <div class="workspace-tab-header-inner-close-button"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div></div>
+          <div class="workspace-tab-header-status-container">
+            <div class="workspace-tab-header-new-tab"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></div>
+          </div>
+        </div>
+        <div class="workspace-leaf"><div class="workspace-leaf-content"><div class="view-content" style="height:40px"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body></html>

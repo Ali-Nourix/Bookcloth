@@ -16,6 +16,7 @@ delete the folder without affecting the theme.
 | `overlays.html` | Command palette, context menu, settings modal, buttons, toggle, notice |
 | `rtl.html` | Persian typography and right-to-left layout |
 | `plugin-pane.html` | A dense plugin pane header, the case that breaks icon buttons |
+| `controls.html` | Every control in the markup Obsidian and its plugins actually emit: icons wrapped one, two and three elements deep; a note's properties as real `<input>`s; a `<select>` that has to keep room for its own chevron |
 
 Open any of them in a browser. Switch themes from the console:
 
@@ -54,6 +55,11 @@ node check.mjs        # every rule keeps a declaration, every declaration parses
 node measure.mjs      # geometry of the controls that are meant to line up
 node contrast.mjs     # the ratios the main README publishes
 ```
+
+`controls.html` exists because the other pages use `<div>`s where Obsidian
+uses `<input>`s and `<button>`s, and a theme can look perfect on the former
+while boxing every row of a note's properties on the latter. Anything that
+touches inputs or buttons gets checked there first.
 
 `check.mjs` exits non-zero if anything was dropped, so it works as a
 pre-commit hook. `measure.mjs` is how the "one centre line" claim in the main

@@ -37,8 +37,10 @@ body {
   stroke-linejoin: round;
 }
 
-/* Small chrome icons: file tree chevrons, property keys, inline flair. */
+/* Small chrome icons: file tree chevrons, property keys, inline flair, and
+   the tab's close button, which sits in a smaller square than the rest. */
 .collapse-icon .svg-icon,
+.workspace-tab-header-inner-close-button .svg-icon,
 .tree-item-icon .svg-icon,
 .metadata-property-key .svg-icon,
 .suggestion-flair .svg-icon,
@@ -52,7 +54,6 @@ body {
 .nav-buttons-container .clickable-icon .svg-icon,
 .nav-action-button .svg-icon,
 .workspace-tab-header-inner-icon .svg-icon,
-.workspace-tab-header-inner-close-button .svg-icon,
 .view-action .svg-icon,
 .view-header-icon .svg-icon,
 .workspace-tab-header-new-tab .svg-icon,
@@ -93,14 +94,22 @@ body {
 
 /* --- Icon buttons --------------------------------------------------------
    Plugins build their pane headers out of real <button> elements wrapping an
-   icon. The generic button treatment gives each one a fill and a ring, and in
-   a narrow sidebar header those boxes take every spare pixel from the label
-   beside them — Notebook Navigator's folder name collapses to a single letter
-   and an ellipsis. Icon buttons opt out of the box and stay flat, so the text
-   next to them keeps its width. */
+   icon, and every plugin wraps it differently: a bare <svg>, an <svg> inside a
+   <span>, an <i>, a <div>. They all have to end up as the same square as the
+   icon buttons Obsidian ships beside them, or a pane header reads as a row of
+   mismatched shapes — which is exactly what it did.
+
+   Three selectors cover it. The first two are the direct-child cases. The
+   third is the wrapped case: a button whose single child contains an icon, at
+   any depth — plugins wrap one, two, sometimes three elements deep, and a
+   fixed depth only fixes the wrapping styles you happened to test against.
+   `:only-child` is what keeps a labelled button out: an icon next to a label
+   is not an only child, so "＋ Add property" keeps its width instead of being
+   squashed into 28px. */
 button.clickable-icon,
 button:has(> svg),
 button:has(> .svg-icon),
+button:has(> :only-child svg),
 .nav-buttons-container button,
 .nav-action-button,
 .view-actions button,
@@ -111,18 +120,28 @@ button:has(> .svg-icon),
   background-color: transparent;
   border: none;
   box-shadow: none;
-  /* Square, so the hover background is a button and not a lozenge. */
-  width: var(--bc-hit);
+  /* Square, so the hover background is a button and not a lozenge. min-width
+     rather than width: these selectors are a heuristic about someone else's
+     markup, and the failure mode of a guess should be a slightly wide button,
+     never a clipped label. The inline padding is what a guess that turns out
+     to have a label needs so the label does not touch the edge; it has to
+     stay below (--bc-hit − icon) / 2, or an icon-only button outgrows its own
+     square and stops being one. */
+  min-width: var(--bc-hit);
   height: var(--bc-hit);
-  padding: 0;
+  padding-block: 0;
+  padding-inline: var(--bc-gap-2);
+  gap: var(--bc-gap-2);
   border-radius: var(--radius-m);
   color: var(--icon-color);
 }
 
-/* Anything icon-only that Obsidian ships gets the same square. */
+/* Anything icon-only that Obsidian ships is not a guess, so it gets the exact
+   square. */
 .clickable-icon:not(.mod-inline),
 .view-action,
 .workspace-tab-header-new-tab,
+.workspace-tab-header-inner-close-button,
 .modal-close-button {
   width: var(--bc-hit);
   height: var(--bc-hit);
@@ -133,9 +152,17 @@ button:has(> .svg-icon),
   border-radius: var(--radius-m);
 }
 
+/* The tab's close button is the one exception: a full 28px square inside a
+   34px tab leaves no room for the title, so it takes the smaller square. */
+.workspace-tab-header-inner-close-button {
+  width: calc(var(--bc-hit) - 8px);
+  height: calc(var(--bc-hit) - 8px);
+}
+
 button.clickable-icon:hover,
 button:has(> svg):hover,
 button:has(> .svg-icon):hover,
+button:has(> :only-child svg):hover,
 .nav-buttons-container button:hover,
 .nav-action-button:hover,
 .view-actions button:hover {

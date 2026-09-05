@@ -66,9 +66,19 @@ body {
   --color-accent-1: var(--bc-ac-400);
   --color-accent-2: var(--bc-ac-300);
 
-  /* Interactive */
-  --interactive-normal: var(--background-modifier-form-field);
+  /* Interactive. Obsidian paints every <button> with --interactive-normal, so
+     making that transparent is what flattens the default button — and it does
+     it without a rule, which means anything that paints its own background
+     (the copy-code button, a plugin's coloured button) simply keeps it. A
+     `button { background: transparent }` rule would have outranked those and
+     stripped them. */
+  --interactive-normal: transparent;
   --interactive-hover: var(--background-modifier-hover);
+
+  /* Destructive fill. Like the accent fill, it is one value for both themes:
+     Notion's dark red is #ff7369, and white on that is 2.5:1. */
+  --bc-danger-fill: #c4362f;
+  --bc-danger-fill-hover: #ab2f29;
   /* Notion fills its primary button with the accent at full strength, which
      puts white label text at 3.9:1. --bc-ac-fill is one step down and clamped,
      which puts it at 5.0:1 — a shade nobody will notice and a contrast failure

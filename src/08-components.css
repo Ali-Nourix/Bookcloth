@@ -188,7 +188,13 @@ body {
 
 /* --- Inputs --------------------------------------------------------------
    Notion's field: a faint fill, a 1px inset ring, a 4px corner, and a two-ring
-   focus state — the inner ring tightens to the accent, the outer one glows. */
+   focus state — the inner ring tightens to the accent, the outer one glows.
+
+   Appearance only. Height comes from --input-height, which Obsidian already
+   applies, and padding is left entirely alone: a <select> reserves room on its
+   trailing edge for the chevron it paints as a background image, and a theme
+   that sets padding-inline on it runs the label under that chevron. That is
+   what was clipping "Bookcloth" to "Bookclot" in the Appearance settings. */
 
 input[type="text"],
 input[type="search"],
@@ -200,9 +206,6 @@ input[type="datetime-local"],
 textarea,
 select,
 .dropdown {
-  height: var(--bc-control-height);
-  padding-inline: var(--bc-gap-3);
-  font-size: var(--font-ui-small);
   color: var(--text-normal);
   border-radius: var(--input-radius);
   border: none;
@@ -212,8 +215,6 @@ select,
 }
 
 textarea {
-  height: auto;
-  padding-block: var(--bc-gap-3);
   line-height: var(--line-height-normal);
 }
 
@@ -234,11 +235,63 @@ textarea::placeholder {
   color: var(--text-faint);
 }
 
+/* Property fields are not form fields. Obsidian un-styles them immediately
+   after its own global input rule; this theme's rule lands in a later sheet
+   and wins, which puts a boxed, filled input on every row of a note's
+   properties. The transparent treatment is restated here rather than by
+   narrowing the rule above, because a plugin's settings field still wants the
+   box.
+
+   Scoped through .metadata-property rather than by class alone, because
+   `input[type="text"]` is (0,1,1) and a bare class is (0,1,0) — a class on
+   its own loses, which is why the value fields came out bare and the key
+   fields beside them stayed boxed. Checkboxes are excluded: a checkbox
+   property draws its tick on a filled background, and clearing that
+   background clears the tick with it. */
+.metadata-property input:not([type="checkbox"]),
+.metadata-property textarea,
+.metadata-property .multi-select-input {
+  background-color: var(--metadata-input-background);
+  border-radius: var(--metadata-property-radius);
+  box-shadow: none;
+}
+
+.metadata-property input:not([type="checkbox"]):hover,
+.metadata-property textarea:hover,
+.metadata-property .multi-select-input:hover {
+  background-color: var(--metadata-input-background-hover);
+  box-shadow: none;
+}
+
+.metadata-property input:not([type="checkbox"]):focus,
+.metadata-property textarea:focus,
+.metadata-property .multi-select-input:focus {
+  background-color: var(--metadata-input-background-active);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500);
+}
+
+/* Same reasoning for the two other fields Obsidian deliberately leaves bare:
+   the inline rename box in the file tree, and a canvas card's label. */
+.workspace-leaf-content .tree-item-self input,
+.canvas-node-label,
+.internal-link-input,
+.view-header-title-container input {
+  background-color: var(--background-modifier-form-field);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500);
+}
+
 /* --- Buttons -------------------------------------------------------------
-   Two shapes only: a filled accent button and a quiet outlined one. Icon-only
-   buttons are excluded here rather than un-styled later, because `:not()`
-   chains outrank almost anything a later rule could reasonably use and the
-   fix has to hold without a specificity arms race. */
+   Two shapes: a filled accent button, and a quiet outlined one — and the
+   outlined one appears only where Obsidian itself puts labelled buttons.
+
+   Everywhere else a <button> stays flat with a hover fill. That inversion is
+   the whole point. A plugin's toolbar button is an icon wrapped in whatever
+   markup that plugin chose — sometimes a bare <svg>, often a <span> around
+   one — and no selector separates "icon" from "label" reliably. Ringing every
+   button by default meant a pane header where three buttons were boxed and
+   the four beside them were not. Ringing only the dialog contexts means the
+   worst case is a labelled button in a plugin's own toolbar looking flat,
+   which is what the rest of that toolbar looks like anyway. */
 
 button,
 .clickable-icon {
@@ -250,33 +303,60 @@ button,
     color var(--bc-speed) var(--bc-ease);
 }
 
-button:not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
-  height: var(--bc-control-height);
-  padding: 0 var(--bc-gap-4);
+/* The flat default comes from --interactive-normal, not from a rule here.
+   All this adds is the hover, and the one exclusion is Obsidian's copy-code
+   button, which paints both of its own states. */
+button:not(.mod-cta):not(.mod-warning):not(.copy-code-button):hover {
+  background-color: var(--background-modifier-hover);
+}
+
+/* Text buttons take Notion's control height. min-height rather than height,
+   so a button whose label wraps grows instead of clipping. */
+.modal button,
+.prompt button,
+.setting-item-control button,
+.notice button,
+.workspace-leaf-content .empty-state button {
+  min-height: var(--bc-control-height);
+  padding-block: 0;
+  padding-inline: var(--bc-gap-4);
   font-size: var(--font-ui-small);
   font-weight: var(--font-medium);
-  line-height: 1;
-  white-space: nowrap;
 }
 
-button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)) {
-  background-color: transparent;
-  border: none;
+/* The ring. `:has(svg)` matches an icon anywhere inside, not only as a direct
+   child, so a wrapped icon in a settings row stays flat like its neighbours. */
+.modal button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.prompt button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.setting-item-control button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.notice button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.workspace-leaf-content .empty-state button:not(.mod-cta):not(.clickable-icon):not(:has(svg)) {
   box-shadow: inset 0 0 0 1px var(--bc-control-border);
-  color: var(--text-normal);
 }
 
-button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(> svg)):not(:has(> .svg-icon)):hover {
+.modal button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.prompt button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.setting-item-control button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.notice button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.workspace-leaf-content .empty-state button:not(.mod-cta):not(.clickable-icon):not(:has(svg)):hover {
   background-color: var(--background-modifier-hover);
   box-shadow: inset 0 0 0 1px var(--bc-control-border);
+}
+
+button.mod-cta,
+button.mod-warning {
+  min-height: var(--bc-control-height);
+  padding-block: 0;
+  padding-inline: var(--bc-gap-4);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+  border: none;
+  box-shadow: none;
 }
 
 button.mod-cta {
   background-color: var(--interactive-accent);
   color: var(--text-on-accent);
-  border: none;
-  box-shadow: none;
-  font-weight: var(--font-medium);
 }
 
 button.mod-cta:hover {
@@ -284,11 +364,12 @@ button.mod-cta:hover {
 }
 
 button.mod-warning {
-  background-color: var(--text-error);
+  background-color: var(--bc-danger-fill);
   color: #ffffff;
-  border: none;
-  box-shadow: none;
-  font-weight: var(--font-medium);
+}
+
+button.mod-warning:hover {
+  background-color: var(--bc-danger-fill-hover);
 }
 
 button:disabled,

@@ -393,7 +393,9 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 
 .workspace-split.mod-root .workspace-tab-header-container {
   background-color: var(--tab-container-background);
-  height: var(--bc-topbar-height);
+  /* min-height, not height: on a frameless window this row also carries the
+     window controls, and a fixed height would clip whatever the platform puts
+     there. The tabs hug its bottom edge either way. */
   min-height: var(--bc-topbar-height);
   align-items: flex-end;
   padding-block: 0;
