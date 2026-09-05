@@ -1,0 +1,105 @@
+/* ==========================================================================
+   DARK — Notion's night
+   Page #191919, chrome #202020 — the chrome is the lighter plane here, which
+   is the reverse of Obsidian's default ordering and the whole reason the dark
+   theme reads as Notion rather than as a dimmed version of the light one.
+   ========================================================================== */
+
+.theme-dark {
+  /* Any hue needs lifting on a dark ground, including one the user picked
+     while in light mode. Shifting the ramp rather than hard-coding a second
+     accent keeps both themes tied to the same single choice. */
+  --bc-ac-lift: 8%;
+
+  --color-base-00: #191919;
+  --color-base-05: #1d1d1d;
+  --color-base-10: #202020;
+  --color-base-20: #252525;
+  --color-base-25: #2f2f2f;
+  --color-base-30: #373737;
+  --color-base-35: #3f3f3f;
+  --color-base-40: #4a4a4a;
+  --color-base-50: #5a5a5a;
+  --color-base-60: #797979;
+  --color-base-70: #9b9b9b;
+  --color-base-100: #d4d4d4;
+
+  --mono-rgb-0: 25, 25, 25;
+  --mono-rgb-100: 255, 255, 255;
+  --color-base-60-rgb: 121, 121, 121;
+
+  --color-red-rgb: 255, 115, 105;
+  --color-orange-rgb: 255, 163, 68;
+  --color-yellow-rgb: 255, 220, 73;
+  --color-green-rgb: 77, 171, 154;
+  --color-cyan-rgb: 94, 183, 196;
+  --color-blue-rgb: 82, 156, 202;
+  --color-purple-rgb: 154, 109, 215;
+  --color-pink-rgb: 226, 85, 161;
+
+  --bc-bg-primary: var(--color-base-00);
+  --bc-bg-secondary: var(--color-base-10);
+  --bc-bg-raised: var(--color-base-20);
+  --bc-bg-sunken: var(--color-base-20);
+
+  --background-primary: var(--bc-bg-primary);
+  --background-primary-alt: var(--color-base-05);
+  --background-secondary: var(--bc-bg-secondary);
+  --background-secondary-alt: var(--color-base-20);
+  --bc-surface-raised: var(--bc-bg-raised);
+  --bc-surface-sunken: var(--bc-bg-sunken);
+
+  --background-modifier-hover: rgba(255, 255, 255, 0.055);
+  --background-modifier-active-hover: rgba(255, 255, 255, 0.1);
+  --background-modifier-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.094));
+  --background-modifier-border-hover: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.18));
+  --background-modifier-border-focus: var(--bc-ac-a40);
+  --background-modifier-form-field: rgba(255, 255, 255, 0.055);
+  --bc-control-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.13));
+  --background-modifier-message: rgba(47, 47, 47, 0.95);
+
+  --background-modifier-error-rgb: var(--color-red-rgb);
+  --background-modifier-error: rgba(var(--color-red-rgb), 0.14);
+  --background-modifier-error-hover: rgba(var(--color-red-rgb), 0.22);
+  --background-modifier-success-rgb: var(--color-green-rgb);
+  --background-modifier-success: rgba(var(--color-green-rgb), 0.16);
+
+  --bc-ink-normal: #d4d4d4;
+  --bc-ink-muted: #9b9b9b;
+  --bc-ink-faint: #6f6f6f;
+
+  --text-normal: var(--bc-ink-normal);
+  --text-muted: var(--bc-ink-muted);
+  --text-faint: var(--bc-ink-faint);
+  --text-on-accent: #ffffff;
+  --text-on-accent-inverted: #191919;
+  --text-error: #ff7369;
+  --text-warning: #ffdc49;
+  --text-success: #4dab9a;
+
+  --text-selection: var(--bc-ac-a28);
+  --text-highlight-bg: rgba(86, 69, 47, 1);
+  --text-highlight-bg-active: rgba(92, 59, 35, 1);
+  --text-blockquote: var(--text-normal);
+
+  --shadow-s: rgba(15, 15, 15, 0.2) 0 0 0 1px, rgba(15, 15, 15, 0.4) 0 2px 4px;
+  --shadow-l: rgba(15, 15, 15, 0.1) 0 0 0 1px, rgba(15, 15, 15, 0.2) 0 3px 6px,
+    rgba(15, 15, 15, 0.4) 0 9px 24px;
+
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: rgba(255, 255, 255, 0.14);
+  --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.28);
+
+  --workspace-background-translucent: rgba(25, 25, 25, 0.72);
+}
+
+/* Dark accents need a touch less saturation to stop them vibrating. */
+body.theme-dark {
+  --bc-ac-sat: 0.92;
+}
+body.theme-dark.bc-accent-subtle {
+  --bc-ac-sat: 0.66;
+}
+body.theme-dark.bc-accent-vivid {
+  --bc-ac-sat: 1.1;
+}

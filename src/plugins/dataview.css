@@ -1,0 +1,66 @@
+/* --------------------------------------------------------------------------
+   Dataview
+   Tested against Dataview 0.5.x. Everything reads from core variables, so a
+   plugin update changes what is styled, not whether it stays legible.
+   -------------------------------------------------------------------------- */
+
+body:not(.bc-off-dataview) .table-view-table {
+  font-size: var(--table-text-size);
+  border-collapse: collapse;
+}
+
+body:not(.bc-off-dataview) .table-view-table > thead > tr > th {
+  color: var(--table-header-color);
+  font-size: var(--table-header-size);
+  font-weight: var(--table-header-weight);
+  border-bottom: 1px solid var(--table-header-border-color);
+  padding: var(--bc-gap-2) var(--bc-gap-4);
+  text-align: start;
+}
+
+body:not(.bc-off-dataview) .table-view-table > tbody > tr > td {
+  border-bottom: 1px solid var(--table-border-color);
+  padding: var(--bc-gap-2) var(--bc-gap-4);
+}
+
+body:not(.bc-off-dataview) .table-view-table > tbody > tr:hover {
+  background-color: var(--table-row-background-hover);
+}
+
+body:not(.bc-off-dataview) .dataview.inline-field-key,
+body:not(.bc-off-dataview) .dataview.inline-field-standalone-value {
+  background-color: var(--bc-surface-sunken);
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.86em;
+  padding: 0.1em 0.4em;
+}
+
+body:not(.bc-off-dataview) .dataview.inline-field-key {
+  border-start-start-radius: var(--radius-s);
+  border-end-start-radius: var(--radius-s);
+  font-weight: var(--font-medium);
+}
+
+body:not(.bc-off-dataview) .dataview.inline-field-value {
+  background-color: var(--bc-ac-a10);
+  color: var(--text-accent);
+  border: none;
+  border-start-end-radius: var(--radius-s);
+  border-end-end-radius: var(--radius-s);
+  padding: 0.1em 0.4em;
+}
+
+body:not(.bc-off-dataview) .dataview-error-box,
+body:not(.bc-off-dataview) .dataview-error {
+  background-color: var(--background-modifier-error);
+  border: none;
+  border-radius: var(--radius-m);
+  color: var(--text-error);
+  padding: var(--bc-gap-3);
+}
+
+body:not(.bc-off-dataview) .dataview-result-list-root-ul,
+body:not(.bc-off-dataview) .dataview.result-group {
+  padding-inline-start: var(--list-indent);
+}

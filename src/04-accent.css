@@ -1,0 +1,212 @@
+/* ==========================================================================
+   ACCENT DISTRIBUTION
+   One hue in, a whole interface out. Nothing below this line hard-codes a
+   colour: every accented surface reads from the ramp built in 01-tokens.
+
+   Notion spends its accent narrowly — links, the caret, selection, one filled
+   button, the focus ring — and leaves everything else neutral. This file
+   follows that, so the chrome stays grey whichever accent is chosen.
+   ========================================================================== */
+
+/* Warmth. Bleeds a little of the accent hue into the chrome. The Notion
+   palette is already warm, so this idles at 0%; the control exists for anyone
+   who wants their greys pulled toward their accent. */
+body.theme-light {
+  --background-secondary: color-mix(
+    in srgb,
+    var(--color-base-10),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --background-secondary-alt: color-mix(
+    in srgb,
+    var(--color-base-20),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --bc-surface-sunken: color-mix(
+    in srgb,
+    var(--bc-bg-sunken),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+}
+
+body.theme-dark {
+  --background-secondary: color-mix(
+    in srgb,
+    var(--color-base-10),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --background-secondary-alt: color-mix(
+    in srgb,
+    var(--color-base-20),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --bc-surface-sunken: color-mix(
+    in srgb,
+    var(--bc-bg-sunken),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+}
+
+/* Semantic hues are authored as RGB triples so a single Style Settings control
+   drives both the solid colour and every wash derived from it. */
+body {
+  --color-red: rgb(var(--color-red-rgb));
+  --color-orange: rgb(var(--color-orange-rgb));
+  --color-yellow: rgb(var(--color-yellow-rgb));
+  --color-green: rgb(var(--color-green-rgb));
+  --color-cyan: rgb(var(--color-cyan-rgb));
+  --color-blue: rgb(var(--color-blue-rgb));
+  --color-purple: rgb(var(--color-purple-rgb));
+  --color-pink: rgb(var(--color-pink-rgb));
+}
+
+body {
+  /* Obsidian's own accent trio */
+  --color-accent: var(--bc-ac-500);
+  --color-accent-1: var(--bc-ac-400);
+  --color-accent-2: var(--bc-ac-300);
+
+  /* Interactive. Obsidian paints every <button> with --interactive-normal, so
+     making that transparent is what flattens the default button — and it does
+     it without a rule, which means anything that paints its own background
+     (the copy-code button, a plugin's coloured button) simply keeps it. A
+     `button { background: transparent }` rule would have outranked those and
+     stripped them. */
+  --interactive-normal: transparent;
+  --interactive-hover: var(--background-modifier-hover);
+
+  /* Destructive fill. Like the accent fill, it is one value for both themes:
+     Notion's dark red is #ff7369, and white on that is 2.5:1. */
+  --bc-danger-fill: #c4362f;
+  --bc-danger-fill-hover: #ab2f29;
+  /* Notion fills its primary button with the accent at full strength, which
+     puts white label text at 3.9:1. --bc-ac-fill is one step down and clamped,
+     which puts it at 5.0:1 — a shade nobody will notice and a contrast failure
+     everybody would. The same token serves both themes, so a filled button is
+     the one surface that does not move between light and dark. */
+  --interactive-accent: var(--bc-ac-fill);
+  --interactive-accent-hover: var(--bc-ac-fill-hover);
+  --interactive-accent-hsl: var(--accent-h), var(--bc-ac-s), var(--bc-ac-l);
+
+  /* Text and links */
+  --text-accent: var(--bc-ac-600);
+  --text-accent-hover: var(--bc-ac-700);
+  --link-color: var(--bc-ac-600);
+  --link-color-hover: var(--bc-ac-700);
+  --link-external-color: var(--bc-ac-600);
+  --link-external-color-hover: var(--bc-ac-700);
+  --link-unresolved-color: var(--text-faint);
+  --link-unresolved-opacity: 1;
+  --link-unresolved-filter: none;
+  --link-unresolved-decoration-style: dotted;
+  --link-decoration: none;
+  --link-decoration-hover: underline;
+  --link-decoration-thickness: 1px;
+  --link-external-decoration: none;
+  --link-external-decoration-hover: underline;
+
+  --caret-color: var(--bc-ac-500);
+
+  /* Selection tokens used by chrome — nav rows, tabs, list items. Neutral,
+     because in Notion the selected page in the sidebar is a plain grey slab
+     with ordinary dark text. Accent intensity → Vivid puts the colour back. */
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.06);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.08);
+  --bc-select-fg: var(--text-normal);
+
+  /* Form controls */
+  --checkbox-radius: var(--bc-check-radius);
+  /* Set with the rest of the checkbox in 12-icons. */
+  --checkbox-color: var(--interactive-accent);
+  --checkbox-color-hover: var(--interactive-accent-hover);
+  --checkbox-border-color: var(--bc-control-border);
+  --checkbox-border-color-hover: var(--interactive-accent);
+  --checkbox-marker-color: var(--text-on-accent);
+  --checklist-done-color: var(--text-faint);
+  --checklist-done-decoration: line-through;
+
+  --toggle-border-width: 0px;
+  --toggle-thumb-color: #ffffff;
+  --toggle-thumb-radius: 50%;
+  --toggle-radius: 2em;
+
+  --slider-thumb-border-color: var(--bc-control-border);
+  --slider-thumb-border-width: 1px;
+  --slider-thumb-radius: 50%;
+  --slider-track-background: var(--background-modifier-border);
+  --slider-track-height: 3px;
+
+  /* Icons. Chrome icons sit a step below the text they label — the row is the
+     content, the icon is a marker. Notion's are rgba(55,53,47,0.45) at rest,
+     which is this theme's faint ink. */
+  --icon-color: var(--text-faint);
+  --icon-color-hover: var(--text-normal);
+  --icon-color-active: var(--bc-select-fg);
+  --icon-color-focused: var(--text-normal);
+  --icon-opacity: 1;
+  --icon-opacity-hover: 1;
+  --icon-opacity-active: 1;
+
+  --collapse-icon-color: var(--text-faint);
+  /* Rotation already says collapsed, so the chevron stays neutral. */
+  --collapse-icon-color-collapsed: var(--text-muted);
+
+  /* Tags — Notion's inline pill: a grey chip, 3px corner, no border. */
+  --tag-color: var(--text-muted);
+  --tag-color-hover: var(--text-normal);
+  --tag-background: rgba(var(--mono-rgb-100), 0.06);
+  --tag-background-hover: rgba(var(--mono-rgb-100), 0.1);
+  --tag-border-width: 0px;
+  --tag-border-color: transparent;
+  --tag-decoration: none;
+  --tag-decoration-hover: none;
+  --tag-padding-x: 0.45em;
+  --tag-padding-y: 0.15em;
+  --tag-size: 0.85em;
+  --tag-weight: var(--font-normal);
+
+  /* Graph */
+  --graph-line: var(--background-modifier-border-hover);
+  --graph-node: var(--text-muted);
+  --graph-node-tag: var(--color-green);
+  --graph-node-attachment: var(--color-yellow);
+  --graph-node-unresolved: var(--text-faint);
+  --graph-node-focused: var(--bc-ac-500);
+  --graph-text: var(--text-muted);
+}
+
+.theme-dark {
+  --text-accent: var(--bc-ac-400);
+  --text-accent-hover: var(--bc-ac-300);
+  --link-color: var(--bc-ac-400);
+  --link-color-hover: var(--bc-ac-300);
+  --link-external-color: var(--bc-ac-400);
+  --link-external-color-hover: var(--bc-ac-300);
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.055);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.1);
+  --toggle-thumb-color: #ffffff;
+}
+
+/* Accent intensity -------------------------------------------------------
+   Subtle drops the selected row to a whisper; Vivid washes the accent through
+   the chrome. */
+body.bc-accent-subtle {
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.035);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.055);
+}
+
+body.bc-accent-vivid {
+  --bc-select-bg: var(--bc-ac-a10);
+  --bc-select-bg-strong: var(--bc-ac-a16);
+  --bc-select-fg: var(--bc-ac-700);
+  --tag-color: var(--bc-ac-700);
+  --tag-background: var(--bc-ac-a10);
+  --tag-background-hover: var(--bc-ac-a16);
+}
+
+body.theme-dark.bc-accent-vivid {
+  --bc-select-fg: var(--bc-ac-300);
+  --bc-select-bg: var(--bc-ac-a16);
+  --bc-select-bg-strong: var(--bc-ac-a24);
+  --tag-color: var(--bc-ac-300);
+}

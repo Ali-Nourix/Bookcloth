@@ -1,0 +1,282 @@
+/* ==========================================================================
+   PANES
+   Notion's layout is flush: a warm-grey sidebar meeting a white page, with
+   no gap, no card and no drawn line between them. That is the default here.
+
+   The floating layout — every region as its own rounded surface on a darker
+   backdrop — is kept as an option, because it is the one piece of the old
+   theme worth keeping and it costs nothing to leave in.
+   ========================================================================== */
+
+/* body is included deliberately. Obsidian paints it --background-primary,
+   which is white, and every pixel the app container does not cover — the gaps
+   in the floating layout, the moment during a resize, the outside of a
+   rounded corner — shows that white through. Painting body with the same
+   colour as the layer above it means anything that peeks is the backdrop. */
+body,
+.app-container,
+.horizontal-main-container,
+.workspace {
+  background-color: var(--background-secondary);
+}
+
+/* The ribbon is dissolved into the sidebar: same tone, no seam. */
+.workspace-ribbon {
+  background-color: transparent;
+}
+
+.workspace-split.mod-left-split,
+.workspace-split.mod-right-split {
+  background-color: var(--background-secondary);
+  border: none;
+  box-shadow: none;
+}
+
+/* Two panes stacked in one sidebar — a calendar above an outline, say — are
+   two panels, not one. Flush, they are separated by a hairline; floating,
+   they become two cards with the same gap as everything else. Without this
+   they run together into a single tall surface and the seam between two
+   unrelated views disappears. */
+.workspace-split.mod-left-split .workspace-tabs + .workspace-tabs,
+.workspace-split.mod-right-split .workspace-tabs + .workspace-tabs,
+.workspace-split.mod-left-split .workspace-tabs:not(:first-child),
+.workspace-split.mod-right-split .workspace-tabs:not(:first-child) {
+  box-shadow: inset 0 1px 0 0 var(--background-modifier-border);
+}
+
+/* Every layer inside a sidebar is transparent, so the panel's own colour is
+   the only one there is. .view-content is on the list because a pane that
+   paints its own background is a pane whose bottom corners are square
+   whatever the panel above it is rounded to. */
+.workspace-split.mod-left-split .workspace-tabs,
+.workspace-split.mod-right-split .workspace-tabs,
+.workspace-split.mod-left-split .workspace-leaf-content,
+.workspace-split.mod-right-split .workspace-leaf-content,
+.workspace-split.mod-left-split .workspace-tab-header-container,
+.workspace-split.mod-right-split .workspace-tab-header-container,
+.workspace-split.mod-left-split .workspace-leaf,
+.workspace-split.mod-right-split .workspace-leaf,
+.workspace-split.mod-left-split .view-content,
+.workspace-split.mod-right-split .view-content {
+  background-color: transparent;
+}
+
+/* The page. The tab strip keeps the chrome tone and the leaf below it is the
+   page colour, so the active tab and the page read as one surface.
+
+   The split itself is transparent, and that is not tidiness — Obsidian paints
+   it --background-primary, which is white, and a rounded corner on the panel
+   inside it does not hide what is behind it. The white wedge that kept
+   appearing at the editor's corners was this element showing through them.
+   Clipping the panel could never have fixed it: the white was outside the
+   panel, not spilling out of it. */
+.workspace-split.mod-root,
+.workspace-split.mod-root .workspace-split,
+.workspace-split.mod-root .workspace-leaf,
+.workspace-split.mod-left-split .workspace-split,
+.workspace-split.mod-right-split .workspace-split {
+  background-color: transparent;
+}
+
+.workspace-split.mod-root .workspace-tabs {
+  background-color: var(--tab-container-background);
+}
+
+.workspace-split.mod-root .workspace-leaf-content {
+  background-color: var(--background-primary);
+}
+
+.status-bar {
+  background-color: transparent;
+}
+
+/* Optional hairlines, for anyone who wants the regions drawn rather than
+   toned. */
+body.bc-borders .workspace-split.mod-left-split {
+  box-shadow: inset -1px 0 0 0 var(--background-modifier-border);
+}
+
+body.bc-borders .workspace-split.mod-right-split {
+  box-shadow: inset 1px 0 0 0 var(--background-modifier-border);
+}
+
+body.bc-borders .workspace-split.mod-root .workspace-tab-header-container {
+  box-shadow: inset 0 -1px 0 0 var(--background-modifier-border);
+}
+
+/* Floating layout ---------------------------------------------------------
+   Every region becomes its own rounded surface on a backdrop that has to stay
+   darker than the panes, or the gaps stop reading as gaps. Pane geometry and
+   backdrop are defined together: change one and the other has to move with
+   it. Corners go on the pane and its two end pieces rather than on a clipping
+   container — `overflow: hidden` here would swallow anything a plugin renders
+   past its own bounds. */
+
+.theme-light {
+  --bc-backdrop: #ebebea;
+}
+
+.theme-dark {
+  --bc-backdrop: #131313;
+}
+
+body.bc-float-panes,
+body.bc-float-panes .app-container,
+body.bc-float-panes .horizontal-main-container,
+body.bc-float-panes .workspace {
+  background-color: var(--bc-backdrop);
+}
+
+/* Gap on the container rather than margins on the children, so the space
+   between two panes is the same as the space at the window edge instead of
+   double it. */
+body.bc-float-panes .workspace {
+  padding: var(--bc-pane-gap);
+  gap: var(--bc-pane-gap);
+  /* Obsidian floats the status bar over the bottom-right of whatever is
+     beneath it. Flush, that is fine — there is nothing to cover. Floating, it
+     lands on top of the editor panel's own bottom corners, which is why they
+     looked square: they were behind it. Reserving its height puts the status
+     bar on the backdrop, where the rest of this layout already assumes it
+     is. */
+  padding-block-end: calc(var(--bc-pane-gap) + var(--bc-statusbar-height));
+}
+
+/* Where the card is painted depends on how many panes the sidebar holds, and
+   getting that wrong costs either the seam between two panes or the surface
+   under a plugin's footer.
+
+   One pane — the common case — and the split is the card. That matters
+   because a plugin can render a footer bar as a direct child of the split,
+   outside .workspace-tabs entirely; painting the card further in leaves that
+   bar with no surface under it and no corner to be clipped by.
+
+   Two or more, and the card moves to each leaf group so a calendar sitting
+   above an outline reads as two panels rather than one tall surface. The
+   split behind them keeps only the gap. `:has(… ~ …)` rather than `+`
+   because Obsidian puts a resize handle between them. */
+
+body.bc-float-panes .workspace-split.mod-left-split,
+body.bc-float-panes .workspace-split.mod-right-split {
+  background-color: var(--background-secondary);
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  background-color: var(--tab-container-background);
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes
+  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs),
+body.bc-float-panes
+  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs),
+body.bc-float-panes .workspace-split.mod-left-split .workspace-split,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
+  background-color: transparent;
+  border-radius: 0;
+  gap: var(--bc-pane-gap);
+  /* The clip moved to the cards inside, so the split itself must not keep
+     one: a stacked sidebar clipped at its own rectangle would cut anything
+     either pane renders past it, for no corner in return. */
+  overflow: visible;
+}
+
+body.bc-float-panes
+  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs,
+body.bc-float-panes
+  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs {
+  background-color: var(--background-secondary);
+  border-radius: var(--bc-pane-radius);
+  /* Each is its own card now, so the hairline that separated them when they
+     were flush would be a line inside a rounded corner. */
+  box-shadow: none;
+}
+
+body.bc-float-panes
+  .workspace-split.mod-root
+  .workspace-tab-header-container {
+  border-start-start-radius: var(--bc-pane-radius);
+  border-start-end-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* Handing the corner down the chain -----------------------------------
+   A rounded parent does not clip its children. So a sidebar rounded at the
+   split will still square its own bottom corners the moment anything inside
+   it paints — a plugin footer, a vault-name bar, a view that fills its own
+   background. Clipping the pane would fix all of it in one line and is
+   exactly what this theme refuses to do: `overflow: hidden` on a sidebar
+   swallows the date pickers, colour swatches and drag previews that plugins
+   render past their own edge.
+
+   Instead the corner is handed to whichever element actually owns it. Only
+   the bottom two need handing down: the top pair belong to the tab strip,
+   which is transparent, so the split's own rounded background is already what
+   shows there.
+
+   That covers the elements this theme knows the names of. It does not cover a
+   plugin that paints a footer of its own at the bottom of a sidebar, which is
+   why the panel is also clipped — with `overflow: clip` rather than `hidden`,
+   because clip does not turn the panel into a scroll container and so cannot
+   swallow a pane's own scrolling. Popovers are unaffected either way: menus,
+   tooltips and suggestion lists render into document.body, not into the pane.
+   **Square panel corners** turns the clipping off for anyone who finds a
+   plugin that does draw outside its panel. */
+
+/* The clip follows the card. On a single-pane sidebar that is the split, so a
+   footer rendered outside .workspace-tabs is still cut at the panel's corner;
+   on a stacked one it is each leaf group. */
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
+  overflow: clip;
+}
+
+body.bc-float-panes:not(.bc-no-clip-panes)
+  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs,
+body.bc-float-panes:not(.bc-no-clip-panes)
+  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-tabs {
+  overflow: clip;
+}
+
+body.bc-float-panes .workspace-split.mod-left-split > .workspace-tabs,
+body.bc-float-panes .workspace-split.mod-right-split > .workspace-tabs {
+  border-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .view-content,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .view-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* The editor's last row, for the same reason. */
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content .view-content {
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-split {
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-leaf-resize-handle {
+  background-color: transparent;
+}
+
+body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
+body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
+body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
+  box-shadow: 0 0 0 1px var(--background-modifier-border);
+}

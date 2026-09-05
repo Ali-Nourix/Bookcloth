@@ -1,0 +1,603 @@
+/* @settings
+
+name: Bookcloth
+id: bookcloth
+settings:
+    -
+        id: bc-info
+        title: About
+        description: Bookcloth follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-accent-head
+        title: Accent
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: accent
+        title: Accent override
+        description: Only applies while Obsidian's own accent is set to Default. The default is Notion's blue.
+        type: variable-themed-color
+        format: hsl-split
+        opacity: false
+        default-light: '#2383e2'
+        default-dark: '#2383e2'
+    -
+        id: bc-accent-intensity
+        title: Accent intensity
+        description: How loudly the accent is used across the interface. Notion keeps it to links, the caret, selection and one filled button — that is Normal.
+        type: class-select
+        allowEmpty: false
+        default: bc-accent-normal
+        options:
+            -
+                label: Subtle
+                value: bc-accent-subtle
+            -
+                label: Normal
+                value: bc-accent-normal
+            -
+                label: Vivid
+                value: bc-accent-vivid
+    -
+        id: bc-tint
+        title: Neutral warmth
+        description: How much of the accent hue bleeds into the greys. Zero — the default — leaves Notion's own warm neutrals alone.
+        type: variable-number-slider
+        default: 0
+        min: 0
+        max: 14
+        step: 1
+        format: '%'
+    -
+        id: bc-accent-headings
+        title: Accent headings
+        description: Colours h1 and h2 with the accent instead of body ink.
+        type: class-toggle
+        default: false
+    -
+        id: bc-surface-head
+        title: Surfaces
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-bg-primary
+        title: Page background
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#ffffff'
+        default-dark: '#191919'
+    -
+        id: bc-bg-secondary
+        title: Sidebar and tab strip
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#f7f7f5'
+        default-dark: '#202020'
+    -
+        id: bc-bg-raised
+        title: Raised surfaces
+        description: Modals, menus, popovers and the command palette.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#ffffff'
+        default-dark: '#252525'
+    -
+        id: bc-bg-sunken
+        title: Sunken surfaces
+        description: Code blocks.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#f7f6f3'
+        default-dark: '#252525'
+    -
+        id: bc-border-strength
+        title: Border strength
+        description: Multiplies every hairline in the interface. Zero removes them all.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2.5
+        step: 0.1
+    -
+        id: bc-ink-head
+        title: Text colours
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-ink-normal
+        title: Body text
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#37352f'
+        default-dark: '#d4d4d4'
+    -
+        id: bc-ink-muted
+        title: Muted text
+        description: Filenames, tab titles, table headers, property labels.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#706f6b'
+        default-dark: '#9b9b9b'
+    -
+        id: bc-ink-faint
+        title: Faint text
+        description: Status bar, counts, icons at rest. Non-essential information only.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#9b9a97'
+        default-dark: '#6f6f6f'
+    -
+        id: bc-hue-head
+        title: Semantic colours
+        description: Notion's own palette. Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: color-red-rgb
+        title: Red
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#d44c47'
+        default-dark: '#ff7369'
+    -
+        id: color-orange-rgb
+        title: Orange
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#d9730d'
+        default-dark: '#ffa344'
+    -
+        id: color-yellow-rgb
+        title: Yellow
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#cb912f'
+        default-dark: '#ffdc49'
+    -
+        id: color-green-rgb
+        title: Green
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#448361'
+        default-dark: '#4dab9a'
+    -
+        id: color-cyan-rgb
+        title: Cyan
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#3a838c'
+        default-dark: '#5eb7c4'
+    -
+        id: color-blue-rgb
+        title: Blue
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#337ea9'
+        default-dark: '#529cca'
+    -
+        id: color-purple-rgb
+        title: Purple
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#9065b0'
+        default-dark: '#9a6dd7'
+    -
+        id: color-pink-rgb
+        title: Pink
+        type: variable-themed-color
+        format: rgb-values
+        opacity: false
+        default-light: '#c14c8a'
+        default-dark: '#e255a1'
+    -
+        id: bc-typo-head
+        title: Typography
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-font-interface
+        title: Interface font
+        type: variable-text
+        default: Inter
+        quotes: true
+    -
+        id: bc-font-text
+        title: Editor font
+        type: variable-text
+        default: Inter
+        quotes: true
+    -
+        id: bc-font-mono
+        title: Monospace font
+        type: variable-text
+        default: ui-monospace
+        quotes: true
+    -
+        id: bc-serif-body
+        title: Serif body text
+        description: Sets note body — not the interface — in a serif face.
+        type: class-toggle
+        default: false
+    -
+        id: bc-h-scale
+        title: Heading scale
+        description: Notion's headings are 30, 24 and 20px on a 16px page. This scales all three at once.
+        type: variable-number-slider
+        default: 1
+        min: 0.85
+        max: 1.3
+        step: 0.05
+    -
+        id: bc-h-weight
+        title: Heading weight
+        type: variable-select
+        default: '600'
+        options:
+            - '400'
+            - '500'
+            - '600'
+            - '700'
+    -
+        id: bc-line-height
+        title: Line height
+        type: variable-number-slider
+        default: 1.5
+        min: 1.3
+        max: 2.1
+        step: 0.05
+    -
+        id: bc-code-size
+        title: Code font size
+        description: Relative to the surrounding text. Notion sets code at 85%.
+        type: variable-number-slider
+        default: 0.85
+        min: 0.7
+        max: 1.1
+        step: 0.025
+    -
+        id: bc-link-style
+        title: Link style
+        description: Notion underlines links where they sit. Plain underlines on hover only; Ink is Notion's own inline-link treatment — body colour with a faint rule.
+        type: class-select
+        allowEmpty: false
+        default: bc-link-underline
+        options:
+            -
+                label: Accent, underlined
+                value: bc-link-underline
+            -
+                label: Accent, plain
+                value: bc-link-plain
+            -
+                label: Ink, underlined
+                value: bc-link-ink
+    -
+        id: bc-code-ink
+        title: Inline code in body ink
+        description: Off by default — Notion sets inline code in red on a grey chip.
+        type: class-toggle
+        default: false
+    -
+        id: bc-rtl
+        title: Persian / Arabic typography
+        description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading, tracking and task alignment for Arabic script.
+        type: class-toggle
+        default: false
+    -
+        id: bc-shape-head
+        title: Shape and density
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-radius
+        title: Corner radius
+        description: One number for every corner in the theme. Rows, chips, buttons and inputs sit on it; menus and code at 1.5×; modals, popovers and floating panels at 2×; tags at 0.75×. Notion is 4px. Zero is fully square.
+        type: variable-number-slider
+        default: 4
+        min: 0
+        max: 16
+        step: 1
+        format: px
+    -
+        id: bc-topbar-height
+        title: Top bar height
+        description: The band across the top of the window. The ribbon's collapse control, both sidebar tab strips and the editor tab bar all measure from this one number, and the inset that centres a button in it is worked out from the button's own size — so a taller bar keeps everything on the same centre line instead of drifting apart.
+        type: variable-number-slider
+        default: 45
+        min: 32
+        max: 64
+        step: 1
+        format: px
+    -
+        id: bc-hit
+        title: Icon button size
+        description: The square hit area behind every icon-only button. It centres itself in the top bar above, so the two can be set independently.
+        type: variable-number-slider
+        default: 28
+        min: 22
+        max: 40
+        step: 1
+        format: px
+    -
+        id: bc-icon-gap
+        title: Space between icon buttons
+        description: How far apart the 28px squares in a toolbar sit. Below about 4px a row of them reads as one bar with seams in it.
+        type: variable-number-slider
+        default: 6
+        min: 0
+        max: 14
+        step: 1
+        format: px
+    -
+        id: bc-row-base
+        title: Sidebar row height
+        description: Notion's is 27px. Interface density scales it from here.
+        type: variable-number-slider
+        default: 27
+        min: 22
+        max: 40
+        step: 1
+        format: px
+    -
+        id: bc-density
+        title: Interface density
+        type: class-select
+        allowEmpty: false
+        default: bc-density-cozy
+        options:
+            -
+                label: Compact
+                value: bc-density-compact
+            -
+                label: Cozy
+                value: bc-density-cozy
+            -
+                label: Comfortable
+                value: bc-density-comfortable
+    -
+        id: bc-line-width
+        title: Note width
+        description: Notion's text column is 44rem.
+        type: variable-number
+        default: 44
+        format: rem
+    -
+        id: bc-borders
+        title: Visible panel borders
+        description: Off by default — panels are separated by tone, not by lines.
+        type: class-toggle
+        default: false
+    -
+        id: bc-float-head
+        title: Floating panels
+        description: Off by default. Notion's layout is flush; turning this on lifts every region onto its own rounded card, with a darker backdrop behind them.
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-float-panes
+        title: Float the panels
+        type: class-toggle
+        default: false
+    -
+        id: bc-no-clip-panes
+        title: Do not clip panel corners
+        description: Floating panels are clipped at their corners so a plugin that paints its own footer cannot square them off again. Turn this on if you find a plugin that needs to draw outside its panel.
+        type: class-toggle
+        default: false
+    -
+        id: bc-pane-gap
+        title: Gap between panels
+        description: The space every panel keeps from its neighbours and from the window edge.
+        type: variable-number
+        default: 8
+        format: px
+    -
+        id: bc-backdrop
+        title: Backdrop behind the panels
+        description: The seams only read if this is darker than the panels themselves.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#ebebea'
+        default-dark: '#131313'
+    -
+        id: bc-icon-head
+        title: Icons
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-icon-scale
+        title: Icon size
+        description: Scales the whole set. Notion runs its chrome icons at 16px, which is 1.
+        type: variable-number-slider
+        default: 1
+        min: 0.8
+        max: 1.4
+        step: 0.05
+    -
+        id: bc-icon-weight
+        title: Icon stroke weight
+        type: variable-number-slider
+        default: 1
+        min: 0.7
+        max: 1.5
+        step: 0.05
+    -
+        id: bc-ui-head
+        title: Interface
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-tab-style
+        title: Tab style
+        description: Merged is Notion's — the active tab is the page colour and runs into it. Pill floats it in the strip; Underline flattens it to a marker.
+        type: class-select
+        allowEmpty: false
+        default: bc-tabs-merged
+        options:
+            -
+                label: Merged
+                value: bc-tabs-merged
+            -
+                label: Pill
+                value: bc-tabs-pill
+            -
+                label: Underline
+                value: bc-tabs-underline
+    -
+        id: bc-indent-guides
+        title: Show file tree indentation guides
+        description: Off by default — Notion draws none.
+        type: class-toggle
+        default: false
+    -
+        id: bc-hide-statusbar
+        title: Hide status bar until hover
+        type: class-toggle
+        default: false
+    -
+        id: bc-hide-ribbon
+        title: Hide ribbon until hover
+        type: class-toggle
+        default: false
+    -
+        id: bc-editor-head
+        title: Editor
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-callout-style
+        title: Callout style
+        type: class-select
+        allowEmpty: false
+        default: bc-callout-soft
+        options:
+            -
+                label: Soft fill
+                value: bc-callout-soft
+            -
+                label: Left rule
+                value: bc-callout-rule
+    -
+        id: bc-wash
+        title: Callout colour strength
+        description: How much hue a callout carries. Notion's fills land at about 12%.
+        type: variable-number-slider
+        default: 12
+        min: 3
+        max: 25
+        step: 1
+        format: '%'
+    -
+        id: bc-check-size
+        title: Checkbox size
+        description: Relative to the text beside it. Below about 1 it stops reading as something you can click.
+        type: variable-number-slider
+        default: 1.15
+        min: 0.9
+        max: 1.6
+        step: 0.05
+        format: em
+    -
+        id: bc-task-progress
+        title: In-progress task colour
+        description: The half-filled box on a `- [/]` task.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#337ea9'
+        default-dark: '#529cca'
+    -
+        id: bc-task-attention
+        title: Needs-attention task colour
+        description: The exclamation box on a `- [!]` task.
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#d9730d'
+        default-dark: '#ffa344'
+    -
+        id: bc-checkbox-style
+        title: Checkbox style
+        type: class-select
+        allowEmpty: false
+        default: bc-check-round
+        options:
+            -
+                label: Rounded square
+                value: bc-check-round
+            -
+                label: Circle
+                value: bc-check-circle
+    -
+        id: bc-no-fade-done
+        title: Keep completed tasks at full contrast
+        description: Completed checklist items are dimmed by default.
+        type: class-toggle
+        default: false
+    -
+        id: bc-active-line
+        title: Highlight the active line
+        description: Off by default — a moving band across a page of prose distracts more than it helps.
+        type: class-toggle
+        default: false
+    -
+        id: bc-plugin-head
+        title: Plugin support
+        description: Plugin styling is on by default. Turn an item on here to opt out and let that plugin fall back to its own styles.
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: bc-off-dataview
+        title: Opt out of Dataview styling
+        type: class-toggle
+        default: false
+    -
+        id: bc-off-tasks
+        title: Opt out of Tasks styling
+        type: class-toggle
+        default: false
+    -
+        id: bc-off-kanban
+        title: Opt out of Kanban styling
+        type: class-toggle
+        default: false
+    -
+        id: bc-off-calendar
+        title: Opt out of Calendar and Periodic Notes styling
+        type: class-toggle
+        default: false
+    -
+        id: bc-off-misc
+        title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
+        type: class-toggle
+        default: false
+*/

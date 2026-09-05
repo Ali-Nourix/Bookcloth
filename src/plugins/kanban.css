@@ -1,0 +1,59 @@
+/* --------------------------------------------------------------------------
+   Kanban
+   Tested against Kanban 2.0.x. Lanes are sunken, cards sit on the raised
+   surface — the same figure-and-ground rule the rest of the theme uses.
+   -------------------------------------------------------------------------- */
+
+body:not(.bc-off-kanban) .kanban-plugin {
+  background-color: var(--background-secondary);
+  --kanban-lane-radius: var(--radius-l);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__lane {
+  background-color: var(--bc-surface-sunken);
+  border: none;
+  border-radius: var(--radius-l);
+  box-shadow: none;
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__lane-header-wrapper {
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__lane-title-text {
+  font-weight: var(--font-semibold);
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__lane-setting-count {
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__item {
+  background-color: var(--bc-surface-raised);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  box-shadow: none;
+  transition: border-color var(--bc-speed) var(--bc-ease);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__item:hover {
+  border-color: var(--background-modifier-border-hover);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__item.is-dragging {
+  box-shadow: var(--shadow-l);
+  border-color: var(--bc-ac-500);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__item-button-wrapper button,
+body:not(.bc-off-kanban) .kanban-plugin__new-item-button {
+  border-radius: var(--radius-m);
+  color: var(--text-muted);
+}
+
+body:not(.bc-off-kanban) .kanban-plugin__item-tags .tag {
+  font-size: 0.78em;
+}

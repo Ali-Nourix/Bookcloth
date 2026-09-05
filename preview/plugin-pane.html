@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="app-shim.css"><link rel="stylesheet" href="theme.css">
+<style>
+svg{display:block}
+.stage{height:100vh;background:var(--bc-backdrop);padding:12px;display:flex;gap:12px}
+.pane{width:300px;background:var(--background-secondary);border-radius:var(--radius-l);padding:0}
+/* plugin's own header markup: a label that must share the row with buttons */
+.nn-header{display:flex;align-items:center;gap:4px;padding:8px 8px 4px}
+.nn-crumb{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
+.nn-crumb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:var(--font-ui-small);color:var(--text-muted)}
+.nn-section{padding:6px 12px;font-size:var(--font-ui-small);font-weight:600;color:var(--text-accent)}
+.nn-row{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:var(--font-ui-small);color:var(--text-muted);border-radius:var(--radius-m)}
+.nn-row.is-selected{background:var(--bc-select-bg);color:var(--bc-select-fg)}
+.nn-row svg{width:var(--icon-xs);height:var(--icon-xs);flex:0 0 auto}
+</style></head>
+<body class="theme-dark is-focused">
+<div class="stage">
+  <div class="pane">
+    <div class="nn-header">
+      <div class="nn-crumb">
+        <svg class="svg-icon" viewBox="0 0 24 24" style="width:15px;height:15px;flex:0 0 auto"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+        <span>شهریور ماه</span>
+      </div>
+      <button aria-label="Search"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+      <button aria-label="Stack"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></button>
+      <button aria-label="New daily note"><svg class="svg-icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg></button>
+      <button aria-label="Appearance"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 1 0 0 20 2 2 0 0 0 1.5-3.3 2 2 0 0 1 1.5-3.4h2A4.5 4.5 0 0 0 22 11 10 10 0 0 0 12 2Z"/></svg></button>
+    </div>
+    <div class="nn-section">Pinned</div>
+    <div class="nn-row"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg><span>1405-05-W4</span></div>
+    <div class="nn-row is-selected"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg><span>1405-05-W3</span></div>
+    <div class="nn-row"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg><span>1405-05-W2</span></div>
+  </div>
+  <div class="pane" style="flex:1;background:var(--background-primary)"></div>
+</div>
+</body></html>

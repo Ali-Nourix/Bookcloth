@@ -1,0 +1,450 @@
+/* ==========================================================================
+   ICONS
+   Obsidian ships Lucide, drawn on a 24-unit grid with a 2px stroke. Scale
+   that artwork down without adjusting the stroke and it goes spindly; scale
+   it up and it goes clumsy — a 2px stroke rendered at 14px is 1.17px on
+   screen, at 28px it is 2.33px. So stroke weight is defined per size, tuned
+   to land at a constant ~1.4px on screen, which is what puts Lucide's outline
+   artwork at the visual weight of Notion's solid set.
+   ========================================================================== */
+
+body {
+  --bc-icon-scale: 1;
+
+  --icon-xs: calc(14px * var(--bc-icon-scale));
+  --icon-s: calc(16px * var(--bc-icon-scale));
+  --icon-m: calc(18px * var(--bc-icon-scale));
+  /* Deliberately the same as --icon-m, which is how Obsidian ships it. The two
+     are not interchangeable in its stylesheet — the ribbon and the sidebar tab
+     icons ask for l, pane actions ask for m — so the moment they differ, one
+     row of chrome renders at two sizes and two weights. Making l a step larger
+     was the whole reason a live dump came back with 18px icons at 1.575px
+     sitting next to 18px icons at 1.71px. Rather than out-specify Obsidian on
+     every one of those selectors, the disagreement is removed. */
+  --icon-l: var(--icon-m);
+  --icon-xl: calc(28px * var(--bc-icon-scale));
+
+  /* Obsidian pairs one stroke with each size and repeats it for m and l. Same
+     here, for the same reason: whichever token an element ends up resolving,
+     an 18px icon is an 18px icon at one weight. */
+  --bc-icon-weight: 1;
+  --icon-xs-stroke-width: calc(2px * var(--bc-icon-weight));
+  --icon-s-stroke-width: calc(2px * var(--bc-icon-weight));
+  --icon-m-stroke-width: calc(1.75px * var(--bc-icon-weight));
+  --icon-l-stroke-width: var(--icon-m-stroke-width);
+  --icon-xl-stroke-width: calc(1.25px * var(--bc-icon-weight));
+
+  /* 18px is the default, not 16. Anything the theme does not name explicitly
+     is an icon button somewhere in the chrome, and coming out one step below
+     its neighbours is exactly how the sidebar collapse control ended up as
+     the smallest thing in the corner of the app. The two smaller sizes are
+     opted into below. */
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
+}
+
+/* Every icon that sits at a given size gets that size's stroke. Without this
+   pairing the sidebar chevrons and the ribbon glyphs read at different
+   weights even though they are the same artwork. */
+.svg-icon {
+  stroke-width: var(--icon-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* --- Plugin artwork ------------------------------------------------------
+   --icon-size only reaches an icon that carries Obsidian's .svg-icon class
+   and reads the variable. Plugins ship their own artwork and size it
+   themselves — a bare <svg width="14">, or their own CSS rule — so a pane
+   header ends up with four icons at the theme's size and three at whatever
+   the plugin picked. That is the row the eye reads as broken.
+
+   Inside a chrome icon button the size is the button's to decide, so it is
+   set on the element itself rather than left to a variable nobody else
+   reads. Descendant, not child: the icon may be wrapped.
+
+   And !important, for the same reason the switch above needs it. Obsidian
+   sizes its own sidebar-collapse glyph with a two-class selector; this rule
+   is one class and one element, and specificity compares class count first,
+   so the theme loses however the sheets are ordered. Two attempts at
+   out-specifying it both failed. An icon button's icon is the size of the
+   button it is in — that is not a preference to be outvoted. */
+.clickable-icon:not(.mod-inline) svg,
+.side-dock-ribbon-action svg,
+.sidebar-toggle-button svg,
+.workspace-ribbon-collapse-btn svg,
+.workspace-ribbon svg,
+.workspace-tab-header-container .clickable-icon svg,
+.workspace-tab-header-inner-icon svg,
+.workspace-tab-header-new-tab svg,
+.workspace-tab-header-status-container svg,
+.nav-buttons-container svg,
+.nav-action-button svg,
+.view-actions svg,
+button.clickable-icon svg,
+button:has(> svg) > svg,
+button:has(> :only-child svg) svg {
+  width: var(--icon-m) !important;
+  height: var(--icon-m) !important;
+  /* The stroke has to travel with the size, and for the same reason. Forcing
+     the box while leaving the weight alone is how a live dump came back with
+     three different stroke widths on 18px icons standing in one row. Harmless
+     on filled artwork: stroke-width does nothing where there is no stroke. */
+  stroke-width: var(--icon-stroke) !important;
+  flex: 0 0 auto;
+}
+
+/* The ones that are deliberately smaller take their size back, and have to
+   shout just as loudly to do it. */
+.workspace-tab-header-inner-close-button svg,
+.search-input-container svg,
+.collapse-icon svg,
+.tree-item-icon svg,
+.metadata-property-key svg,
+.suggestion-flair svg {
+  width: var(--icon-xs) !important;
+  height: var(--icon-xs) !important;
+  stroke-width: var(--icon-xs-stroke-width) !important;
+}
+
+.menu-item-icon svg,
+.callout-icon svg {
+  width: var(--icon-s) !important;
+  height: var(--icon-s) !important;
+}
+
+/* Three roles, three sizes, and every icon in a given row shares one of them —
+   which is the whole point. A control that is 16px beside a control that is
+   18px reads as a mistake even when neither is wrong on its own.
+
+   14px: inline markers. Chevrons, tree icons, property keys, the flair on a
+   suggestion, the glyph inside a search field, the tab's close button. These
+   sit inside text or inside a smaller square, and at any larger size they
+   start competing with the thing they mark. */
+.collapse-icon .svg-icon,
+.workspace-tab-header-inner-close-button .svg-icon,
+.tree-item-icon .svg-icon,
+.metadata-property-key .svg-icon,
+.suggestion-flair .svg-icon,
+.search-input-container .svg-icon {
+  --icon-size: var(--icon-xs);
+  --icon-stroke: var(--icon-xs-stroke-width);
+}
+
+/* The folding chevrons need forcing rather than a weight of their own.
+   Obsidian sets stroke-width on the element itself, so --icon-stroke never
+   reaches them: measured live, they were still drawing at 4px — a weight it
+   chose for the 10px box it ships, which becomes a blob at 14px. They are in
+   the 14px list above and take that list's stroke like everything else in it.
+
+   Carrying Obsidian's heavier ratio across was tried first and dropped: it
+   left two stroke weights at one size, which is the defect this whole pass
+   exists to remove, and a heavier chevron is Obsidian's taste rather than
+   Notion's. */
+.collapse-indicator svg {
+  width: var(--icon-xs) !important;
+  height: var(--icon-xs) !important;
+  stroke-width: var(--icon-xs-stroke-width) !important;
+}
+
+/* 16px: icons that label a line of text — a menu row, a callout title. They
+   are read with the words beside them, so they match the words' scale. */
+.menu-item-icon .svg-icon,
+.callout-icon .svg-icon {
+  /* 18px is the default, not 16. Anything the theme does not name explicitly
+     is an icon button somewhere in the chrome, and coming out one step below
+     its neighbours is exactly how the sidebar collapse control ended up as
+     the smallest thing in the corner of the app. The two smaller sizes are
+     opted into below. */
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
+}
+
+/* 18px: every icon that is a button in the chrome. The ribbon, the sidebar
+   collapse control, sidebar tabs, pane header actions, view actions, the
+   tab-bar controls. They all sit in the same 28px square and they all sit in
+   rows with each other, so they are all one size. */
+.side-dock-ribbon-action .svg-icon,
+.sidebar-toggle-button .svg-icon,
+.nav-buttons-container .clickable-icon .svg-icon,
+.nav-action-button .svg-icon,
+.workspace-tab-header-inner-icon .svg-icon,
+.view-action .svg-icon,
+.view-header-icon .svg-icon,
+.workspace-tab-header-new-tab .svg-icon,
+.workspace-tab-header-status-container .svg-icon {
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
+}
+
+/* A callout title is set at 600; a hairline icon beside it looks unfinished.
+   The icon is nudged one notch heavier to match the text it labels. */
+.callout-icon .svg-icon {
+  --icon-stroke: calc(var(--icon-s-stroke-width) * 1.15);
+}
+
+.callout-title {
+  gap: var(--bc-gap-3);
+}
+
+.callout-icon {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  /* Optically centred on the first line of the title rather than on the
+     title box, which is what keeps a two-line callout title from dragging
+     its icon down the block. */
+  margin-block-start: 0.1em;
+}
+
+/* The sidebar collapse control is centred on the ribbon's own axis, so it
+   cannot sit half a pixel off the column of glyphs beneath it. */
+.workspace-ribbon .sidebar-toggle-button,
+.workspace-ribbon .workspace-ribbon-collapse-btn {
+  margin-inline: auto;
+}
+
+/* --- Icon buttons --------------------------------------------------------
+   Plugins build their pane headers out of real <button> elements wrapping an
+   icon, and every plugin wraps it differently: a bare <svg>, an <svg> inside a
+   <span>, an <i>, a <div>. They all have to end up as the same square as the
+   icon buttons Obsidian ships beside them, or a pane header reads as a row of
+   mismatched shapes — which is exactly what it did.
+
+   Three selectors cover it. The first two are the direct-child cases. The
+   third is the wrapped case: a button whose single child contains an icon, at
+   any depth — plugins wrap one, two, sometimes three elements deep, and a
+   fixed depth only fixes the wrapping styles you happened to test against.
+   `:only-child` is what keeps a labelled button out: an icon next to a label
+   is not an only child, so "＋ Add property" keeps its width instead of being
+   squashed into 28px. */
+button.clickable-icon,
+button:has(> svg),
+button:has(> .svg-icon),
+button:has(> :only-child svg),
+.nav-buttons-container button,
+.nav-action-button,
+.view-actions button,
+.workspace-tab-header-status-container button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  /* Square, so the hover background is a button and not a lozenge. min-width
+     rather than width: these selectors are a heuristic about someone else's
+     markup, and the failure mode of a guess should be a slightly wide button,
+     never a clipped label. The inline padding is what a guess that turns out
+     to have a label needs so the label does not touch the edge; it has to
+     stay below (--bc-hit − icon) / 2, or an icon-only button outgrows its own
+     square and stops being one. */
+  min-width: var(--bc-hit);
+  height: var(--bc-hit);
+  padding-block: 0;
+  padding-inline: var(--bc-gap-2);
+  gap: var(--bc-gap-2);
+  border-radius: var(--radius-m);
+  color: var(--icon-color);
+}
+
+/* Anything icon-only that Obsidian ships is not a guess, so it gets the exact
+   square. */
+.clickable-icon:not(.mod-inline),
+.view-action,
+.workspace-tab-header-new-tab,
+.workspace-tab-header-inner-close-button,
+.modal-close-button {
+  width: var(--bc-hit);
+  height: var(--bc-hit);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-m);
+}
+
+/* The tab's close button is the one exception: a full 28px square inside a
+   34px tab leaves no room for the title, so it takes the smaller square. */
+.workspace-tab-header-inner-close-button {
+  width: calc(var(--bc-hit) - 8px);
+  height: calc(var(--bc-hit) - 8px);
+}
+
+button.clickable-icon:hover,
+button:has(> svg):hover,
+button:has(> .svg-icon):hover,
+button:has(> :only-child svg):hover,
+.nav-buttons-container button:hover,
+.nav-action-button:hover,
+.view-actions button:hover {
+  background-color: var(--background-modifier-hover);
+  border: none;
+  box-shadow: none;
+  color: var(--icon-color-hover);
+}
+
+/* An icon never grows to push a sibling label out of the pane, and a label is
+   always allowed to shrink before it is allowed to overflow. */
+.clickable-icon,
+.nav-action-button,
+.side-dock-ribbon-action {
+  flex: 0 0 auto;
+}
+
+.nav-header .nav-buttons-container,
+.view-header-title-container,
+.workspace-tab-header-inner-title {
+  min-width: 0;
+}
+
+/* Pointer targets are Obsidian's business on a mouse. Forcing a minimum
+   square here is what widens every button in a dense plugin toolbar; touch
+   sizing is handled in the mobile layer instead. */
+
+.collapse-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms var(--bc-ease), color var(--bc-speed) var(--bc-ease);
+}
+
+/* --- Checkboxes ----------------------------------------------------------
+   A rounded square, filled with the accent and marked with a white tick. The
+   masks are written out here rather than inherited so the theme controls the
+   shape, the optical centring and how much of the box each mark fills.
+
+   Size is a ratio of the text size rather than a flat 1em, and it is measured
+   from --font-text-size rather than from em. A checkbox is an <input>, and an
+   input does not inherit font-size: 1em on one is the user agent's 13.33px, so
+   `1.15em` came out as 15.3px in a real vault — smaller than Obsidian's own
+   18px default, in a theme whose whole point here was a bigger box. Against
+   the text size it is 1.15 of whatever the reader actually set. */
+
+body {
+  --bc-check-size: 1.15;
+  --checkbox-size: calc(
+    var(--bc-check-size) * var(--font-text-size, 16px) * var(--bc-icon-scale)
+  );
+
+  --bc-check-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
+  --bc-check-mask-bang: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9"/><path d="M12 19h.01"/></svg>');
+
+  /* The two alternate states carry their own hues, because "in progress" and
+     "needs attention" are not the same signal as "done" and colouring all
+     three with the accent throws that away. Overridable in Style Settings,
+     so they are plain values rather than aliases of the semantic hues. */
+  --bc-task-progress: #337ea9;
+  --bc-task-attention: #d9730d;
+}
+
+.theme-dark {
+  --bc-task-progress: #529cca;
+  --bc-task-attention: #ffa344;
+}
+
+input[type="checkbox"] {
+  border-width: 1px;
+  border-color: var(--checkbox-border-color);
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--checkbox-border-color-hover);
+}
+
+input[type="checkbox"]:checked::after {
+  -webkit-mask-image: var(--bc-check-mask);
+  mask-image: var(--bc-check-mask);
+  -webkit-mask-size: 74%;
+  mask-size: 74%;
+  /* Lucide's check is bottom-heavy on its own canvas; nudging it up a hair
+     centres it optically rather than mathematically. */
+  -webkit-mask-position: 50% 45%;
+  mask-position: 50% 45%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Shape is set on the element for both options, not only for the circle.
+   Relying on the square being "the state with no rule" means anything else
+   that touches --checkbox-radius silently wins, which is how a box that was
+   set to square comes back round. */
+input[type="checkbox"],
+body.bc-check-round input[type="checkbox"] {
+  border-radius: var(--bc-check-radius);
+}
+
+body.bc-check-circle input[type="checkbox"] {
+  border-radius: 50%;
+}
+
+body.bc-check-circle input[type="checkbox"]:checked::after {
+  -webkit-mask-size: 62%;
+  mask-size: 62%;
+}
+
+/* --- Alternate task states -----------------------------------------------
+   `- [/]` is in progress and `- [!]` needs attention.
+
+   Obsidian marks these three different ways depending on where you are, and
+   a rule that knows about only one of them is a rule that works in Reading
+   View and does nothing while you are actually writing:
+
+     Reading View   <li class="task-list-item" data-task="/">
+     Live Preview   <div class="HyperMD-task-line" data-task="/">
+     both, newer    <input class="task-list-item-checkbox" data-task="/">
+
+   So each state is written against all three. The input stays unchecked in
+   every one of them, which means the ::after that carries the glyph has to
+   declare its own `content` — the one Obsidian ships exists only on :checked. */
+
+/* In progress: outlined in its own colour and filled to the halfway line. No
+   glyph. A mark inside a half-filled box is two signals competing for
+   eighteen pixels, and the amount of colour is the one that reads without
+   being looked at. */
+.task-list-item[data-task="/"] > input[type="checkbox"],
+.HyperMD-task-line[data-task="/"] > input[type="checkbox"],
+input[type="checkbox"][data-task="/"] {
+  position: relative;
+  border-color: var(--bc-task-progress);
+  background-color: transparent;
+  background-image: linear-gradient(
+    to right,
+    var(--bc-task-progress) 50%,
+    transparent 50%
+  );
+}
+
+/* Needs attention: filled, with the one glyph that means it. */
+.task-list-item[data-task="!"] > input[type="checkbox"],
+.HyperMD-task-line[data-task="!"] > input[type="checkbox"],
+input[type="checkbox"][data-task="!"] {
+  position: relative;
+  border-color: transparent;
+  background-color: var(--bc-task-attention);
+}
+
+.task-list-item[data-task="!"] > input[type="checkbox"]::after,
+.HyperMD-task-line[data-task="!"] > input[type="checkbox"]::after,
+input[type="checkbox"][data-task="!"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--checkbox-marker-color);
+  -webkit-mask-image: var(--bc-check-mask-bang);
+  mask-image: var(--bc-check-mask-bang);
+  -webkit-mask-size: 74%;
+  mask-size: 74%;
+  -webkit-mask-position: 50% 50%;
+  mask-position: 50% 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* The text of a task that is neither open nor done keeps full contrast — only
+   a completed one is dimmed. */
+.task-list-item[data-task="/"],
+.task-list-item[data-task="!"] {
+  color: var(--text-normal);
+  text-decoration: none;
+}

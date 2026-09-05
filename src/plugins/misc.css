@@ -1,0 +1,93 @@
+/* --------------------------------------------------------------------------
+   Assorted plugins
+   Excalidraw, Iconize, Editing Toolbar, Omnisearch, Style Settings, Highlightr.
+   Each block does the minimum needed to stop the plugin looking bolted on.
+   -------------------------------------------------------------------------- */
+
+/* Excalidraw ------------------------------------------------------------- */
+body:not(.bc-off-misc) .excalidraw .Island,
+body:not(.bc-off-misc) .excalidraw .App-menu__left,
+body:not(.bc-off-misc) .excalidraw .Stack {
+  border-radius: var(--radius-l);
+}
+
+body:not(.bc-off-misc) .excalidraw {
+  --island-bg-color: var(--bc-surface-raised);
+  --button-hover-bg: var(--background-modifier-hover);
+  --color-primary: var(--bc-ac-500);
+  --color-primary-darker: var(--bc-ac-600);
+  --color-primary-darkest: var(--bc-ac-700);
+  --color-primary-light: var(--bc-ac-200);
+}
+
+/* Iconize ---------------------------------------------------------------- */
+body:not(.bc-off-misc) .iconize-icon,
+body:not(.bc-off-misc) .obsidian-icon-folder-icon {
+  opacity: 0.85;
+  margin-inline-end: var(--bc-gap-2);
+}
+
+body:not(.bc-off-misc) .tree-item-self.is-active .iconize-icon {
+  opacity: 1;
+}
+
+/* Editing Toolbar --------------------------------------------------------- */
+body:not(.bc-off-misc) #cMenuModalBar,
+body:not(.bc-off-misc) .cMenuToolbarPopoverBar {
+  background-color: var(--bc-surface-raised);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-l);
+}
+
+body:not(.bc-off-misc) .cMenuToolbarCommandItem {
+  border-radius: var(--radius-s);
+  color: var(--icon-color);
+}
+
+body:not(.bc-off-misc) .cMenuToolbarCommandItem:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--icon-color-hover);
+}
+
+/* Omnisearch -------------------------------------------------------------- */
+body:not(.bc-off-misc) .omnisearch-modal .suggestion-item {
+  border-radius: var(--radius-m);
+}
+
+body:not(.bc-off-misc) .omnisearch-result__title {
+  font-weight: var(--font-medium);
+}
+
+body:not(.bc-off-misc) .omnisearch-highlight,
+body:not(.bc-off-misc) .omnisearch-result__match {
+  background-color: var(--bc-ac-a24);
+  color: var(--text-normal);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Style Settings ---------------------------------------------------------- */
+.style-settings-container .setting-item {
+  border-top: none;
+  padding-block: var(--bc-gap-3);
+}
+
+.style-settings-heading {
+  border-radius: var(--radius-m);
+}
+
+.style-settings-heading:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+/* Highlightr -------------------------------------------------------------- */
+body:not(.bc-off-misc) .highlightr-container mark {
+  border-radius: var(--radius-s);
+  padding: 0.08em 0.18em;
+}
+
+/* Deliberately no blanket `[data-type] .view-content` rule here. Forcing a
+   background onto every pane a plugin might register is how themes break
+   canvases, boards and embedded editors that paint their own surface.
+   Unknown panes inherit the correct colours from :root already. */

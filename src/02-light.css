@@ -1,0 +1,110 @@
+/* ==========================================================================
+   LIGHT — Notion's paper
+   White page, warm-grey chrome, ink at #37352f. Every value here is either
+   Notion's own or derived from it: the greys are alphas of the same ink, so
+   chrome tinted over any surface stays in the family.
+   ========================================================================== */
+
+.theme-light {
+  --bc-ac-lift: 0%;
+
+  /* Neutral ramp. Obsidian derives a lot from these, so anything this theme
+     forgets to style still lands somewhere sensible. */
+  --color-base-00: #ffffff;
+  --color-base-05: #fbfbfa;
+  --color-base-10: #f7f7f5;
+  --color-base-20: #f1f1ef;
+  --color-base-25: #ebebea;
+  --color-base-30: #e3e2e0;
+  --color-base-35: #dcdbd9;
+  --color-base-40: #d3d1cb;
+  --color-base-50: #b9b9b7;
+  --color-base-60: #9b9a97;
+  --color-base-70: #787774;
+  --color-base-100: #37352f;
+
+  --mono-rgb-0: 255, 255, 255;
+  --mono-rgb-100: 55, 53, 47;
+  /* Obsidian hands the quote callout this triple and defines it nowhere. */
+  --color-base-60-rgb: 155, 154, 151;
+
+  /* Notion's text hues. Callouts, tags, syntax and most plugins inherit
+     from these. */
+  --color-red-rgb: 212, 76, 71;
+  --color-orange-rgb: 217, 115, 13;
+  --color-yellow-rgb: 203, 145, 47;
+  --color-green-rgb: 68, 131, 97;
+  --color-cyan-rgb: 58, 131, 140;
+  --color-blue-rgb: 51, 126, 169;
+  --color-purple-rgb: 144, 101, 176;
+  --color-pink-rgb: 193, 76, 138;
+
+  /* Surfaces ------------------------------------------------------------
+     The page is white; chrome is the warm grey behind it. Overridable in
+     Style Settings — everything else derives from these four. */
+  --bc-bg-primary: var(--color-base-00);
+  --bc-bg-secondary: var(--color-base-10);
+  --bc-bg-raised: #ffffff;
+  --bc-bg-sunken: #f7f6f3;
+
+  --background-primary: var(--bc-bg-primary);
+  --background-primary-alt: var(--color-base-05);
+  --background-secondary: var(--bc-bg-secondary);
+  --background-secondary-alt: var(--color-base-20);
+  --bc-surface-raised: var(--bc-bg-raised);
+  --bc-surface-sunken: var(--bc-bg-sunken);
+
+  /* Notion's interaction greys, to the alpha. */
+  --background-modifier-hover: rgba(55, 53, 47, 0.06);
+  --background-modifier-active-hover: rgba(55, 53, 47, 0.08);
+  --background-modifier-border: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.09));
+  --background-modifier-border-hover: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.16));
+  --background-modifier-border-focus: var(--bc-ac-a40);
+  --background-modifier-form-field: rgba(242, 241, 238, 0.6);
+  --bc-control-border: rgba(15, 15, 15, calc(var(--bc-border-strength) * 0.1));
+  --background-modifier-message: rgba(15, 15, 15, 0.88);
+
+  --background-modifier-error-rgb: var(--color-red-rgb);
+  --background-modifier-error: rgba(var(--color-red-rgb), 0.12);
+  --background-modifier-error-hover: rgba(var(--color-red-rgb), 0.2);
+  --background-modifier-success-rgb: var(--color-green-rgb);
+  --background-modifier-success: rgba(var(--color-green-rgb), 0.14);
+
+  /* Ink ------------------------------------------------------------------
+     Notion writes these as alphas of the ink. They are given here as the
+     solid colours those alphas resolve to on the page, so a value that lands
+     on a tinted surface — a callout, a selected row — doesn't shift. */
+  --bc-ink-normal: #37352f;
+  --bc-ink-muted: #706f6b;
+  --bc-ink-faint: #9b9a97;
+
+  --text-normal: var(--bc-ink-normal);
+  --text-muted: var(--bc-ink-muted);
+  --text-faint: var(--bc-ink-faint);
+  --text-on-accent: #ffffff;
+  --text-on-accent-inverted: #37352f;
+  /* The three message colours are darkened past Notion's own: an error or a
+     warning is text you have to be able to read, and Notion's yellow lands at
+     2.8:1 on white. The hues themselves — used for callouts, tags and the
+     graph — stay exactly as Notion ships them. */
+  --text-error: #cb3f39;
+  --text-warning: #996611;
+  --text-success: #448361;
+
+  --text-selection: var(--bc-ac-a28);
+  --text-highlight-bg: rgba(251, 243, 219, 1);
+  --text-highlight-bg-active: rgba(253, 236, 200, 1);
+  --text-blockquote: var(--text-normal);
+
+  /* Notion's two elevations, verbatim. The 1px ring is part of the shadow
+     rather than a border, so a floating surface never gains a pixel. */
+  --shadow-s: rgba(15, 15, 15, 0.1) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 2px 4px;
+  --shadow-l: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 3px 6px,
+    rgba(15, 15, 15, 0.2) 0 9px 24px;
+
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: rgba(55, 53, 47, 0.2);
+  --scrollbar-active-thumb-bg: rgba(55, 53, 47, 0.35);
+
+  --workspace-background-translucent: rgba(255, 255, 255, 0.72);
+}

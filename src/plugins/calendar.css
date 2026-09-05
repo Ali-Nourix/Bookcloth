@@ -1,0 +1,43 @@
+/* --------------------------------------------------------------------------
+   Calendar / Periodic Notes
+   Tested against Calendar 1.5.x. The dot-and-fill indicators are switched to
+   the accent ramp so a custom accent carries through to the month grid.
+   -------------------------------------------------------------------------- */
+
+body:not(.bc-off-calendar) #calendar-container {
+  --color-background-heading: transparent;
+  --color-background-day: transparent;
+  --color-background-weeknum: transparent;
+  --color-background-weekend: transparent;
+  --color-dot: var(--bc-ac-500);
+  --color-arrow: var(--text-muted);
+  --color-button: var(--text-muted);
+  --color-text-title: var(--text-normal);
+  --color-text-heading: var(--text-faint);
+  --color-text-day: var(--text-muted);
+  --color-text-today: var(--bc-select-fg);
+  --color-text-weeknum: var(--text-faint);
+}
+
+body:not(.bc-off-calendar) #calendar-container .day {
+  border-radius: var(--radius-m);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+body:not(.bc-off-calendar) #calendar-container .day:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+body:not(.bc-off-calendar) #calendar-container .day.active {
+  background-color: var(--bc-select-bg-strong);
+  color: var(--bc-select-fg);
+}
+
+body:not(.bc-off-calendar) #calendar-container .day.today {
+  color: var(--bc-select-fg);
+  font-weight: var(--font-semibold);
+}
+
+body:not(.bc-off-calendar) #calendar-container .week-num {
+  border-radius: var(--radius-s);
+}

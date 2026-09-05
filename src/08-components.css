@@ -1,0 +1,570 @@
+/* ==========================================================================
+   COMPONENTS
+   Everything that floats, and every control that isn't an icon.
+
+   Notion builds its controls out of inset box-shadows rather than borders, so
+   a focused input never gains a pixel and never nudges its neighbours. That
+   technique is used here too: `border: none` plus an inset ring.
+   ========================================================================== */
+
+body {
+  --modal-background: var(--bc-surface-raised);
+  --modal-border-width: 0px;
+  --modal-border-color: transparent;
+  --modal-max-height: 85vh;
+  --modal-community-sidebar-width: 240px;
+
+  --prompt-border-width: 0px;
+  --prompt-border-color: transparent;
+  --prompt-width: 600px;
+  --prompt-max-width: 88vw;
+
+  /* Notion's control height. Inputs, dropdowns and text buttons all sit on
+     it, so a row of mixed controls lines up without per-control nudging. */
+  --bc-control-height: 32px;
+  --input-height: var(--bc-control-height);
+  --input-font-weight: var(--font-normal);
+  --input-border-width: 0px;
+
+  --popover-width: 420px;
+  --popover-height: 340px;
+  --popover-font-size: 0.94em;
+  --popover-max-height: 60vh;
+
+  --menu-padding: var(--bc-gap-2);
+  --menu-item-radius: var(--radius-m);
+
+  --search-result-background: transparent;
+  --search-clear-button-color: var(--text-faint);
+}
+
+/* --- Modals --------------------------------------------------------------
+   Radius and shadow only. Padding stays Obsidian's, because plugin modals lay
+   out their own content inside this box and a theme that repads it
+   double-pads some and crops others. */
+
+.modal,
+.modal.mod-settings {
+  border-radius: var(--modal-radius);
+  border: none;
+  box-shadow: var(--shadow-l);
+}
+
+.modal-bg {
+  background-color: rgba(15, 15, 15, 0.45);
+  backdrop-filter: none;
+}
+
+.theme-dark .modal-bg {
+  background-color: rgba(15, 15, 15, 0.6);
+}
+
+.modal-title {
+  font-size: 1.15em;
+  font-weight: var(--font-semibold);
+  letter-spacing: -0.01em;
+}
+
+.modal-close-button {
+  border-radius: var(--radius-m);
+}
+
+/* --- Command palette and quick switcher ---------------------------------- */
+
+.prompt {
+  border-radius: var(--modal-radius);
+  border: none;
+  box-shadow: var(--shadow-l);
+  background-color: var(--bc-surface-raised);
+}
+
+/* Scoped past the generic `input[type="text"]` rule below, which would
+   otherwise repaint the palette field as a boxed input. */
+.prompt .prompt-input {
+  font-size: 1.05em;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.prompt .prompt-input:focus {
+  box-shadow: none;
+  border: none;
+}
+
+.prompt-instructions {
+  border-top: 1px solid var(--background-modifier-border);
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+.suggestion-container {
+  border-radius: var(--menu-radius);
+  border: none;
+  box-shadow: var(--shadow-l);
+  background-color: var(--bc-surface-raised);
+}
+
+.suggestion-item {
+  border-radius: var(--radius-m);
+  font-size: var(--font-ui-small);
+}
+
+.suggestion-item.is-selected {
+  background-color: var(--bc-select-bg);
+  color: var(--bc-select-fg);
+}
+
+.suggestion-item.is-selected .suggestion-note,
+.suggestion-item.is-selected .suggestion-aux {
+  color: var(--text-faint);
+}
+
+.suggestion-hotkey,
+.suggestion-flair {
+  color: var(--text-faint);
+}
+
+.suggestion-highlight {
+  color: var(--text-normal);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+}
+
+/* --- Menus ---------------------------------------------------------------
+   A 6px card with a 1px ring baked into the shadow, 4px of padding, and rows
+   that highlight inside that padding rather than bleeding to the edge. */
+
+.menu {
+  border-radius: var(--menu-radius);
+  border: none;
+  box-shadow: var(--shadow-l);
+  background-color: var(--bc-surface-raised);
+}
+
+.menu-item {
+  border-radius: var(--menu-item-radius);
+  font-size: var(--font-ui-small);
+  min-height: var(--bc-hit);
+}
+
+.menu-item:not(.is-disabled):hover,
+.menu-item.selected {
+  background-color: var(--background-modifier-hover);
+}
+
+.menu-item.is-warning:hover {
+  background-color: var(--background-modifier-error);
+  color: var(--text-error);
+}
+
+.menu-separator {
+  border-top: 1px solid var(--background-modifier-border);
+  margin-block: var(--bc-gap-2);
+}
+
+.menu-item-icon {
+  color: var(--icon-color);
+}
+
+/* --- Popovers ------------------------------------------------------------ */
+
+.popover.hover-popover {
+  border-radius: var(--radius-xl);
+  border: none;
+  box-shadow: var(--shadow-l);
+  overflow: hidden;
+}
+
+.tooltip {
+  border-radius: var(--radius-m);
+  font-size: var(--font-ui-smaller);
+  box-shadow: var(--shadow-s);
+}
+
+.tooltip .tooltip-arrow {
+  display: none;
+}
+
+/* --- Inputs --------------------------------------------------------------
+   Notion's field: a faint fill, a 1px inset ring, a 4px corner, and a two-ring
+   focus state — the inner ring tightens to the accent, the outer one glows.
+
+   Appearance only. Height comes from --input-height, which Obsidian already
+   applies, and padding is left entirely alone: a <select> reserves room on its
+   trailing edge for the chevron it paints as a background image, and a theme
+   that sets padding-inline on it runs the label under that chevron. That is
+   what was clipping "Bookcloth" to "Bookclot" in the Appearance settings. */
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+textarea,
+select,
+.dropdown {
+  color: var(--text-normal);
+  border-radius: var(--input-radius);
+  border: none;
+  background-color: var(--background-modifier-form-field);
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
+  transition: box-shadow var(--bc-speed) var(--bc-ease);
+}
+
+textarea {
+  line-height: var(--line-height-normal);
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus,
+.dropdown:focus {
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500), 0 0 0 2px var(--bc-ac-a24);
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+/* Property fields are not form fields. Obsidian un-styles them immediately
+   after its own global input rule; this theme's rule lands in a later sheet
+   and wins, which puts a boxed, filled input on every row of a note's
+   properties. The transparent treatment is restated here rather than by
+   narrowing the rule above, because a plugin's settings field still wants the
+   box.
+
+   Scoped through .metadata-property rather than by class alone, because
+   `input[type="text"]` is (0,1,1) and a bare class is (0,1,0) — a class on
+   its own loses, which is why the value fields came out bare and the key
+   fields beside them stayed boxed. Checkboxes are excluded: a checkbox
+   property draws its tick on a filled background, and clearing that
+   background clears the tick with it. */
+.metadata-property input:not([type="checkbox"]),
+.metadata-property textarea,
+.metadata-property .multi-select-input {
+  background-color: var(--metadata-input-background);
+  border-radius: var(--metadata-property-radius);
+  box-shadow: none;
+}
+
+.metadata-property input:not([type="checkbox"]):hover,
+.metadata-property textarea:hover,
+.metadata-property .multi-select-input:hover {
+  background-color: var(--metadata-input-background-hover);
+  box-shadow: none;
+}
+
+.metadata-property input:not([type="checkbox"]):focus,
+.metadata-property textarea:focus,
+.metadata-property .multi-select-input:focus {
+  background-color: var(--metadata-input-background-active);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500);
+}
+
+/* Same reasoning for the two other fields Obsidian deliberately leaves bare:
+   the inline rename box in the file tree, and a canvas card's label. */
+.workspace-leaf-content .tree-item-self input,
+.canvas-node-label,
+.internal-link-input,
+.view-header-title-container input {
+  background-color: var(--background-modifier-form-field);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-500);
+}
+
+/* --- Buttons -------------------------------------------------------------
+   Two shapes: a filled accent button, and a quiet outlined one — and the
+   outlined one appears only where Obsidian itself puts labelled buttons.
+
+   Everywhere else a <button> stays flat with a hover fill. That inversion is
+   the whole point. A plugin's toolbar button is an icon wrapped in whatever
+   markup that plugin chose — sometimes a bare <svg>, often a <span> around
+   one — and no selector separates "icon" from "label" reliably. Ringing every
+   button by default meant a pane header where three buttons were boxed and
+   the four beside them were not. Ringing only the dialog contexts means the
+   worst case is a labelled button in a plugin's own toolbar looking flat,
+   which is what the rest of that toolbar looks like anyway. */
+
+button,
+.clickable-icon {
+  border-radius: var(--button-radius);
+  box-shadow: none;
+  font-family: inherit;
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    box-shadow var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+/* The flat default comes from --interactive-normal, not from a rule here.
+   All this adds is the hover, and the one exclusion is Obsidian's copy-code
+   button, which paints both of its own states. */
+button:not(.mod-cta):not(.mod-warning):not(.copy-code-button):hover {
+  background-color: var(--background-modifier-hover);
+}
+
+/* Text buttons take Notion's control height. min-height rather than height,
+   so a button whose label wraps grows instead of clipping. */
+.modal button,
+.prompt button,
+.setting-item-control button,
+.notice button,
+.workspace-leaf-content .empty-state button {
+  min-height: var(--bc-control-height);
+  padding-block: 0;
+  padding-inline: var(--bc-gap-4);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+}
+
+/* The ring. `:has(svg)` matches an icon anywhere inside, not only as a direct
+   child, so a wrapped icon in a settings row stays flat like its neighbours. */
+.modal button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.prompt button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.setting-item-control button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.notice button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)),
+.workspace-leaf-content .empty-state button:not(.mod-cta):not(.clickable-icon):not(:has(svg)) {
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
+}
+
+.modal button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.prompt button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.setting-item-control button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.notice button:not(.mod-cta):not(.mod-warning):not(.clickable-icon):not(:has(svg)):hover,
+.workspace-leaf-content .empty-state button:not(.mod-cta):not(.clickable-icon):not(:has(svg)):hover {
+  background-color: var(--background-modifier-hover);
+  box-shadow: inset 0 0 0 1px var(--bc-control-border);
+}
+
+button.mod-cta,
+button.mod-warning {
+  min-height: var(--bc-control-height);
+  padding-block: 0;
+  padding-inline: var(--bc-gap-4);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+  border: none;
+  box-shadow: none;
+}
+
+button.mod-cta {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+button.mod-cta:hover {
+  background-color: var(--interactive-accent-hover);
+}
+
+button.mod-warning {
+  background-color: var(--bc-danger-fill);
+  color: #ffffff;
+}
+
+button.mod-warning:hover {
+  background-color: var(--bc-danger-fill-hover);
+}
+
+button:disabled,
+button.mod-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clickable-icon:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--icon-color-hover);
+}
+
+.clickable-icon.is-active {
+  background-color: var(--bc-select-bg-strong);
+  color: var(--text-normal);
+}
+
+/* Keyboard focus must always be visible, including on custom controls. */
+:focus-visible {
+  outline: 2px solid var(--bc-ac-500);
+  outline-offset: 1px;
+}
+
+/* --- Toggles -------------------------------------------------------------
+   Notion's switch is 26×16 with a 12px thumb. Obsidian's is 42×24 with a 20px
+   one, and the travel it applies is measured against *its* track. Change the
+   track without changing the thumb and the travel with it and you get a 20px
+   circle in a 16px slot: taller than its track, past the end of it, and off
+   its centre line.
+
+   Three of these numbers come from two tokens and the travel is derived, not
+   typed — width − height is the only value that lands the thumb inside the far
+   edge with the inset it started from.
+
+   And all of it is !important, which needs saying out loud. Two earlier
+   attempts raised specificity instead and both lost, because specificity
+   compares class count before element count: `body .checkbox-container::after`
+   is one class and two elements, and any Obsidian or plugin rule of the form
+   `.some-container .checkbox-container:after` is two classes and one — so it
+   wins, whatever order the sheets load in. There is no selector a theme can
+   write that reliably outranks a rule it cannot see. A switch's dimensions are
+   not a suggestion, so they are declared as facts. */
+
+body {
+  --bc-toggle-w: 26px;
+  --bc-toggle-h: 16px;
+  --bc-toggle-pad: 2px;
+  --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
+  --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));
+
+  /* Obsidian's own names for the same numbers, for the versions that read
+     them rather than sizing the element directly. */
+  --toggle-width: var(--bc-toggle-w);
+  --toggle-height: var(--bc-toggle-h);
+  --toggle-thumb-width: var(--bc-toggle-thumb);
+  --toggle-thumb-height: var(--bc-toggle-thumb);
+}
+
+.checkbox-container {
+  width: var(--bc-toggle-w) !important;
+  height: var(--bc-toggle-h) !important;
+  min-width: var(--bc-toggle-w) !important;
+  flex: 0 0 auto;
+  border-radius: var(--toggle-radius);
+  background-color: var(--background-modifier-border-hover);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.checkbox-container::after {
+  width: var(--bc-toggle-thumb) !important;
+  height: var(--bc-toggle-thumb) !important;
+  top: var(--bc-toggle-pad) !important;
+  left: var(--bc-toggle-pad) !important;
+  inset-block-end: auto !important;
+  inset-inline-end: auto !important;
+  margin: 0 !important;
+  box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
+}
+
+.checkbox-container.is-enabled {
+  background-color: var(--interactive-accent);
+}
+
+.checkbox-container.is-enabled::after {
+  transform: translate3d(var(--bc-toggle-travel), 0, 0) !important;
+}
+
+/* --- Window controls -----------------------------------------------------
+   On Windows and Linux Obsidian draws the minimise, maximise and close
+   buttons itself, in the top band, and leaves them at the platform's own
+   colours — which is a grey block in the corner of an otherwise quiet
+   interface. They are the theme's to style like anything else: flat, the
+   same muted glyph as every other icon, a grey hover, and the one red that
+   platform convention reserves for close. */
+
+.titlebar {
+  background-color: var(--titlebar-background);
+}
+
+.titlebar-button-container .titlebar-button,
+.titlebar-button {
+  color: var(--icon-color);
+  background-color: transparent;
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+.titlebar-button-container .titlebar-button:hover,
+.titlebar-button:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.titlebar-button-container .titlebar-button.mod-close:hover,
+.titlebar-button.mod-close:hover {
+  background-color: #c42b1c;
+  color: #ffffff;
+}
+
+/* --- Notices -------------------------------------------------------------
+   Notion's toast: a dark pill in the corner, the same in both themes. */
+
+.notice {
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-l);
+  border: none;
+  background-color: var(--background-modifier-message);
+  color: #ffffff;
+  font-size: var(--font-ui-small);
+}
+
+.notice .notice-close {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* --- Settings ------------------------------------------------------------ */
+
+.modal.mod-settings .vertical-tab-header {
+  background-color: var(--background-secondary);
+  border-inline-end: none;
+}
+
+.modal.mod-settings .vertical-tab-nav-item {
+  border-radius: var(--radius-m);
+  margin-inline: var(--bc-gap-2);
+  padding-block: var(--bc-gap-2);
+  border: none;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.modal.mod-settings .vertical-tab-nav-item:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.modal.mod-settings .vertical-tab-nav-item.is-active {
+  background-color: var(--bc-select-bg-strong);
+  color: var(--bc-select-fg);
+  font-weight: var(--font-medium);
+}
+
+.setting-item {
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.setting-item-name {
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+  color: var(--text-normal);
+}
+
+.setting-item-description {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.setting-item-heading .setting-item-name {
+  font-size: var(--font-ui-large);
+  font-weight: var(--font-semibold);
+}
+
+.community-item,
+.installed-plugins-container .setting-item {
+  border-radius: var(--radius-l);
+}
+
+/* --- Motion preference --------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important; /* override inline animation timings */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
