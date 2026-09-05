@@ -1,4 +1,4 @@
-/* Bookcloth 2.3.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.3.2 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -1630,27 +1630,27 @@ body.bc-indent-guides {
   opacity: 1;
   visibility: visible;
 
-  /* Static, so it joins the ribbon's column instead of floating over it, and
-     first in that column whatever the DOM order is — what a given platform
-     and release stacks above it varies. */
-  position: static;
-  order: -1;
-  flex: 0 0 auto;
-  align-self: center;
-
+  /* And that is all this rule does to it.
+     Two earlier releases tried to move it onto the top band — `position:
+     static` to pull it into the ribbon's column, `order: -1` to put it
+     first, the band's height to centre it. Both broke the ribbon, in
+     opposite directions: the first left a 40px hole where the glyph should
+     have been, the second pushed every action down by the height of a
+     control Obsidian had already reserved space for. Obsidian floats this
+     element out of the flow precisely so it costs nothing, and a theme that
+     forces it back in is paying that cost twice.
+     Its position, its box and its padding are Obsidian's. What is fixed here
+     is what was actually wrong with it: it was invisible, and its glyph was
+     a size smaller than everything around it. */
+  min-width: var(--bc-hit);
+  min-height: var(--bc-hit);
   display: flex;
   align-items: center;
   justify-content: center;
-  /* min-height, not height, and no padding reset: the glyph in some builds is
-     a background image sized by its own padding, and zeroing that is what
-     left a 40px hole in the ribbon with nothing in it. The band comes from
-     the minimum; everything inside it stays Obsidian's. */
-  min-height: var(--bc-topbar-height);
-  min-width: var(--bc-hit);
-  margin: 0;
   border-radius: var(--radius-m);
   color: var(--icon-color);
-  transition: background-color var(--bc-speed) var(--bc-ease);
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
 }
 
 .workspace-ribbon .workspace-ribbon-collapse-btn:hover,
@@ -1659,22 +1659,17 @@ body.bc-indent-guides {
   color: var(--icon-color-hover);
 }
 
+/* Only the gap. Not the padding, and not the margin — that is where Obsidian
+   reserves the space its floated collapse control would otherwise have taken,
+   and zeroing it slides every action up underneath that control. All this
+   container was ever missing was the spacing between its own children, since
+   the gap on .workspace-ribbon never reached them. */
 .workspace-ribbon .side-dock-actions,
 .workspace-ribbon .side-dock-settings {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--bc-icon-gap);
-  padding: 0;
-  margin: 0;
-}
-
-/* The band starts at the very top of the ribbon, so the collapse control's
-   centre is the band's centre. The actions below it keep their own spacing
-   through the ribbon's gap. */
-.workspace-ribbon.mod-left,
-.workspace-ribbon.mod-right {
-  padding-block-start: 0;
 }
 
 .workspace-ribbon.mod-left::before,
@@ -1692,6 +1687,9 @@ body.bc-indent-guides {
    it is still squared by the second selector here. */
 .side-dock-ribbon-action,
 .workspace-ribbon .clickable-icon:not(.workspace-ribbon-collapse-btn):not(.sidebar-toggle-button) {
+  /* The collapse control is excluded: its box is Obsidian's, for the reasons
+     above, and a fixed 28px square would crop a glyph that some builds size
+     from its own padding. It takes a minimum instead. */
   display: flex;
   align-items: center;
   justify-content: center;

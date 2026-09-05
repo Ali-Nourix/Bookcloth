@@ -274,6 +274,10 @@ input.metadata-input-text, input.metadata-input-number {
   transition: opacity 0.1s;
 }
 .workspace-ribbon:hover .workspace-ribbon-collapse-btn { opacity: 1; }
+/* …and reserves the space it would have taken, since it takes none. A theme
+   that forces it back into the flow pays for that space twice — which is
+   what this line is here to make visible. */
+.workspace-ribbon .side-dock-actions { margin-top: 30px; }
 
 /* ---------- floating layers ---------- */
 .menu { position: absolute; min-width: 220px; z-index: 30; padding: var(--size-2-3); }

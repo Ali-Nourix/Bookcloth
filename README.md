@@ -195,6 +195,57 @@ is its own setting because how far apart 28px squares sit is the one number
 that decides whether a toolbar reads as a row of buttons or as one bar with
 seams in it.
 
+The sidebar collapse control took six releases to get right, for a reason worth
+writing down: **the class it was being styled with does not exist.** Obsidian
+calls it `.workspace-ribbon-collapse-btn`. `.sidebar-toggle-button` — the name
+this theme aimed at — does not appear once in 769 KB of Minimal and Things, so
+every rule written for it matched nothing at all, six times in a row, while the
+screenshots kept coming back identical. A selector that is merely wrong looks
+exactly like a selector that is being outranked, which is what kept sending the
+fix in the wrong direction. Both names are carried now.
+
+Reading the real element instead of guessing at it turned up two more things.
+Obsidian ships it at `opacity: 0` and reveals it on ribbon hover — which is the
+whole story behind those screenshots, because the box that kept appearing
+around it was the hover state, and it was the only ribbon item that ever looked
+boxed. It is always visible here: a control that hides an entire sidebar should
+not have to be hunted for. And the ribbon's actions are not its siblings; they
+are nested inside `.side-dock-actions`, so the gap set on `.workspace-ribbon`
+never reached them.
+
+What the theme does *not* do to it is the other half of the lesson. Two
+releases tried to move it onto the band — pulling it into the ribbon's column,
+ordering it first, giving it the band's height — and both broke the ribbon in
+opposite directions: one left a 40px hole where the glyph should have been, the
+other pushed every action down by the height of a control Obsidian had already
+reserved space for. Obsidian floats this element out of the flow precisely so
+it costs nothing. Its position, its box and its padding are left alone, and so
+is the margin on `.side-dock-actions`, which is where that reservation lives.
+Fixed is what was actually wrong: it was invisible, and its glyph was a size
+smaller than everything around it.
+
+## The window frame
+
+On Windows and Linux, Obsidian draws the minimise, maximise and close buttons
+itself and leaves them at the platform's colours — a grey block in the corner
+of an otherwise quiet interface. They are restyled like anything else: flat,
+the same muted glyph as every other icon, a grey hover, and the one red that
+platform convention reserves for close.
+
+## The top band
+
+Obsidian spreads the controls along the top of the window across four separate
+containers: the ribbon column, the left sidebar's tab strip, the editor tab bar
+and the right sidebar's tab strip. Each brings its own padding, so left alone
+the sidebar-toggle button sits a few pixels above the tabs beside it and what
+should be one row reads as three.
+
+Bookcloth gives all four the same 40px band and the same 28px control, so every
+icon in that row shares one centre line — and the same 6px between them, which
+is its own setting because how far apart 28px squares sit is the one number
+that decides whether a toolbar reads as a row of buttons or as one bar with
+seams in it.
+
 The sidebar collapse control is the exception that proves it, and it took six
 releases to get right for a reason worth writing down: **the class it was being
 styled with does not exist.** Obsidian calls it `.workspace-ribbon-collapse-btn`.
