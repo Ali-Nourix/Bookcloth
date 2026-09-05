@@ -146,22 +146,41 @@ body.bc-indent-guides {
 
 .workspace-ribbon .workspace-ribbon-collapse-btn,
 .workspace-ribbon .sidebar-toggle-button {
-  /* First in the column whatever the DOM order is, because what a given
-     platform and release stacks above it varies. */
+  /* Obsidian ships this at opacity 0 and reveals it when the ribbon is
+     hovered. That is the whole story behind the screenshots: the box that
+     kept appearing around it was the hover state, which is also why it was
+     the only ribbon item that ever looked boxed. A control that hides an
+     entire sidebar should not have to be hunted for, so it is always on. */
+  opacity: 1;
+  visibility: visible;
+
+  /* Static, so it joins the ribbon's column instead of floating over it, and
+     first in that column whatever the DOM order is — what a given platform
+     and release stacks above it varies. */
+  position: static;
   order: -1;
+  flex: 0 0 auto;
+  align-self: center;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
-  /* The band's full height rather than a 28px hit area, so the icon centres
-     on half the band — the same 20px every other control in that row
-     returns. */
-  height: var(--bc-topbar-height);
+  /* min-height, not height, and no padding reset: the glyph in some builds is
+     a background image sized by its own padding, and zeroing that is what
+     left a 40px hole in the ribbon with nothing in it. The band comes from
+     the minimum; everything inside it stays Obsidian's. */
   min-height: var(--bc-topbar-height);
-  width: 100%;
+  min-width: var(--bc-hit);
   margin: 0;
-  padding: 0;
   border-radius: var(--radius-m);
+  color: var(--icon-color);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.workspace-ribbon .workspace-ribbon-collapse-btn:hover,
+.workspace-ribbon .sidebar-toggle-button:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--icon-color-hover);
 }
 
 .workspace-ribbon .side-dock-actions,

@@ -207,6 +207,16 @@ The same reading of the real DOM turned up a second one. The ribbon's actions
 are not siblings of the collapse control; they are nested inside
 `.side-dock-actions`, so a gap set on `.workspace-ribbon` never reached them.
 
+A third thing fell out of the same reading. Obsidian ships that control at
+`opacity: 0` and reveals it when the ribbon is hovered — which is the whole
+story behind the screenshots, because the box that kept appearing around it was
+the hover state, and it was the only ribbon item that ever looked boxed. It is
+always visible here: a control that hides an entire sidebar should not have to
+be hunted for. It is also forced back into the ribbon's column, since Obsidian
+floats it out of the flow, and its padding is left alone — in some builds the
+glyph is a background image sized by that padding, and zeroing it leaves a 40px
+hole in the ribbon with nothing in it.
+
 The control itself is the only item in that row that is *not* a 28px square: it
 takes the band's full height, so its icon centres on the band rather than on a
 hit area that happens to start wherever Obsidian stacked it, and it is ordered

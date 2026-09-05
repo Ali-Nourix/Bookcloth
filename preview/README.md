@@ -61,7 +61,13 @@ uses `<input>`s and `<button>`s, and a theme can look perfect on the former
 while boxing every row of a note's properties on the latter. Anything that
 touches inputs or buttons gets checked there first.
 
-`app-shim.css` also carries four rules shaped the way Obsidian's own
+`app-shim.css` also carries Obsidian's own treatment of the ribbon collapse
+control — hidden at `opacity: 0` until the ribbon is hovered, floated out of
+the column, sized by its own padding — because a theme that only renders the
+tidy version of that element ships three releases of fixes for a button it
+cannot see.
+
+It carries four more rules shaped the way Obsidian's own
 higher-specificity rules are shaped — two classes where a theme can only
 reach for one. They exist so the harness reproduces the condition that beat
 this theme twice rather than the easy version of it: drop the `!important`

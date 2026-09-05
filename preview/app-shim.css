@@ -262,7 +262,18 @@ input.metadata-input-text, input.metadata-input-number {
 .setting-item-control .checkbox-container:after { width: 20px; height: 20px; top: 2px; left: 2px; }
 .setting-item-control .checkbox-container.is-enabled:after { transform: translate3d(18px, 0, 0); }
 .sidebar-toggle-button .clickable-icon svg { width: 12px; height: 12px; }
+/* Obsidian's own treatment of the collapse control, which is what a theme has
+   to get past: hidden until the ribbon is hovered, floated out of the column,
+   and sized by its own padding rather than by a width and height. */
 .workspace-ribbon .workspace-ribbon-collapse-btn svg { width: 12px; height: 12px; }
+.workspace-ribbon-collapse-btn {
+  opacity: 0;
+  position: absolute;
+  top: 4px;
+  padding: 4px 6px;
+  transition: opacity 0.1s;
+}
+.workspace-ribbon:hover .workspace-ribbon-collapse-btn { opacity: 1; }
 
 /* ---------- floating layers ---------- */
 .menu { position: absolute; min-width: 220px; z-index: 30; padding: var(--size-2-3); }
