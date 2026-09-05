@@ -166,6 +166,47 @@ const result = await pg.evaluate(() => {
   }
   notes.push(`embeds checked: ${all('.markdown-embed').length}`);
 
+  /* 5b. nothing may be clipped by an ancestor that hides its overflow. This is
+         the check the earlier ones missed: an embed can fit its own content box
+         perfectly and still be cut, because it is the CONTAINER that clips. In
+         a live vault the embed carried a negative inline-start margin and stood
+         34px past a callout that Obsidian gives overflow: hidden — so in a
+         right-to-left note one character came off the start of every line. */
+  const clipper = (el) => {
+    for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+      const o = getComputedStyle(n);
+      if (o.overflowX !== 'visible' || o.overflowY !== 'visible') return n;
+    }
+    return null;
+  };
+  for (const em of all('.markdown-embed')) {
+    const c = clipper(em);
+    if (!c) continue;
+    const cr = rect(c);
+    const csy = getComputedStyle(c);
+    const inner = {
+      left: cr.left + parseFloat(csy.paddingLeft) + parseFloat(csy.borderLeftWidth),
+      right: cr.right - parseFloat(csy.paddingRight) - parseFloat(csy.borderRightWidth),
+    };
+    const er = rect(em);
+    const past = R(Math.max(er.right - inner.right, inner.left - er.left));
+    if (past > 0.5) {
+      const who = `${c.tagName.toLowerCase()}.${(c.getAttribute('class') || '').split(/\s+/)[0]}`;
+      fails.push(`embed stands ${past}px outside ${who}, which clips (overflow ${csy.overflow})`);
+    }
+    /* and nothing inside it may be cut by that same ancestor either */
+    for (const k of em.querySelectorAll('*')) {
+      if (k.ownerSVGElement || !shown(k)) continue;
+      const kr = rect(k);
+      const cut = R(Math.max(kr.right - inner.right, inner.left - kr.left));
+      if (cut > 0.5) {
+        const tag = `${k.tagName.toLowerCase()}.${(k.getAttribute('class') || '').split(/\s+/)[0]}`;
+        fails.push(`${tag} inside the embed is cut off by ${cut}px`);
+        break;
+      }
+    }
+  }
+
   /* 6. the in-progress box follows the accent. */
   const half = all('input[type=checkbox]').find(
     (e) => (e.getAttribute('data-task') ?? e.closest('[data-task]')?.getAttribute('data-task')) === '/'

@@ -385,6 +385,31 @@ Inside a callout the embed goes flush: no card, no ring, no padding. The callout
 is already the container, and a second box around the same content is one box
 too many.
 
+The cut at the right edge had a second cause, and it needed a console dump of
+the real note to find. The embed arrives with a **negative inline-start
+margin** and stands 34px past its container. Obsidian gives `.callout`
+`overflow: hidden` so its rounded corner stays clean — and in Live Preview the
+callout is a `.cm-embed-block`, so that clip is not a theme's to switch off.
+In a right-to-left note the side standing outside is the *right* one, which is
+the side every line begins on. Thirty-four pixels of it, silently, off the
+start of each line.
+
+`.markdown-embed { margin-inline: 0 }` did not fix it: at one class it lost to
+whatever sets that margin among the twenty-six stylesheets in the vault it was
+measured in. Inside a callout the margin is now flagged. An embed standing
+outside a container that clips is not a preference to be outvoted — it is text
+the reader cannot see. Outside a callout the unflagged rule leaves a deliberate
+bleed alone.
+
+Two smaller things came out of the same dump. The inner preview view keeps
+`overflow: auto` from being a page, which in a right-to-left note reserves an
+11px gutter down the left of every embed for a scrollbar with nothing to
+scroll; it is `visible` here, since an embed has no height limit. And heading
+fold arrows are absolutely positioned *outside* the text column, so inside an
+embed they land beyond the container and get cut in half — they are dropped
+inside embeds, because a view of a heading somewhere else does not need the
+control that folds the real one.
+
 One selector detail is worth recording, because it cost this release. The rule
 had been written as `.internal-embed .markdown-embed` — and Obsidian puts both
 of those classes **on the same element**, so it matched nothing at all. Every
@@ -392,7 +417,10 @@ embed in the theme was unstyled, and the symptom was indistinguishable from a
 rule being outranked: the theme simply appeared not to have styled it. That is
 the second time in this project that a selector matching nothing has been
 mistaken for a specificity problem. `node invariants.mjs light embeds.html`
-now measures the two numbers that would have caught it — how much dead space
+now measures the numbers that would have caught all of it — including the one
+the first pass missed: an embed can fit its own content box perfectly and still
+be cut, because it is the *container* that clips, so the check walks up to the
+nearest ancestor that hides its overflow and measures against that — how much dead space
 sits under an embed's last line, and how far anything in it runs past the
 content box.
 

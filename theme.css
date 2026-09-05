@@ -1,4 +1,4 @@
-/* Bookcloth 2.6.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.6.2 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -620,7 +620,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.6.1";
+  --bc-version: "2.6.2";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -2580,10 +2580,38 @@ body.bc-no-fade-done {
 .markdown-embed {
   position: relative;
   margin-block: var(--bc-gap-3);
+  /* Measured in a live vault: the embed arrives with a negative inline-start
+     margin and stands 34px past its container. Obsidian gives .callout
+     overflow: hidden so its rounded corner stays clean, and in Live Preview the
+     callout is a .cm-embed-block, so that clip is not a theme's to switch off.
+     In a right-to-left note the side standing out is the right one — the side
+     every line begins on — so the 34px came off the start of each line. An
+     embed is a block in the flow: it starts where its container starts and it
+     is never wider than what holds it. */
+  margin-inline: 0;
+  max-width: 100%;
   padding: var(--embed-padding);
   border-radius: var(--bc-pane-radius);
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+/* An embed does not get a scrollbar of its own. Obsidian's inner preview view
+   keeps overflow: auto from being a page, and in a right-to-left note that
+   reserves an 11px gutter down the left of every embed for a scrollbar that
+   has nothing to scroll — the embed has no height limit here. */
+.markdown-embed .markdown-preview-view,
+.markdown-embed .markdown-embed-content {
+  overflow: visible;
+}
+
+/* Heading fold arrows are absolutely positioned outside the text column, at the
+   inline start. Inside an embed that column is already at its container's edge,
+   so they land 22px beyond it and the callout cuts them in half. They are
+   dropped inside embeds rather than half-drawn: this is a view of a heading
+   somewhere else, and the arrow that folds it belongs with the real one. */
+.markdown-embed .heading-collapse-indicator {
+  display: none;
 }
 
 .markdown-embed > :first-child,
@@ -2603,7 +2631,16 @@ body.bc-no-fade-done {
    the note says it is: this content, here. */
 .callout .markdown-embed,
 .callout-content .markdown-embed {
-  margin-block: 0;
+  /* margin, with a flag, because this is the one that was actually cutting the
+     text. The negative inline-start margin is set by something that loads after
+     the theme — there are twenty-six stylesheets in the vault it was measured
+     in — and `.markdown-embed { margin-inline: 0 }` at one class lost to it,
+     the same way every unflagged answer in this project has lost to a rule with
+     one more class in it. Inside a container that clips, an embed standing
+     outside its container is not a preference to be outvoted: it is text the
+     reader cannot see. Outside a callout the plain rule above still leaves a
+     deliberate bleed alone. */
+  margin: 0 !important;
   padding: 0;
   background-color: transparent;
   box-shadow: none;

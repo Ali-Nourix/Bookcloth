@@ -206,8 +206,37 @@ body {
 /* physical right, not inline-end — in an RTL note this lands on the wrong side
    and over the text unless the theme says otherwise */
 .markdown-embed-link { position: absolute; top: 0; right: 0; padding: 4px; color: var(--text-faint); cursor: pointer; }
-.markdown-embed-content { max-height: 100%; }
+.markdown-embed-content { max-height: 100%; overflow: auto; }
+.markdown-embed .markdown-preview-view { overflow: auto; }
 .internal-embed { display: block; }
+
+/* Transcribed from a live vault, because every one of these is load-bearing
+   and none of them were in the harness while the defect was being chased.
+
+   The callout clips. Obsidian does this so its rounded corner stays clean, and
+   in Live Preview the callout is a .cm-embed-block, so a theme cannot simply
+   turn it off — anything sticking out of the callout is gone, silently. */
+.callout { overflow: hidden; }
+.cm-embed-block { position: relative; }
+
+/* And the embed sticks out. It carries a negative inline-start margin, so in a
+   right-to-left note it reaches 34px past the callout's padding on the right —
+   the side every line begins on. Clipped by the rule above, that is one
+   character off the start of each line, which is exactly how it was reported. */
+.callout .markdown-embed { margin-right: -34px; }
+
+/* Heading fold arrows are absolutely positioned outside the text column, at
+   the inline start. Inside an embed inside a clipping callout they land beyond
+   the edge and are cut in half. */
+.heading-collapse-indicator {
+  position: absolute;
+  inset-inline-start: -22px;
+  width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.el-h1, .el-h2, .el-h3 { position: relative; }
 
 .callout { padding: var(--callout-padding); margin-block: 1em; }
 .callout-title { display: flex; font-weight: var(--callout-title-weight); }
