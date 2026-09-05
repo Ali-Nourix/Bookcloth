@@ -3705,41 +3705,102 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
    every one of them, which means the ::after that carries the glyph has to
    declare its own `content` — the one Obsidian ships exists only on :checked. */
 
+/* A plugin's stylesheet loads AFTER the theme's, so on equal specificity the
+   plugin wins. Task plugins commonly paint these same two checkboxes, and a
+   half-applied pair of rules is worse than either alone: TaskPro, for one,
+   replaces the ::after with a text "!" but leaves this file's mask-image in
+   place, so the character is masked down to a speck inside an unfilled box.
+
+   Everything below therefore draws the whole checkbox and leaves nothing of a
+   competing rule behind — each ::after resets the properties a text glyph
+   needs (content, display, colour, font) before painting its own mask.
+
+   The !important flags are on exactly the declarations that draw, and they are
+   load-bearing. Out-specifying a plugin by counting selectors does not work
+   here: a rule like
+   `.markdown-source-view.mod-cm6 .task-list-item-checkbox[data-task="!"]`
+   carries four class-level tokens, and class-level count is compared before
+   element count — so no amount of `body … input[type=checkbox]` prefixing ever
+   reaches it. Adding classes until it did would pin this file to one version
+   of someone else's stylesheet. A flag on the drawing declarations is smaller,
+   and says what it means: the theme draws the checkbox.
+
+   The anchors are the three shapes Obsidian uses, plus the two classes TaskPro
+   adds in Reading View, so a state looks the same wherever it appears:
+
+     Reading View   <li class="task-list-item" data-task="/">
+     Live Preview   <div class="HyperMD-task-line" data-task="/">
+     both, newer    <input class="task-list-item-checkbox" data-task="/">
+     TaskPro        <input class="task-list-item-checkbox is-in-progress">     */
+
 /* In progress: outlined in its own colour and filled to the halfway line. No
    glyph. A mark inside a half-filled box is two signals competing for
    eighteen pixels, and the amount of colour is the one that reads without
    being looked at. */
 .task-list-item[data-task="/"] > input[type="checkbox"],
 .HyperMD-task-line[data-task="/"] > input[type="checkbox"],
-input[type="checkbox"][data-task="/"] {
+input[type="checkbox"][data-task="/"],
+input[type="checkbox"].is-in-progress {
   position: relative;
-  border-color: var(--bc-task-progress);
-  background-color: transparent;
+  border-color: var(--bc-task-progress) !important;
+  background-color: transparent !important;
   background-image: linear-gradient(
     to right,
     var(--bc-task-progress) 50%,
     transparent 50%
-  );
+  ) !important;
+}
+
+/* The half-fill is the whole signal, so a glyph a plugin adds is removed
+   rather than layered over it. */
+.task-list-item[data-task="/"] > input[type="checkbox"]::before,
+.HyperMD-task-line[data-task="/"] > input[type="checkbox"]::before,
+input[type="checkbox"][data-task="/"]::before,
+input[type="checkbox"].is-in-progress::before,
+.task-list-item[data-task="/"] > input[type="checkbox"]::after,
+.HyperMD-task-line[data-task="/"] > input[type="checkbox"]::after,
+input[type="checkbox"][data-task="/"]::after,
+input[type="checkbox"].is-in-progress::after {
+  content: none !important;
 }
 
 /* Needs attention: filled, with the one glyph that means it. */
 .task-list-item[data-task="!"] > input[type="checkbox"],
 .HyperMD-task-line[data-task="!"] > input[type="checkbox"],
-input[type="checkbox"][data-task="!"] {
+input[type="checkbox"][data-task="!"],
+input[type="checkbox"].is-not-done {
   position: relative;
-  border-color: transparent;
-  background-color: var(--bc-task-attention);
+  border-color: transparent !important;
+  background-color: var(--bc-task-attention) !important;
+  background-image: none !important;
+}
+
+.task-list-item[data-task="!"] > input[type="checkbox"]::before,
+.HyperMD-task-line[data-task="!"] > input[type="checkbox"]::before,
+input[type="checkbox"][data-task="!"]::before,
+input[type="checkbox"].is-not-done::before {
+  content: none !important;
 }
 
 .task-list-item[data-task="!"] > input[type="checkbox"]::after,
 .HyperMD-task-line[data-task="!"] > input[type="checkbox"]::after,
-input[type="checkbox"][data-task="!"]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: var(--checkbox-marker-color);
-  -webkit-mask-image: var(--bc-check-mask-bang);
-  mask-image: var(--bc-check-mask-bang);
+input[type="checkbox"][data-task="!"]::after,
+input[type="checkbox"].is-not-done::after {
+  /* Reset half: undo a text glyph so only the mask below is left. */
+  content: "" !important;
+  display: block !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  /* Paint half. */
+  position: absolute !important;
+  inset: 0 !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  background-color: var(--checkbox-marker-color) !important;
+  background-image: none !important;
+  -webkit-mask-image: var(--bc-check-mask-bang) !important;
+  mask-image: var(--bc-check-mask-bang) !important;
   -webkit-mask-size: 74%;
   mask-size: 74%;
   -webkit-mask-position: 50% 50%;
@@ -3751,7 +3812,9 @@ input[type="checkbox"][data-task="!"]::after {
 /* The text of a task that is neither open nor done keeps full contrast — only
    a completed one is dimmed. */
 .task-list-item[data-task="/"],
-.task-list-item[data-task="!"] {
+.task-list-item[data-task="!"],
+.task-list-item:has(> input.is-in-progress),
+.task-list-item:has(> input.is-not-done) {
   color: var(--text-normal);
   text-decoration: none;
 }
