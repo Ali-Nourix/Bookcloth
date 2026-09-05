@@ -410,6 +410,13 @@ outside a container that clips is not a preference to be outvoted — it is text
 the reader cannot see. Outside a callout the unflagged rule leaves a deliberate
 bleed alone.
 
+Embedding a *heading section* rather than a whole note still gets a title
+element — with nothing in it. Height 0, and it kept the margin below it, so the
+top of every such embed carried 4px the sides did not. In the vault this was
+measured in, the content started at y 257.8 inside an embed that started at
+253.8: exactly that margin, and nothing else. An element that draws nothing
+takes no space, so an empty title is not rendered.
+
 The padding was ragged in the one direction nobody declares. An embed's box is
 read as a card, so the gap above the first line is compared against the gap
 beside it — and measured across four embeds it came out anywhere between 12px

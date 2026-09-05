@@ -202,7 +202,10 @@ body {
   padding: var(--embed-padding);
   font-style: var(--embed-font-style);
 }
-.markdown-embed-title { font-weight: 600; }
+/* Obsidian gives the title 24px of inline padding to clear the link button,
+   and renders the element even when there is no title to put in it — height 0,
+   and still contributing whatever margin a theme puts on it. */
+.markdown-embed-title { font-weight: 600; padding-right: 24px; }
 /* physical right, not inline-end — in an RTL note this lands on the wrong side
    and over the text unless the theme says otherwise */
 .markdown-embed-link { position: absolute; top: 0; right: 0; padding: 4px; color: var(--text-faint); cursor: pointer; }

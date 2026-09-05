@@ -484,6 +484,15 @@ body.bc-callout-rule .callout-content .markdown-embed {
   text-align: start;
 }
 
+/* Embed a heading section rather than a whole note and Obsidian still renders
+   the title element — with nothing in it. Height 0, and it still carried the
+   margin below it, so the top of every such embed had 4px the sides did not:
+   measured in a live vault as content starting at y 257.8 inside an embed
+   starting at 253.8. An element that draws nothing takes no space. */
+.markdown-embed-title:empty {
+  display: none;
+}
+
 /* Obsidian pins the open-in-full control to the physical right, which in a
    right-to-left note is the start of the line and lands on top of the first
    heading — which is what the report's screenshot shows. Logical inset, and

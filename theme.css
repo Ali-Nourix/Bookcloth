@@ -1,4 +1,4 @@
-/* Bookcloth 2.6.4 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.6.5 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -620,7 +620,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.6.4";
+  --bc-version: "2.6.5";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -2689,6 +2689,15 @@ body.bc-callout-rule .callout-content .markdown-embed {
   font-size: var(--font-ui-small);
   margin-block-end: var(--bc-gap-2);
   text-align: start;
+}
+
+/* Embed a heading section rather than a whole note and Obsidian still renders
+   the title element — with nothing in it. Height 0, and it still carried the
+   margin below it, so the top of every such embed had 4px the sides did not:
+   measured in a live vault as content starting at y 257.8 inside an embed
+   starting at 253.8. An element that draws nothing takes no space. */
+.markdown-embed-title:empty {
+  display: none;
 }
 
 /* Obsidian pins the open-in-full control to the physical right, which in a
