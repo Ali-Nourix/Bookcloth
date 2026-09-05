@@ -12,7 +12,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.7.0";
+  --bc-version: "2.8.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -133,6 +133,18 @@ body {
   /* What Obsidian's floating status bar occupies. Only the floating layout
      reads it, to keep the panels clear of it. */
   --bc-statusbar-height: 26px;
+
+  /* --- Numbers the settings pane reaches -------------------------------
+     Each of these is a private name that Obsidian's own variable is then set
+     from, rather than a control writing to Obsidian's variable directly. The
+     embed padding is why: --embed-padding belongs to the app, anything loading
+     after the theme can hand it different numbers, and a theme reading it gets
+     them. A private token cannot be reached that way. */
+  --bc-heading-space: 1.9;
+  --bc-p-spacing: 0.5em;
+  --bc-list-indent: 1.5em;
+  --bc-list-spacing: 0.125em;
+  --bc-toggle-scale: 1;
 
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);

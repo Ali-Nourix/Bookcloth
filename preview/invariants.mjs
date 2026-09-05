@@ -225,7 +225,10 @@ const result = await pg.evaluate(() => {
       const co = em.closest('.callout');
       if (co) edged = opaque(getComputedStyle(co).backgroundColor);
     }
-    if (!edged) fails.push('embed has no edge and sits in nothing that has one');
+    /* unless the reader asked for exactly that */
+    if (!edged && !document.body.classList.contains('bc-embed-bare')) {
+      fails.push('embed has no edge and sits in nothing that has one');
+    }
   }
 
   /* 5d. an embed's padding is the same on the top as on the sides. Measured

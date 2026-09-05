@@ -352,6 +352,45 @@ settings:
         step: 1
         format: px
     -
+        id: bc-tab-height
+        title: Editor tab height
+        description: The tab itself, which sits bottom-flush against the page so the two merge. Shorter than the band above it on purpose.
+        type: variable-number-slider
+        default: 34
+        min: 24
+        max: 48
+        step: 1
+        format: px
+    -
+        id: bc-statusbar-height
+        title: Status bar height
+        description: Only the reserved strip at the bottom. Hide it entirely under Interface below.
+        type: variable-number-slider
+        default: 26
+        min: 16
+        max: 44
+        step: 1
+        format: px
+    -
+        id: bc-row-inset
+        title: Sidebar row inset
+        description: How far a sidebar row's text sits from the panel edge. Notion's is 8px.
+        type: variable-number-slider
+        default: 8
+        min: 0
+        max: 24
+        step: 1
+        format: px
+    -
+        id: bc-toggle-scale
+        title: Switch size
+        description: Scales the on/off switches in settings panes. 1 is Notion's 26x16.
+        type: variable-number-slider
+        default: 1
+        min: 0.7
+        max: 1.8
+        step: 0.05
+    -
         id: bc-row-base
         title: Sidebar row height
         description: Notion's is 27px. Interface density scales it from here.
@@ -477,6 +516,16 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-speed
+        title: Animation speed
+        description: How long hovers, toggles and menus take. Zero turns transitions off; the theme also respects the system's reduce-motion setting on its own.
+        type: variable-number-slider
+        default: 100
+        min: 0
+        max: 400
+        step: 10
+        format: ms
+    -
         id: bc-hide-statusbar
         title: Hide status bar until hover
         type: class-toggle
@@ -505,6 +554,72 @@ settings:
             -
                 label: Left rule
                 value: bc-callout-rule
+    -
+        id: bc-embed-padding
+        title: Embed padding
+        description: The space inside a transcluded block — `![[Note#Heading]]`. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
+        type: variable-number-slider
+        default: 12
+        min: 0
+        max: 32
+        step: 1
+        format: px
+    -
+        id: bc-embed-style
+        title: Embed style
+        description: How a transclusion is drawn. Card gives it a sunken panel and a hairline; Quiet takes the fill away and keeps the hairline; Bare removes both and leaves the content, which reads as text you typed.
+        type: class-select
+        allowEmpty: false
+        default: bc-embed-card
+        options:
+            -
+                label: Card
+                value: bc-embed-card
+            -
+                label: Quiet
+                value: bc-embed-quiet
+            -
+                label: Bare
+                value: bc-embed-bare
+    -
+        id: bc-heading-space
+        title: Space above headings
+        description: The gap before a heading, as a multiple of its own size. Lower it for dense notes.
+        type: variable-number-slider
+        default: 1.9
+        min: 0
+        max: 3.5
+        step: 0.1
+    -
+        id: bc-p-spacing
+        title: Paragraph spacing
+        description: The gap between paragraphs, in ems of the text size.
+        type: variable-number-slider
+        default: 0.5
+        min: 0
+        max: 2
+        step: 0.05
+        format: em
+    -
+        id: bc-list-indent
+        title: List indent
+        description: How far each list level steps in.
+        type: variable-number-slider
+        default: 1.5
+        min: 0.5
+        max: 3.5
+        step: 0.05
+        format: em
+    -
+        id: bc-list-spacing
+        title: Space between list items
+        description: Zero packs a checklist tight; raise it for reading.
+        type: variable-number-slider
+        default: 0.125
+        min: 0
+        max: 1
+        step: 0.025
+        format: em
     -
         id: bc-wash
         title: Callout colour strength

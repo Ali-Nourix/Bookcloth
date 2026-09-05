@@ -492,7 +492,7 @@ body.bc-no-fade-done {
   margin: 0 !important;
   /* same reason as the base rule, and it has to shout at least as loudly or
      the base rule's flag would win over this one on the axis it sets */
-  padding: var(--bc-gap-3) !important;
+  padding: calc(var(--bc-embed-padding) * 0.67) !important;
   background-color: transparent;
   box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
 }
@@ -507,6 +507,20 @@ body.bc-callout-rule .callout-content .markdown-embed {
   padding: var(--bc-embed-padding) !important;
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+/* Embed style, as a setting. Card is the default and is what the rules above
+   draw. These two come after everything else on purpose: they carry the same
+   three classes as the callout-variant rule, so order is what decides, and
+   order here means "the reader's choice last". */
+body.bc-embed-quiet .markdown-embed.markdown-embed {
+  background-color: transparent;
+}
+
+body.bc-embed-bare .markdown-embed.markdown-embed {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0 !important;
 }
 
 .markdown-embed-title {

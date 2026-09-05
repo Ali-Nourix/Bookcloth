@@ -1,4 +1,4 @@
-/* Bookcloth 2.7.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.8.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -356,6 +356,45 @@ settings:
         step: 1
         format: px
     -
+        id: bc-tab-height
+        title: Editor tab height
+        description: The tab itself, which sits bottom-flush against the page so the two merge. Shorter than the band above it on purpose.
+        type: variable-number-slider
+        default: 34
+        min: 24
+        max: 48
+        step: 1
+        format: px
+    -
+        id: bc-statusbar-height
+        title: Status bar height
+        description: Only the reserved strip at the bottom. Hide it entirely under Interface below.
+        type: variable-number-slider
+        default: 26
+        min: 16
+        max: 44
+        step: 1
+        format: px
+    -
+        id: bc-row-inset
+        title: Sidebar row inset
+        description: How far a sidebar row's text sits from the panel edge. Notion's is 8px.
+        type: variable-number-slider
+        default: 8
+        min: 0
+        max: 24
+        step: 1
+        format: px
+    -
+        id: bc-toggle-scale
+        title: Switch size
+        description: Scales the on/off switches in settings panes. 1 is Notion's 26x16.
+        type: variable-number-slider
+        default: 1
+        min: 0.7
+        max: 1.8
+        step: 0.05
+    -
         id: bc-row-base
         title: Sidebar row height
         description: Notion's is 27px. Interface density scales it from here.
@@ -481,6 +520,16 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-speed
+        title: Animation speed
+        description: How long hovers, toggles and menus take. Zero turns transitions off; the theme also respects the system's reduce-motion setting on its own.
+        type: variable-number-slider
+        default: 100
+        min: 0
+        max: 400
+        step: 10
+        format: ms
+    -
         id: bc-hide-statusbar
         title: Hide status bar until hover
         type: class-toggle
@@ -509,6 +558,72 @@ settings:
             -
                 label: Left rule
                 value: bc-callout-rule
+    -
+        id: bc-embed-padding
+        title: Embed padding
+        description: The space inside a transcluded block — `![[Note#Heading]]`. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
+        type: variable-number-slider
+        default: 12
+        min: 0
+        max: 32
+        step: 1
+        format: px
+    -
+        id: bc-embed-style
+        title: Embed style
+        description: How a transclusion is drawn. Card gives it a sunken panel and a hairline; Quiet takes the fill away and keeps the hairline; Bare removes both and leaves the content, which reads as text you typed.
+        type: class-select
+        allowEmpty: false
+        default: bc-embed-card
+        options:
+            -
+                label: Card
+                value: bc-embed-card
+            -
+                label: Quiet
+                value: bc-embed-quiet
+            -
+                label: Bare
+                value: bc-embed-bare
+    -
+        id: bc-heading-space
+        title: Space above headings
+        description: The gap before a heading, as a multiple of its own size. Lower it for dense notes.
+        type: variable-number-slider
+        default: 1.9
+        min: 0
+        max: 3.5
+        step: 0.1
+    -
+        id: bc-p-spacing
+        title: Paragraph spacing
+        description: The gap between paragraphs, in ems of the text size.
+        type: variable-number-slider
+        default: 0.5
+        min: 0
+        max: 2
+        step: 0.05
+        format: em
+    -
+        id: bc-list-indent
+        title: List indent
+        description: How far each list level steps in.
+        type: variable-number-slider
+        default: 1.5
+        min: 0.5
+        max: 3.5
+        step: 0.05
+        format: em
+    -
+        id: bc-list-spacing
+        title: Space between list items
+        description: Zero packs a checklist tight; raise it for reading.
+        type: variable-number-slider
+        default: 0.125
+        min: 0
+        max: 1
+        step: 0.025
+        format: em
     -
         id: bc-wash
         title: Callout colour strength
@@ -620,7 +735,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.7.0";
+  --bc-version: "2.8.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -741,6 +856,18 @@ body {
   /* What Obsidian's floating status bar occupies. Only the floating layout
      reads it, to keep the panels clear of it. */
   --bc-statusbar-height: 26px;
+
+  /* --- Numbers the settings pane reaches -------------------------------
+     Each of these is a private name that Obsidian's own variable is then set
+     from, rather than a control writing to Obsidian's variable directly. The
+     embed padding is why: --embed-padding belongs to the app, anything loading
+     after the theme can hand it different numbers, and a theme reading it gets
+     them. A private token cannot be reached that way. */
+  --bc-heading-space: 1.9;
+  --bc-p-spacing: 0.5em;
+  --bc-list-indent: 1.5em;
+  --bc-list-spacing: 0.125em;
+  --bc-toggle-scale: 1;
 
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
@@ -1279,7 +1406,7 @@ body {
      always somewhere to click and keep writing. */
   --file-margins: var(--bc-gap-5) max(var(--bc-gap-6), 4vw) 20vh;
 
-  --p-spacing: 0.5em;
+  --p-spacing: var(--bc-p-spacing);
   --p-spacing-empty: 0em;
 
   /* Headings ------------------------------------------------------------
@@ -1345,8 +1472,8 @@ body {
   --hr-color: var(--background-modifier-border-hover);
   --hr-thickness: 1px;
 
-  --list-indent: 1.5em;
-  --list-spacing: 0.125em;
+  --list-indent: var(--bc-list-indent);
+  --list-spacing: var(--bc-list-spacing);
   --list-marker-color: var(--text-normal);
   --list-marker-color-hover: var(--text-normal);
   --list-marker-color-collapsed: var(--text-accent);
@@ -1384,7 +1511,7 @@ body {
 .markdown-rendered h2,
 .markdown-source-view.mod-cm6 .HyperMD-header-1,
 .markdown-source-view.mod-cm6 .HyperMD-header-2 {
-  margin-block-start: 1.9em;
+  margin-block-start: calc(var(--bc-heading-space) * 1em);
   margin-block-end: 0.25em;
 }
 
@@ -1394,7 +1521,7 @@ body {
 .markdown-rendered h6,
 .markdown-source-view.mod-cm6 .HyperMD-header-3,
 .markdown-source-view.mod-cm6 .HyperMD-header-4 {
-  margin-block-start: 1.5em;
+  margin-block-start: calc(var(--bc-heading-space) * 0.79em);
   margin-block-end: 0.2em;
 }
 
@@ -2699,7 +2826,7 @@ body.bc-no-fade-done {
   margin: 0 !important;
   /* same reason as the base rule, and it has to shout at least as loudly or
      the base rule's flag would win over this one on the axis it sets */
-  padding: var(--bc-gap-3) !important;
+  padding: calc(var(--bc-embed-padding) * 0.67) !important;
   background-color: transparent;
   box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
 }
@@ -2714,6 +2841,20 @@ body.bc-callout-rule .callout-content .markdown-embed {
   padding: var(--bc-embed-padding) !important;
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+/* Embed style, as a setting. Card is the default and is what the rules above
+   draw. These two come after everything else on purpose: they carry the same
+   three classes as the callout-variant rule, so order is what decides, and
+   order here means "the reader's choice last". */
+body.bc-embed-quiet .markdown-embed.markdown-embed {
+  background-color: transparent;
+}
+
+body.bc-embed-bare .markdown-embed.markdown-embed {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0 !important;
 }
 
 .markdown-embed-title {
@@ -3236,8 +3377,8 @@ button.mod-cta:disabled {
    not a suggestion, so they are declared as facts. */
 
 body {
-  --bc-toggle-w: 26px;
-  --bc-toggle-h: 16px;
+  --bc-toggle-w: calc(26px * var(--bc-toggle-scale));
+  --bc-toggle-h: calc(16px * var(--bc-toggle-scale));
   --bc-toggle-pad: 2px;
   --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
   --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));

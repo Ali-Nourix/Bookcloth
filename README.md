@@ -158,16 +158,24 @@ font-size slider keeps working:
 | Text colours | Body, muted and faint ink, separately per theme |
 | Semantic colours | All eight hues — red through pink — separately per theme |
 | Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
-| Shape and density | Corner radius, icon button size, space between icon buttons, sidebar row height, density, note width, visible borders |
+| Shape and density | Corner radius, top bar height, icon button size, space between icon buttons, editor tab height, status bar height, sidebar row height and inset, switch size, density, note width, visible borders |
 | Floating panels | Float the panels, gap, backdrop colour, corner clipping |
 | Icons | Icon size, stroke weight |
-| Interface | Tab style, indentation guides, hide status bar, hide ribbon |
-| Editor | Callout style and colour strength, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
+| Interface | Tab style, indentation guides, animation speed, hide status bar, hide ribbon |
+| Editor | Callout style and colour strength, embed padding and style, space above headings, paragraph spacing, list indent and item spacing, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
 | Plugin support | Opt out of any of the bundled plugin styles |
 
 Every plugin style is **on by default** and the toggles turn them off, so
 nothing depends on having Style Settings installed. Turning every control off
 still leaves a complete theme.
+
+Every slider writes to a **private** `--bc-` token that the theme then sets
+Obsidian's own variable from, rather than to Obsidian's variable directly. That
+is not tidiness: `--embed-padding` belongs to the app, and in a vault with
+twenty-six stylesheets loading after the theme, one of them handing that
+variable different numbers is ordinary — and a theme reading it gets them, with
+no way to tell from a computed style that anything happened. A private name
+cannot be reached that way, so a control that says 12px produces 12px.
 
 Semantic colours are authored as RGB triples, so one picker drives both the
 solid colour and every wash derived from it — change Blue and the note callout,
