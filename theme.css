@@ -1,4 +1,4 @@
-/* Bookcloth 2.6.5 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.6.6 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -620,7 +620,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.6.5";
+  --bc-version: "2.6.6";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -2582,6 +2582,16 @@ body.bc-no-fade-done {
    and just as invisible, because a rule that matches nothing and a rule that
    is outranked both look like "the theme did not style this". */
 .markdown-embed {
+  /* A transclusion is a block, and it has to be told so. Obsidian's class for
+     one in Live Preview is literally `inline-embed` and the element is a
+     <span>: on an inline box, horizontal padding lays out and vertical padding
+     only paints. That is the whole of "the sides have padding and the top does
+     not", and no amount of correcting the padding value reaches it — which is
+     why two releases of correcting the value changed nothing on screen.
+
+     Safe for every embed the theme styles: an image transclusion is
+     .image-embed and never carries .markdown-embed. */
+  display: block;
   position: relative;
   margin-block: var(--bc-gap-3);
   /* Measured in a live vault: the embed arrives with a negative inline-start

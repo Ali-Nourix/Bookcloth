@@ -211,7 +211,11 @@ body {
 .markdown-embed-link { position: absolute; top: 0; right: 0; padding: 4px; color: var(--text-faint); cursor: pointer; }
 .markdown-embed-content { max-height: 100%; overflow: auto; }
 .markdown-embed .markdown-preview-view { overflow: auto; }
-.internal-embed { display: block; }
+/* Deliberately NOT `display: block`. Obsidian's class for a transclusion in
+   Live Preview is literally `inline-embed` and the element is a <span>. On an
+   inline box, horizontal padding lays out and vertical padding only paints —
+   so a theme's padding shows on the sides and does nothing on the top. A
+   harness built out of <div>s cannot show that, and did not. */
 
 /* Transcribed from a live vault, because every one of these is load-bearing
    and none of them were in the harness while the defect was being chased.

@@ -56,7 +56,10 @@
     const rad = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map((k) => px(s[`border-${k}-radius`]));
     if (rad.some((x) => x !== '0')) bits.push(`r ${rad.every((x) => x === rad[0]) ? rad[0] : rad.join('/')}`);
 
-    if (s.display !== 'block') bits.push(`d ${s.display}`);
+    /* always, not only when it differs from block: on an inline box vertical
+       padding paints without laying out, so display is the first thing to know
+       about anything whose padding looks wrong on one axis. */
+    bits.push(`d ${s.display}`);
     if (s.display.includes('flex') || s.display.includes('grid')) {
       if (s.gap !== 'normal' && s.gap !== '0px') bits.push(`gap ${px(s.gap)}`);
       if (s.flexDirection !== 'row') bits.push(s.flexDirection);

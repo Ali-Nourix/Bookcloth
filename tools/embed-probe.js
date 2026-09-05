@@ -14,6 +14,11 @@
     const r = el.getBoundingClientRect();
     const bits = [
       `box ${R(r.x)},${R(r.y)} ${R(r.width)}x${R(r.height)}`,
+      /* display first: an inline box lays out horizontal padding and only
+         paints the vertical, so a padding that looks right in the stylesheet
+         does nothing on the top. Leaving this out of the dump is what turned
+         one measurement into three rounds. */
+      `display ${s.display}`,
       `dir ${s.direction}`,
       `ta ${s.textAlign}`,
       `ov ${s.overflowX}/${s.overflowY}`,

@@ -410,6 +410,21 @@ outside a container that clips is not a preference to be outvoted — it is text
 the reader cannot see. Outside a callout the unflagged rule leaves a deliberate
 bleed alone.
 
+The reason the padding kept not changing is one declaration, and it is not a
+padding. **A transclusion has to be told it is a block.** Obsidian's class for
+one in Live Preview is literally `inline-embed`, and the element is a `<span>`.
+On an inline box, horizontal padding lays out and vertical padding only paints
+— so the sides showed the padding and the top showed nothing, and correcting
+the padding *value* could not reach it. Two releases of correcting the value
+changed nothing on screen, which is exactly what a rule aimed at the wrong
+property looks like.
+
+It is safe to force: an image transclusion is `.image-embed` and never carries
+`.markdown-embed`. `app-shim.css` now leaves the element inline the way
+Obsidian ships it and `embeds.html` uses a `<span>`, so the harness renders the
+awkward version rather than a `<div>` that is a block for free — which is why
+it agreed with a stylesheet that the app disagreed with.
+
 Embedding a *heading section* rather than a whole note still gets a title
 element — with nothing in it. Height 0, and it kept the margin below it, so the
 top of every such embed carried 4px the sides did not. In the vault this was
