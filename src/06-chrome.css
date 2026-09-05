@@ -400,13 +400,13 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   align-items: flex-end;
   padding-block: 0;
   gap: var(--bc-gap-1);
-  /* On a frameless window this row also holds the window controls, and
-     Obsidian reserves their width in --frame-*-space. Taking the larger of
-     that and the theme's own inset means the first tab never ends up under
-     the traffic lights, and the fallback keeps the rule working on the
-     builds that define neither. */
-  padding-inline-start: max(var(--bc-gap-3), var(--frame-left-space, 0px));
-  padding-inline-end: max(var(--bc-gap-3), var(--frame-right-space, 0px));
+  /* A plain inset on both sides. An earlier version took max() of this and
+     Obsidian's --frame-*-space, on the theory that the window controls share
+     this row — but on Windows that variable is reserved for the right-most
+     tab container, which is the right sidebar's, not the editor's. Taking it
+     here added the whole width of the window controls as a second time, and
+     opened a gap beside the right sidebar that nothing was in. */
+  padding-inline: var(--bc-gap-3);
 }
 
 .workspace-split.mod-root .workspace-tab-header {

@@ -143,7 +143,22 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
    Instead the corner is handed to whichever element actually owns it. Only
    the bottom two need handing down: the top pair belong to the tab strip,
    which is transparent, so the split's own rounded background is already what
-   shows there. */
+   shows there.
+
+   That covers the elements this theme knows the names of. It does not cover a
+   plugin that paints a footer of its own at the bottom of a sidebar, which is
+   why the panel is also clipped — with `overflow: clip` rather than `hidden`,
+   because clip does not turn the panel into a scroll container and so cannot
+   swallow a pane's own scrolling. Popovers are unaffected either way: menus,
+   tooltips and suggestion lists render into document.body, not into the pane.
+   **Square panel corners** turns the clipping off for anyone who finds a
+   plugin that does draw outside its panel. */
+
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
+  overflow: clip;
+}
 
 body.bc-float-panes .workspace-split.mod-left-split > .workspace-tabs,
 body.bc-float-panes .workspace-split.mod-right-split > .workspace-tabs {

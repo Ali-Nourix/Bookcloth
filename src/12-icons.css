@@ -37,6 +37,40 @@ body {
   stroke-linejoin: round;
 }
 
+/* --- Plugin artwork ------------------------------------------------------
+   --icon-size only reaches an icon that carries Obsidian's .svg-icon class
+   and reads the variable. Plugins ship their own artwork and size it
+   themselves — a bare <svg width="14">, or their own CSS rule — so a pane
+   header ends up with four icons at the theme's size and three at whatever
+   the plugin picked. That is the row the eye reads as broken.
+
+   Inside a chrome icon button the size is the button's to decide, so it is
+   set on the element itself rather than left to a variable nobody else
+   reads. Descendant, not child: the icon may be wrapped. */
+.side-dock-ribbon-action svg,
+.sidebar-toggle-button svg,
+.workspace-tab-header-container .clickable-icon svg,
+.workspace-tab-header-inner-icon svg,
+.workspace-tab-header-new-tab svg,
+.workspace-tab-header-status-container svg,
+.nav-buttons-container svg,
+.nav-action-button svg,
+.view-actions svg,
+button.clickable-icon svg,
+button:has(> svg) > svg,
+button:has(> :only-child svg) svg {
+  width: var(--icon-m);
+  height: var(--icon-m);
+  flex: 0 0 auto;
+}
+
+/* The two that are deliberately smaller keep their size back. */
+.workspace-tab-header-inner-close-button svg,
+.search-input-container svg {
+  width: var(--icon-xs);
+  height: var(--icon-xs);
+}
+
 /* Three roles, three sizes, and every icon in a given row shares one of them —
    which is the whole point. A control that is 16px beside a control that is
    18px reads as a mistake even when neither is wrong on its own.
@@ -282,19 +316,27 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
 }
 
 /* --- Alternate task states -----------------------------------------------
-   `- [/]` is in progress and `- [!]` needs attention. Obsidian marks the list
-   item with data-task and leaves the input unchecked, so both the mark and
-   the `content` that carries it have to be declared here — the ::after that
-   draws a tick only exists on :checked.
+   `- [/]` is in progress and `- [!]` needs attention.
 
-   Live Preview puts data-task on the same .task-list-item, so one selector
-   covers both modes. */
+   Obsidian marks these three different ways depending on where you are, and
+   a rule that knows about only one of them is a rule that works in Reading
+   View and does nothing while you are actually writing:
+
+     Reading View   <li class="task-list-item" data-task="/">
+     Live Preview   <div class="HyperMD-task-line" data-task="/">
+     both, newer    <input class="task-list-item-checkbox" data-task="/">
+
+   So each state is written against all three. The input stays unchecked in
+   every one of them, which means the ::after that carries the glyph has to
+   declare its own `content` — the one Obsidian ships exists only on :checked. */
 
 /* In progress: outlined in its own colour and filled to the halfway line. No
    glyph. A mark inside a half-filled box is two signals competing for
    eighteen pixels, and the amount of colour is the one that reads without
    being looked at. */
-.task-list-item[data-task="/"] > input[type="checkbox"] {
+.task-list-item[data-task="/"] > input[type="checkbox"],
+.HyperMD-task-line[data-task="/"] > input[type="checkbox"],
+input[type="checkbox"][data-task="/"] {
   position: relative;
   border-color: var(--bc-task-progress);
   background-color: transparent;
@@ -306,13 +348,17 @@ body.bc-check-circle input[type="checkbox"]:checked::after {
 }
 
 /* Needs attention: filled, with the one glyph that means it. */
-.task-list-item[data-task="!"] > input[type="checkbox"] {
+.task-list-item[data-task="!"] > input[type="checkbox"],
+.HyperMD-task-line[data-task="!"] > input[type="checkbox"],
+input[type="checkbox"][data-task="!"] {
   position: relative;
   border-color: transparent;
   background-color: var(--bc-task-attention);
 }
 
-.task-list-item[data-task="!"] > input[type="checkbox"]::after {
+.task-list-item[data-task="!"] > input[type="checkbox"]::after,
+.HyperMD-task-line[data-task="!"] > input[type="checkbox"]::after,
+input[type="checkbox"][data-task="!"]::after {
   content: "";
   position: absolute;
   inset: 0;

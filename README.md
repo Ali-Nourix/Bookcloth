@@ -66,9 +66,16 @@ the other. The gap is applied to the container, not as margins on the panels,
 so the space between two panels is the same as the space at the window edge
 instead of double it.
 
-Corners are painted onto the panels rather than clipped with `overflow: hidden`.
-Clipping would swallow anything a sidebar plugin renders past its own edge —
-date pickers, colour swatches, drag previews.
+A rounded parent does not clip its children, so a panel rounded at the split
+still squares its own bottom corners the moment anything inside it paints — a
+plugin footer, a vault-name bar, a view that fills its own background. The
+corner is therefore handed down to whichever element owns it, and the panel is
+clipped as well, with `overflow: clip` rather than `overflow: hidden`: clip does
+not turn the panel into a scroll container, so it cannot swallow a pane's own
+scrolling. Popovers are unaffected either way — menus, tooltips and suggestion
+lists render into `document.body`, not into the pane. **Do not clip panel
+corners** turns it off for anyone who finds a plugin that genuinely draws
+outside its panel.
 
 Every scrolling pane reserves room at its foot. The status bar floats over the
 bottom of whatever is beneath it, and without that reserve the last item in a
@@ -135,7 +142,7 @@ font-size slider keeps working:
 | Semantic colours | All eight hues — red through pink — separately per theme |
 | Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
 | Shape and density | Corner radius, icon button size, sidebar row height, density, note width, visible borders |
-| Floating panels | Float the panels, gap, backdrop colour |
+| Floating panels | Float the panels, gap, backdrop colour, corner clipping |
 | Icons | Icon size, stroke weight |
 | Interface | Tab style, indentation guides, hide status bar, hide ribbon |
 | Editor | Callout style and colour strength, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
@@ -214,6 +221,13 @@ close button), 16px for icons that label a line of text (menu rows, callout
 titles), 18px for every icon that is a button in the chrome. A 16px control
 beside an 18px control reads as a mistake even when neither is wrong alone.
 
+`--icon-size` only reaches artwork that carries Obsidian's `.svg-icon` class
+and reads the variable. Plugins ship their own and size it themselves, which is
+how a pane header ends up with four icons at the theme's size and three at
+whatever the plugin picked. Inside a chrome icon button the size is the
+button's to decide, so it is set on the element rather than left to a variable
+nobody else reads.
+
 ## Tasks
 
 `- [x]` is a filled box with a white tick. `- [/]` is outlined in its own
@@ -253,8 +267,7 @@ a theme that repads those boxes double-pads some plugin dialogs and crops
 others. The one exception is `.view-header`, which is *set* rather than added
 to, so the inset is the same whatever Obsidian's own padding is underneath.
 
-For the same reason there is no `overflow: hidden` on the editor pane and no
-blanket `[data-type] .view-content` rule. Clipping the pane swallows anything a
+For the same reason there is no blanket `[data-type] .view-content` rule. Clipping the pane swallows anything a
 plugin renders outside its own bounds, and forcing a background onto every
 registered pane breaks canvases, boards and embedded editors that paint their
 own surface.

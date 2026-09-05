@@ -383,6 +383,12 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-no-clip-panes
+        title: Do not clip panel corners
+        description: Floating panels are clipped at their corners so a plugin that paints its own footer cannot square them off again. Turn this on if you find a plugin that needs to draw outside its panel.
+        type: class-toggle
+        default: false
+    -
         id: bc-pane-gap
         title: Gap between panels
         description: The space every panel keeps from its neighbours and from the window edge.
