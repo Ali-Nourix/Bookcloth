@@ -122,6 +122,33 @@ body.bc-indent-guides {
   border: none;
   align-items: center;
   gap: var(--bc-icon-gap);
+
+  /* Measured in a live vault, which is what it took. Obsidian ships this
+     element static, with a 45px top margin, and ships the collapse control
+     inside it as `position: absolute; top: 0`.
+
+     A static element is not a containing block. So that `top: 0` never
+     resolved against the ribbon at all — it resolved against an ancestor
+     further up, dropped the control above the ribbon entirely, and the 45px
+     margin exists to hold open the space it landed in. Forty-five pixels of
+     margin reserving room for a 28px control that is sitting outside the
+     element it belongs to.
+
+     Making the ribbon relative gives that control the containing block it was
+     always written for. The margin then has nothing to hold, so it becomes
+     padding: the same clearance, moved to where the control actually is. */
+  position: relative;
+  padding-block-start: var(--bc-topbar-height);
+}
+
+/* The margin carries .mod-left / .mod-right, so zeroing it from a one-class
+   selector loses on class count — and !important because which ancestor
+   classes Obsidian hangs it off varies by platform and frame mode, and this
+   is a measured value rather than a preference: the space it was holding is
+   now padding a few lines above. */
+.workspace-ribbon.mod-left,
+.workspace-ribbon.mod-right {
+  margin-block-start: 0 !important;
 }
 
 /* The ribbon's actual DOM, which is not what it looks like from outside:
@@ -154,7 +181,15 @@ body.bc-indent-guides {
   opacity: 1;
   visibility: visible;
 
-  /* And that is all this rule does to it.
+  /* Now that the ribbon is its containing block, this lands the control on
+     the top band: 6px down from the ribbon's own top puts its 28px centre at
+     20, the same centre-line every other control in that row returns.
+     !important for the same reason as the margin below — Obsidian's own `top`
+     carries an extra class or element depending on where it hangs it, and a
+     measured offset should not lose a specificity count. */
+  top: var(--bc-band-pad) !important;
+
+  /* Otherwise this rule leaves it alone.
      Two earlier releases tried to move it onto the top band — `position:
      static` to pull it into the ribbon's column, `order: -1` to put it
      first, the band's height to centre it. Both broke the ribbon, in

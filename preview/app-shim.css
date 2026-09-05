@@ -262,22 +262,33 @@ input.metadata-input-text, input.metadata-input-number {
 .setting-item-control .checkbox-container:after { width: 20px; height: 20px; top: 2px; left: 2px; }
 .setting-item-control .checkbox-container.is-enabled:after { transform: translate3d(18px, 0, 0); }
 .sidebar-toggle-button .clickable-icon svg { width: 12px; height: 12px; }
-/* Obsidian's own treatment of the collapse control, which is what a theme has
-   to get past: hidden until the ribbon is hovered, floated out of the column,
-   and sized by its own padding rather than by a width and height. */
+/* Obsidian's own treatment of the collapse control, transcribed from a live
+   vault rather than guessed at. Three things matter and all three are here:
+
+   The control is absolutely positioned at top 0 — but the ribbon is static,
+   so the ribbon is NOT its containing block. It resolves against an ancestor
+   further up and lands above the ribbon entirely, which is why the ribbon
+   carries a 45px margin: that margin is holding the space the button sits in.
+
+   And it is hidden until the ribbon is hovered.
+
+   A harness that draws this element the tidy way — in the flow, inside its
+   parent, visible — cannot reproduce any of the three, which is exactly how
+   this theme shipped four fixes for it that changed nothing or made it
+   worse. */
+.workspace-ribbon .sidebar-toggle-button svg,
 .workspace-ribbon .workspace-ribbon-collapse-btn svg { width: 12px; height: 12px; }
+.workspace-ribbon .sidebar-toggle-button.mod-left,
 .workspace-ribbon-collapse-btn {
   opacity: 0;
   position: absolute;
-  top: 4px;
-  padding: 4px 6px;
+  top: 0;
+  width: 40px;
   transition: opacity 0.1s;
 }
+.workspace-ribbon:hover .sidebar-toggle-button.mod-left,
 .workspace-ribbon:hover .workspace-ribbon-collapse-btn { opacity: 1; }
-/* …and reserves the space it would have taken, since it takes none. A theme
-   that forces it back into the flow pays for that space twice — which is
-   what this line is here to make visible. */
-.workspace-ribbon .side-dock-actions { margin-top: 30px; }
+.workspace-ribbon.mod-left { margin-top: 45px; }
 
 /* ---------- floating layers ---------- */
 .menu { position: absolute; min-width: 220px; z-index: 30; padding: var(--size-2-3); }

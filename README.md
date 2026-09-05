@@ -195,6 +195,63 @@ is its own setting because how far apart 28px squares sit is the one number
 that decides whether a toolbar reads as a row of buttons or as one bar with
 seams in it.
 
+The sidebar collapse control took eight releases, and the reason is worth
+writing down because none of the seven wrong answers looked wrong at the time.
+
+Obsidian ships it as `position: absolute; top: 0` **inside a ribbon it ships
+static** — and a static element is not a containing block. That `top: 0` never
+resolved against the ribbon at all. It resolved against an ancestor further up,
+dropped the control above the ribbon entirely, and the 45px top margin Obsidian
+puts on the ribbon exists to hold open the space it landed in. Forty-five pixels
+of margin reserving room for a 28px control sitting outside the element it
+belongs to.
+
+Making the ribbon `position: relative` gives the control the containing block it
+was always written for. The margin then has nothing to hold, so it becomes
+padding: the same clearance, moved to where the control actually is. Three
+declarations, and the empty band at the top of the ribbon closes.
+
+Everything before that was guesswork, and it cost real regressions — a 40px hole
+where the glyph should have been, every ribbon action pushed down a second time,
+a control that vanished entirely. Two things made the guessing expensive:
+
+- **A selector that is merely wrong looks exactly like one being outranked.**
+  Both produce "nothing happened". `.workspace-ribbon-collapse-btn` is the name
+  Minimal and Things use, and current Obsidian calls it `.sidebar-toggle-button`;
+  aiming at one while running the other is indistinguishable from losing a
+  specificity contest. Both names are carried now.
+- **The harness drew the tidy version of the element** — in the flow, inside its
+  parent, visible — and none of the three things that were actually true of it.
+  `app-shim.css` now transcribes the live measurements instead.
+
+Two of its numbers are `!important`: the `top` that puts it on the band, and the
+margin that has to come off the ribbon. Both are measured values rather than
+preferences, and both sit behind Obsidian selectors that carry an extra class or
+element depending on platform and frame mode. `node measure.mjs` checks it first:
+it and the three controls beside it all have to return a centre-y of 20.
+
+## The window frame
+
+On Windows and Linux, Obsidian draws the minimise, maximise and close buttons
+itself and leaves them at the platform's colours — a grey block in the corner
+of an otherwise quiet interface. They are restyled like anything else: flat,
+the same muted glyph as every other icon, a grey hover, and the one red that
+platform convention reserves for close.
+
+## The top band
+
+Obsidian spreads the controls along the top of the window across four separate
+containers: the ribbon column, the left sidebar's tab strip, the editor tab bar
+and the right sidebar's tab strip. Each brings its own padding, so left alone
+the sidebar-toggle button sits a few pixels above the tabs beside it and what
+should be one row reads as three.
+
+Bookcloth gives all four the same 40px band and the same 28px control, so every
+icon in that row shares one centre line — and the same 6px between them, which
+is its own setting because how far apart 28px squares sit is the one number
+that decides whether a toolbar reads as a row of buttons or as one bar with
+seams in it.
+
 The sidebar collapse control took six releases to get right, for a reason worth
 writing down: **the class it was being styled with does not exist.** Obsidian
 calls it `.workspace-ribbon-collapse-btn`. `.sidebar-toggle-button` — the name
