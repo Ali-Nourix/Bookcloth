@@ -71,7 +71,10 @@ body {
 .workspace-split.mod-left-split, .workspace-split.mod-right-split {
   width: 250px; flex: 0 0 250px; background-color: var(--background-secondary);
 }
-.workspace-split.mod-root { flex: 1; min-width: 0; background-color: var(--background-secondary); }
+/* Obsidian paints the root split --background-primary, i.e. white. That is
+   what shows through at the corners of a rounded editor panel, so the shim
+   has to paint it the same way or the defect cannot reproduce here. */
+.workspace-split.mod-root { flex: 1; min-width: 0; background-color: var(--background-primary); }
 
 .workspace-tabs { display: flex; flex-direction: column; flex: 1; min-height: 0; background-color: var(--tab-container-background); }
 .workspace-tab-header-container { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; }

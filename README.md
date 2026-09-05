@@ -76,8 +76,15 @@ the other. The gap is applied to the container, not as margins on the panels,
 so the space between two panels is the same as the space at the window edge
 instead of double it.
 
-A rounded parent does not clip its children, so a panel rounded at the split
-still squares its own bottom corners the moment anything inside it paints — a
+Every structural container behind a panel is transparent, and that is load-
+bearing rather than tidy: Obsidian paints the root split `--background-primary`,
+which is white, and a rounded corner on the panel inside it does not hide what
+is behind it. A white wedge at the editor's corners was that element showing
+through them — and no amount of clipping could have fixed it, because the white
+was outside the panel rather than spilling out of it.
+
+A rounded parent does not clip its children either, so a panel rounded at the
+split still squares its own bottom corners the moment anything inside it paints — a
 plugin footer, a vault-name bar, a view that fills its own background. The
 corner is therefore handed down to whichever element owns it, and the panel is
 clipped as well, with `overflow: clip` rather than `overflow: hidden`: clip does
@@ -186,7 +193,16 @@ Bookcloth gives all four the same 40px band and the same 28px control, so every
 icon in that row shares one centre line — and the same 6px between them, which
 is its own setting because how far apart 28px squares sit is the one number
 that decides whether a toolbar reads as a row of buttons or as one bar with
-seams in it. Measured rather than eyeballed: ribbon
+seams in it.
+
+The sidebar collapse control is the exception that proves it. It is the only
+item in that row that is *not* a 28px square: it takes the band's full height,
+so its icon centres on the band rather than on a hit area that happens to start
+wherever Obsidian stacked it. What sits above it in the ribbon varies by
+platform and release — a vault switcher, an app menu, nothing — so it is also
+ordered to the top rather than left where the DOM puts it. `node measure.mjs`
+checks it first, with an unrelated ribbon item deliberately above it: it and
+the three controls beside it all have to return a centre-y of 20. Measured rather than eyeballed: ribbon
 action, both sidebar toggles, both sidebar tab strips and the new-tab button all
 return a centre of exactly 20px. The editor tabs are the deliberate exception —
 they are 34px and aligned to the bottom of the band, because they merge with the

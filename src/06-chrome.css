@@ -124,6 +124,36 @@ body.bc-indent-guides {
   gap: var(--bc-icon-gap);
 }
 
+/* The sidebar collapse control belongs to the top band, not to the column of
+   ribbon actions under it — it acts on the window, and it has to land on the
+   same centre line as the sidebar tabs beside it.
+
+   Pinning it rather than relying on the ribbon's own stacking, because what
+   Obsidian puts above it in that column varies: a vault switcher, an app
+   menu, nothing at all, depending on platform and release. `order: -1` makes
+   it the first item whatever the DOM says, and giving it the band's full
+   height rather than a 28px hit area centres its icon at exactly half the
+   band — the same 20px every other control in that row returns. */
+.workspace-ribbon .sidebar-toggle-button {
+  order: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: var(--bc-topbar-height);
+  min-height: var(--bc-topbar-height);
+  margin-block: 0;
+  padding-block: 0;
+}
+
+/* The band starts at the very top of the ribbon, so the collapse control's
+   centre is the band's centre. The actions below it keep their own spacing
+   through the ribbon's gap. */
+.workspace-ribbon.mod-left,
+.workspace-ribbon.mod-right {
+  padding-block-start: 0;
+}
+
 .workspace-ribbon.mod-left::before,
 .workspace-ribbon.mod-right::before {
   display: none;
@@ -133,9 +163,12 @@ body.bc-indent-guides {
    gives the sidebar-toggle button a different container from the plugin
    actions below it, so left to itself the top icon sits off the column the
    rest of them share. Sizing them all identically is what lines them up. */
+/* The collapse control is deliberately absent from this list. It is the one
+   ribbon item that is not a 28px square: it is the band's full height, so
+   that its icon lands on the band's centre line. The .clickable-icon inside
+   it is still squared by the second selector here. */
 .side-dock-ribbon-action,
-.workspace-ribbon .clickable-icon,
-.workspace-ribbon .sidebar-toggle-button {
+.workspace-ribbon .clickable-icon {
   display: flex;
   align-items: center;
   justify-content: center;

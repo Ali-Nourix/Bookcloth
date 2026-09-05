@@ -62,18 +62,28 @@ body,
 }
 
 /* The page. The tab strip keeps the chrome tone and the leaf below it is the
-   page colour, so the active tab and the page read as one surface. */
+   page colour, so the active tab and the page read as one surface.
+
+   The split itself is transparent, and that is not tidiness — Obsidian paints
+   it --background-primary, which is white, and a rounded corner on the panel
+   inside it does not hide what is behind it. The white wedge that kept
+   appearing at the editor's corners was this element showing through them.
+   Clipping the panel could never have fixed it: the white was outside the
+   panel, not spilling out of it. */
+.workspace-split.mod-root,
+.workspace-split.mod-root .workspace-split,
+.workspace-split.mod-root .workspace-leaf,
+.workspace-split.mod-left-split .workspace-split,
+.workspace-split.mod-right-split .workspace-split {
+  background-color: transparent;
+}
+
 .workspace-split.mod-root .workspace-tabs {
   background-color: var(--tab-container-background);
 }
 
 .workspace-split.mod-root .workspace-leaf-content {
   background-color: var(--background-primary);
-}
-
-/* Split editor panes: a hairline between them, never a gap. */
-.workspace-split.mod-root .workspace-split {
-  background-color: transparent;
 }
 
 .status-bar {
