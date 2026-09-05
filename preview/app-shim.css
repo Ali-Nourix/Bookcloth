@@ -241,6 +241,22 @@ input.metadata-input-text, input.metadata-input-number {
 .checkbox-container::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: var(--toggle-thumb-radius); background-color: var(--toggle-thumb-color); transition: transform 100ms; }
 .checkbox-container.is-enabled::after { transform: translateX(14px); }
 
+/* ---------- rules a theme has to outrank ----------
+   Obsidian does not style everything with one flat class. Several of its own
+   rules carry two classes, and specificity compares class count before
+   element count — so a theme rule of the form `body .thing::after` (one class,
+   two elements) loses to `.container .thing:after` (two classes, one element)
+   no matter which sheet loads last.
+
+   These four are that shape. They are here so the harness reproduces the
+   condition that beat this theme twice rather than the easy version of it: if
+   a future change to the toggle or to icon sizing drops its !important, these
+   rules take over and the render shows it immediately. */
+.setting-item-control .checkbox-container { width: 42px; height: 24px; }
+.setting-item-control .checkbox-container:after { width: 20px; height: 20px; top: 2px; left: 2px; }
+.setting-item-control .checkbox-container.is-enabled:after { transform: translate3d(18px, 0, 0); }
+.sidebar-toggle-button .clickable-icon svg { width: 12px; height: 12px; }
+
 /* ---------- floating layers ---------- */
 .menu { position: absolute; min-width: 220px; z-index: 30; padding: var(--size-2-3); }
 .menu-item { display: flex; align-items: center; gap: var(--size-4-3); font-size: var(--font-ui-small); cursor: pointer; padding: var(--size-2-2) var(--size-4-3); min-height: 28px; }

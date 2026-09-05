@@ -51,7 +51,14 @@ body {
 
    Inside a chrome icon button the size is the button's to decide, so it is
    set on the element itself rather than left to a variable nobody else
-   reads. Descendant, not child: the icon may be wrapped. */
+   reads. Descendant, not child: the icon may be wrapped.
+
+   And !important, for the same reason the switch above needs it. Obsidian
+   sizes its own sidebar-collapse glyph with a two-class selector; this rule
+   is one class and one element, and specificity compares class count first,
+   so the theme loses however the sheets are ordered. Two attempts at
+   out-specifying it both failed. An icon button's icon is the size of the
+   button it is in — that is not a preference to be outvoted. */
 .clickable-icon:not(.mod-inline) svg,
 .side-dock-ribbon-action svg,
 .sidebar-toggle-button svg,
@@ -66,26 +73,27 @@ body {
 button.clickable-icon svg,
 button:has(> svg) > svg,
 button:has(> :only-child svg) svg {
-  width: var(--icon-m);
-  height: var(--icon-m);
+  width: var(--icon-m) !important;
+  height: var(--icon-m) !important;
   flex: 0 0 auto;
 }
 
-/* The ones that are deliberately smaller take their size back. */
+/* The ones that are deliberately smaller take their size back, and have to
+   shout just as loudly to do it. */
 .workspace-tab-header-inner-close-button svg,
 .search-input-container svg,
 .collapse-icon svg,
 .tree-item-icon svg,
 .metadata-property-key svg,
 .suggestion-flair svg {
-  width: var(--icon-xs);
-  height: var(--icon-xs);
+  width: var(--icon-xs) !important;
+  height: var(--icon-xs) !important;
 }
 
 .menu-item-icon svg,
 .callout-icon svg {
-  width: var(--icon-s);
-  height: var(--icon-s);
+  width: var(--icon-s) !important;
+  height: var(--icon-s) !important;
 }
 
 /* Three roles, three sizes, and every icon in a given row shares one of them —

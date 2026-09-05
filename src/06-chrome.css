@@ -279,7 +279,15 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .workspace-leaf-content[data-type="outline"] .view-content,
 .workspace-leaf-content[data-type="backlink"] .view-content,
 .workspace-leaf-content[data-type="outgoing-link"] .view-content,
-.workspace-leaf-content[data-type="all-properties"] .view-content {
+.workspace-leaf-content[data-type="all-properties"] .view-content,
+/* And any sidebar pane that lays out a tree, named or not. A plugin's
+   outline pane is still an outline pane, and without this its rows — the
+   collapse chevron first — sit flat against the panel edge with nothing
+   between them and it. A pane that lays out something other than a tree
+   keeps its own padding, which is why this asks what is inside rather than
+   what the plugin is called. */
+.workspace-split.mod-left-split .view-content:has(.tree-item-self),
+.workspace-split.mod-right-split .view-content:has(.tree-item-self) {
   padding-inline: var(--bc-row-inset);
 }
 

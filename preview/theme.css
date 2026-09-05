@@ -1,4 +1,4 @@
-/* Bookcloth 2.2.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.2.1 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -1738,7 +1738,15 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .workspace-leaf-content[data-type="outline"] .view-content,
 .workspace-leaf-content[data-type="backlink"] .view-content,
 .workspace-leaf-content[data-type="outgoing-link"] .view-content,
-.workspace-leaf-content[data-type="all-properties"] .view-content {
+.workspace-leaf-content[data-type="all-properties"] .view-content,
+/* And any sidebar pane that lays out a tree, named or not. A plugin's
+   outline pane is still an outline pane, and without this its rows — the
+   collapse chevron first — sit flat against the panel edge with nothing
+   between them and it. A pane that lays out something other than a tree
+   keeps its own padding, which is why this asks what is inside rather than
+   what the plugin is called. */
+.workspace-split.mod-left-split .view-content:has(.tree-item-self),
+.workspace-split.mod-right-split .view-content:has(.tree-item-self) {
   padding-inline: var(--bc-row-inset);
 }
 
@@ -2784,15 +2792,24 @@ button.mod-cta:disabled {
 }
 
 /* --- Toggles -------------------------------------------------------------
-   Notion's switch is 26×16 with a 12px thumb. Obsidian's is 40×22 with an
-   18px one, and the travel it applies is measured against *its* track. Change
-   the track without changing the travel and the thumb slides straight off the
-   end — which is what it was doing.
+   Notion's switch is 26×16 with a 12px thumb. Obsidian's is 42×24 with a 20px
+   one, and the travel it applies is measured against *its* track. Change the
+   track without changing the thumb and the travel with it and you get a 20px
+   circle in a 16px slot: taller than its track, past the end of it, and off
+   its centre line.
 
-   So all three numbers come from two tokens and the travel is derived, not
-   typed: it is exactly width − height, which is the only value that lands the
-   thumb inside the far edge with the same inset it started from. Change
-   either token and the switch stays correct. */
+   Three of these numbers come from two tokens and the travel is derived, not
+   typed — width − height is the only value that lands the thumb inside the far
+   edge with the inset it started from.
+
+   And all of it is !important, which needs saying out loud. Two earlier
+   attempts raised specificity instead and both lost, because specificity
+   compares class count before element count: `body .checkbox-container::after`
+   is one class and two elements, and any Obsidian or plugin rule of the form
+   `.some-container .checkbox-container:after` is two classes and one — so it
+   wins, whatever order the sheets load in. There is no selector a theme can
+   write that reliably outranks a rule it cannot see. A switch's dimensions are
+   not a suggestion, so they are declared as facts. */
 
 body {
   --bc-toggle-w: 26px;
@@ -2801,47 +2818,41 @@ body {
   --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
   --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));
 
-  /* Obsidian's own names for the same four numbers. Set as well as, not
-     instead of, the rules below: which of the two a given Obsidian version
-     actually reads has changed before, and a switch is only correct when
-     the track, the thumb and the travel all agree. */
+  /* Obsidian's own names for the same numbers, for the versions that read
+     them rather than sizing the element directly. */
   --toggle-width: var(--bc-toggle-w);
   --toggle-height: var(--bc-toggle-h);
   --toggle-thumb-width: var(--bc-toggle-thumb);
   --toggle-thumb-height: var(--bc-toggle-thumb);
 }
 
-/* All three carried on `body`. Obsidian sizes its own switch at (0,1,1) and
-   (0,2,1); a later sheet ties rather than wins at those weights, and a tie
-   that goes the wrong way leaves an 18px thumb in a 16px track — too big for
-   it, hanging off the end, and off its centre line. One element heavier
-   settles it. */
-body .checkbox-container {
-  width: var(--bc-toggle-w);
-  height: var(--bc-toggle-h);
-  min-width: var(--bc-toggle-w);
+.checkbox-container {
+  width: var(--bc-toggle-w) !important;
+  height: var(--bc-toggle-h) !important;
+  min-width: var(--bc-toggle-w) !important;
+  flex: 0 0 auto;
   border-radius: var(--toggle-radius);
   background-color: var(--background-modifier-border-hover);
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
-body .checkbox-container::after {
-  width: var(--bc-toggle-thumb);
-  height: var(--bc-toggle-thumb);
-  top: var(--bc-toggle-pad);
-  left: var(--bc-toggle-pad);
-  inset-block-end: auto;
-  inset-inline-end: auto;
-  margin: 0;
+.checkbox-container::after {
+  width: var(--bc-toggle-thumb) !important;
+  height: var(--bc-toggle-thumb) !important;
+  top: var(--bc-toggle-pad) !important;
+  left: var(--bc-toggle-pad) !important;
+  inset-block-end: auto !important;
+  inset-inline-end: auto !important;
+  margin: 0 !important;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
-body .checkbox-container.is-enabled {
+.checkbox-container.is-enabled {
   background-color: var(--interactive-accent);
 }
 
-body .checkbox-container.is-enabled::after {
-  transform: translate3d(var(--bc-toggle-travel), 0, 0);
+.checkbox-container.is-enabled::after {
+  transform: translate3d(var(--bc-toggle-travel), 0, 0) !important;
 }
 
 /* --- Window controls -----------------------------------------------------
@@ -3186,7 +3197,14 @@ body {
 
    Inside a chrome icon button the size is the button's to decide, so it is
    set on the element itself rather than left to a variable nobody else
-   reads. Descendant, not child: the icon may be wrapped. */
+   reads. Descendant, not child: the icon may be wrapped.
+
+   And !important, for the same reason the switch above needs it. Obsidian
+   sizes its own sidebar-collapse glyph with a two-class selector; this rule
+   is one class and one element, and specificity compares class count first,
+   so the theme loses however the sheets are ordered. Two attempts at
+   out-specifying it both failed. An icon button's icon is the size of the
+   button it is in — that is not a preference to be outvoted. */
 .clickable-icon:not(.mod-inline) svg,
 .side-dock-ribbon-action svg,
 .sidebar-toggle-button svg,
@@ -3201,26 +3219,27 @@ body {
 button.clickable-icon svg,
 button:has(> svg) > svg,
 button:has(> :only-child svg) svg {
-  width: var(--icon-m);
-  height: var(--icon-m);
+  width: var(--icon-m) !important;
+  height: var(--icon-m) !important;
   flex: 0 0 auto;
 }
 
-/* The ones that are deliberately smaller take their size back. */
+/* The ones that are deliberately smaller take their size back, and have to
+   shout just as loudly to do it. */
 .workspace-tab-header-inner-close-button svg,
 .search-input-container svg,
 .collapse-icon svg,
 .tree-item-icon svg,
 .metadata-property-key svg,
 .suggestion-flair svg {
-  width: var(--icon-xs);
-  height: var(--icon-xs);
+  width: var(--icon-xs) !important;
+  height: var(--icon-xs) !important;
 }
 
 .menu-item-icon svg,
 .callout-icon svg {
-  width: var(--icon-s);
-  height: var(--icon-s);
+  width: var(--icon-s) !important;
+  height: var(--icon-s) !important;
 }
 
 /* Three roles, three sizes, and every icon in a given row shares one of them —

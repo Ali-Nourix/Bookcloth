@@ -61,6 +61,13 @@ uses `<input>`s and `<button>`s, and a theme can look perfect on the former
 while boxing every row of a note's properties on the latter. Anything that
 touches inputs or buttons gets checked there first.
 
+`app-shim.css` also carries four rules shaped the way Obsidian's own
+higher-specificity rules are shaped — two classes where a theme can only
+reach for one. They exist so the harness reproduces the condition that beat
+this theme twice rather than the easy version of it: drop the `!important`
+from the switch or from icon sizing and those rules take over, visibly, on
+the next render.
+
 `check.mjs` exits non-zero if anything was dropped, so it works as a
 pre-commit hook. `measure.mjs` is how the "one centre line" claim in the main
 README is verified: ribbon action, both sidebar toggles, both sidebar tab

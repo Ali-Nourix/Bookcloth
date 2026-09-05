@@ -387,8 +387,17 @@ Focus rings are visible on every interactive element, and
   have and falls back to system faces; the font fields in Style Settings take
   any family installed on your machine.
 - No network requests, no `@import`. Works offline and on mobile.
-- `!important` appears four times, all inside the reduced-motion block, where
-  overriding inline animation timings is the point.
+- `!important` appears on two things: the reduced-motion block, where
+  overriding inline animation timings is the point, and the geometry of the
+  switch and of the icon inside a chrome icon button. That second use is
+  deliberate and was arrived at the hard way. Specificity compares class count
+  before element count, so a theme rule of the form `body .thing::after` — one
+  class, two elements — loses to any Obsidian or plugin rule shaped like
+  `.container .thing:after` — two classes, one element — however the sheets are
+  ordered. Two rounds of raising specificity both lost to exactly that. A
+  switch's dimensions and the size of an icon inside its own button are not
+  preferences to be outvoted, so they are declared as facts. Both rule shapes
+  are reproduced in `preview/app-shim.css` and checked on every render.
 - Requires Obsidian 1.5 or later for `color-mix()`, which powers the neutral
   warmth control and the callout washes, and for `:has()`, which keeps icon
   buttons flat. If `:has()` were ever unavailable the rule drops out entirely
