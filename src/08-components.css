@@ -411,33 +411,80 @@ body {
   --bc-toggle-pad: 2px;
   --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
   --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));
+
+  /* Obsidian's own names for the same four numbers. Set as well as, not
+     instead of, the rules below: which of the two a given Obsidian version
+     actually reads has changed before, and a switch is only correct when
+     the track, the thumb and the travel all agree. */
+  --toggle-width: var(--bc-toggle-w);
+  --toggle-height: var(--bc-toggle-h);
+  --toggle-thumb-width: var(--bc-toggle-thumb);
+  --toggle-thumb-height: var(--bc-toggle-thumb);
 }
 
-.checkbox-container {
+/* All three carried on `body`. Obsidian sizes its own switch at (0,1,1) and
+   (0,2,1); a later sheet ties rather than wins at those weights, and a tie
+   that goes the wrong way leaves an 18px thumb in a 16px track — too big for
+   it, hanging off the end, and off its centre line. One element heavier
+   settles it. */
+body .checkbox-container {
   width: var(--bc-toggle-w);
   height: var(--bc-toggle-h);
+  min-width: var(--bc-toggle-w);
   border-radius: var(--toggle-radius);
   background-color: var(--background-modifier-border-hover);
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
-.checkbox-container::after {
+body .checkbox-container::after {
   width: var(--bc-toggle-thumb);
   height: var(--bc-toggle-thumb);
   top: var(--bc-toggle-pad);
   left: var(--bc-toggle-pad);
+  inset-block-end: auto;
+  inset-inline-end: auto;
+  margin: 0;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
-.checkbox-container.is-enabled {
+body .checkbox-container.is-enabled {
   background-color: var(--interactive-accent);
 }
 
-/* Carried on `body` so it outranks the travel Obsidian sets for its own
-   track size. Same declaration, one class heavier — the only way a later
-   sheet reliably wins a rule that is already at (0,2,1). */
 body .checkbox-container.is-enabled::after {
   transform: translate3d(var(--bc-toggle-travel), 0, 0);
+}
+
+/* --- Window controls -----------------------------------------------------
+   On Windows and Linux Obsidian draws the minimise, maximise and close
+   buttons itself, in the top band, and leaves them at the platform's own
+   colours — which is a grey block in the corner of an otherwise quiet
+   interface. They are the theme's to style like anything else: flat, the
+   same muted glyph as every other icon, a grey hover, and the one red that
+   platform convention reserves for close. */
+
+.titlebar {
+  background-color: var(--titlebar-background);
+}
+
+.titlebar-button-container .titlebar-button,
+.titlebar-button {
+  color: var(--icon-color);
+  background-color: transparent;
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+.titlebar-button-container .titlebar-button:hover,
+.titlebar-button:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.titlebar-button-container .titlebar-button.mod-close:hover,
+.titlebar-button.mod-close:hover {
+  background-color: #c42b1c;
+  color: #ffffff;
 }
 
 /* --- Notices -------------------------------------------------------------

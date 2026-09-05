@@ -59,7 +59,12 @@ what the Notion desktop app does with its own tabs. **Tab style** offers Pill (a
 floating rounded tab) and Underline (a flat tab with a marker) instead.
 
 **Floating panels** in Style Settings lifts every region onto its own rounded
-card on a darker backdrop. The gap only reads as a gap if the thing behind it
+card on a darker backdrop. Two panes stacked in one sidebar — a calendar above
+an outline, say — become two cards with the same gap as everything else rather
+than one tall surface; flush, they are separated by a hairline instead. And the
+panels stop above the status bar: Obsidian floats it over the bottom-right of
+whatever is beneath it, which flush is fine and floating puts it on top of the
+editor's own bottom corners. The gap only reads as a gap if the thing behind it
 is darker, so the two are set together: **Gap between panels** and **Backdrop
 behind the panels** are adjacent controls, and moving one usually means moving
 the other. The gap is applied to the container, not as margins on the panels,
@@ -155,6 +160,14 @@ still leaves a complete theme.
 Semantic colours are authored as RGB triples, so one picker drives both the
 solid colour and every wash derived from it — change Blue and the note callout,
 the blue tag, the syntax token and the graph node all follow.
+
+## The window frame
+
+On Windows and Linux, Obsidian draws the minimise, maximise and close buttons
+itself and leaves them at the platform's colours — a grey block in the corner
+of an otherwise quiet interface. They are restyled like anything else: flat,
+the same muted glyph as every other icon, a grey hover, and the one red that
+platform convention reserves for close.
 
 ## The top band
 

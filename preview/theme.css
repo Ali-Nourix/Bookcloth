@@ -1,4 +1,4 @@
-/* Bookcloth 2.1.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.2.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -696,6 +696,10 @@ body {
   --bc-row-base: 27px;
   --bc-row-height: calc(var(--bc-row-base) * var(--bc-density));
   --bc-row-inset: 8px;
+
+  /* What Obsidian's floating status bar occupies. Only the floating layout
+     reads it, to keep the panels clear of it. */
+  --bc-statusbar-height: 26px;
 
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
@@ -1576,7 +1580,9 @@ body.bc-indent-guides {
 .workspace-ribbon {
   border: none;
   align-items: center;
-  gap: var(--bc-gap-1);
+  /* 4px, not 2. Two 28px squares two pixels apart read as one bar with a
+     seam in it rather than as two buttons. */
+  gap: var(--bc-gap-2);
 }
 
 .workspace-ribbon.mod-left::before,
@@ -1676,7 +1682,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container {
   padding-inline: var(--bc-gap-3);
-  gap: var(--bc-gap-1);
+  gap: var(--bc-gap-2);
 }
 
 /* Sidebar tabs are icon-only, so their hit area has to be square. Left at
@@ -1765,7 +1771,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 }
 
 .nav-files-container {
-  padding-bottom: var(--bc-gap-5);
+  padding-bottom: var(--bc-gap-2);
 }
 
 /* The pane's own action row lines up with the rows beneath it: same inset,
@@ -1775,7 +1781,11 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 }
 
 .nav-header .nav-buttons-container {
-  gap: var(--bc-gap-1);
+  gap: var(--bc-gap-2);
+}
+
+.view-actions {
+  gap: var(--bc-gap-2);
 }
 
 .tree-item-self.mod-collapsible .tree-item-inner {
@@ -1827,7 +1837,11 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
    it is. Only the block end is padded. */
 .workspace-split.mod-left-split .view-content,
 .workspace-split.mod-right-split .view-content {
-  padding-block-end: var(--bc-gap-6);
+  /* Enough that the last row is not read as cut off, and no more. This was
+     24px of padding on top of the list's own 16px, which showed up as forty
+     pixels of nothing above a plugin's footer bar. The scroll reserve stays
+     larger — it costs nothing until you scroll to the end. */
+  padding-block-end: var(--bc-gap-3);
   scroll-padding-block-end: var(--bc-gap-6);
 }
 
@@ -1862,6 +1876,10 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
      here added the whole width of the window controls as a second time, and
      opened a gap beside the right sidebar that nothing was in. */
   padding-inline: var(--bc-gap-3);
+}
+
+.workspace-split.mod-root .workspace-tab-header-status-container {
+  gap: var(--bc-gap-2);
 }
 
 .workspace-split.mod-root .workspace-tab-header {
@@ -1934,7 +1952,7 @@ body.bc-tabs-underline
   /* Set rather than added to, so the inset is the same whatever Obsidian's
      own padding happens to be in the version underneath. */
   padding-inline: var(--bc-gap-4);
-  gap: var(--bc-gap-1);
+  gap: var(--bc-gap-2);
 }
 
 .view-header-title {
@@ -2782,33 +2800,80 @@ body {
   --bc-toggle-pad: 2px;
   --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
   --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));
+
+  /* Obsidian's own names for the same four numbers. Set as well as, not
+     instead of, the rules below: which of the two a given Obsidian version
+     actually reads has changed before, and a switch is only correct when
+     the track, the thumb and the travel all agree. */
+  --toggle-width: var(--bc-toggle-w);
+  --toggle-height: var(--bc-toggle-h);
+  --toggle-thumb-width: var(--bc-toggle-thumb);
+  --toggle-thumb-height: var(--bc-toggle-thumb);
 }
 
-.checkbox-container {
+/* All three carried on `body`. Obsidian sizes its own switch at (0,1,1) and
+   (0,2,1); a later sheet ties rather than wins at those weights, and a tie
+   that goes the wrong way leaves an 18px thumb in a 16px track — too big for
+   it, hanging off the end, and off its centre line. One element heavier
+   settles it. */
+body .checkbox-container {
   width: var(--bc-toggle-w);
   height: var(--bc-toggle-h);
+  min-width: var(--bc-toggle-w);
   border-radius: var(--toggle-radius);
   background-color: var(--background-modifier-border-hover);
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
-.checkbox-container::after {
+body .checkbox-container::after {
   width: var(--bc-toggle-thumb);
   height: var(--bc-toggle-thumb);
   top: var(--bc-toggle-pad);
   left: var(--bc-toggle-pad);
+  inset-block-end: auto;
+  inset-inline-end: auto;
+  margin: 0;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.2);
 }
 
-.checkbox-container.is-enabled {
+body .checkbox-container.is-enabled {
   background-color: var(--interactive-accent);
 }
 
-/* Carried on `body` so it outranks the travel Obsidian sets for its own
-   track size. Same declaration, one class heavier — the only way a later
-   sheet reliably wins a rule that is already at (0,2,1). */
 body .checkbox-container.is-enabled::after {
   transform: translate3d(var(--bc-toggle-travel), 0, 0);
+}
+
+/* --- Window controls -----------------------------------------------------
+   On Windows and Linux Obsidian draws the minimise, maximise and close
+   buttons itself, in the top band, and leaves them at the platform's own
+   colours — which is a grey block in the corner of an otherwise quiet
+   interface. They are the theme's to style like anything else: flat, the
+   same muted glyph as every other icon, a grey hover, and the one red that
+   platform convention reserves for close. */
+
+.titlebar {
+  background-color: var(--titlebar-background);
+}
+
+.titlebar-button-container .titlebar-button,
+.titlebar-button {
+  color: var(--icon-color);
+  background-color: transparent;
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+.titlebar-button-container .titlebar-button:hover,
+.titlebar-button:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.titlebar-button-container .titlebar-button.mod-close:hover,
+.titlebar-button.mod-close:hover {
+  background-color: #c42b1c;
+  color: #ffffff;
 }
 
 /* --- Notices -------------------------------------------------------------
@@ -3094,8 +3159,13 @@ body {
   --icon-l-stroke-width: calc(1.75px * var(--bc-icon-weight));
   --icon-xl-stroke-width: calc(1.4px * var(--bc-icon-weight));
 
-  --icon-size: var(--icon-s);
-  --icon-stroke: var(--icon-s-stroke-width);
+  /* 18px is the default, not 16. Anything the theme does not name explicitly
+     is an icon button somewhere in the chrome, and coming out one step below
+     its neighbours is exactly how the sidebar collapse control ended up as
+     the smallest thing in the corner of the app. The two smaller sizes are
+     opted into below. */
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
 }
 
 /* Every icon that sits at a given size gets that size's stroke. Without this
@@ -3117,8 +3187,10 @@ body {
    Inside a chrome icon button the size is the button's to decide, so it is
    set on the element itself rather than left to a variable nobody else
    reads. Descendant, not child: the icon may be wrapped. */
+.clickable-icon:not(.mod-inline) svg,
 .side-dock-ribbon-action svg,
 .sidebar-toggle-button svg,
+.workspace-ribbon svg,
 .workspace-tab-header-container .clickable-icon svg,
 .workspace-tab-header-inner-icon svg,
 .workspace-tab-header-new-tab svg,
@@ -3134,11 +3206,21 @@ button:has(> :only-child svg) svg {
   flex: 0 0 auto;
 }
 
-/* The two that are deliberately smaller keep their size back. */
+/* The ones that are deliberately smaller take their size back. */
 .workspace-tab-header-inner-close-button svg,
-.search-input-container svg {
+.search-input-container svg,
+.collapse-icon svg,
+.tree-item-icon svg,
+.metadata-property-key svg,
+.suggestion-flair svg {
   width: var(--icon-xs);
   height: var(--icon-xs);
+}
+
+.menu-item-icon svg,
+.callout-icon svg {
+  width: var(--icon-s);
+  height: var(--icon-s);
 }
 
 /* Three roles, three sizes, and every icon in a given row shares one of them —
@@ -3163,8 +3245,13 @@ button:has(> :only-child svg) svg {
    are read with the words beside them, so they match the words' scale. */
 .menu-item-icon .svg-icon,
 .callout-icon .svg-icon {
-  --icon-size: var(--icon-s);
-  --icon-stroke: var(--icon-s-stroke-width);
+  /* 18px is the default, not 16. Anything the theme does not name explicitly
+     is an icon button somewhere in the chrome, and coming out one step below
+     its neighbours is exactly how the sidebar collapse control ended up as
+     the smallest thing in the corner of the app. The two smaller sizes are
+     opted into below. */
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
 }
 
 /* 18px: every icon that is a button in the chrome. The ribbon, the sidebar
@@ -3485,6 +3572,18 @@ body,
   box-shadow: none;
 }
 
+/* Two panes stacked in one sidebar — a calendar above an outline, say — are
+   two panels, not one. Flush, they are separated by a hairline; floating,
+   they become two cards with the same gap as everything else. Without this
+   they run together into a single tall surface and the seam between two
+   unrelated views disappears. */
+.workspace-split.mod-left-split .workspace-tabs + .workspace-tabs,
+.workspace-split.mod-right-split .workspace-tabs + .workspace-tabs,
+.workspace-split.mod-left-split .workspace-tabs:not(:first-child),
+.workspace-split.mod-right-split .workspace-tabs:not(:first-child) {
+  box-shadow: inset 0 1px 0 0 var(--background-modifier-border);
+}
+
 /* Every layer inside a sidebar is transparent, so the panel's own colour is
    the only one there is. .view-content is on the list because a pane that
    paints its own background is a pane whose bottom corners are square
@@ -3564,12 +3663,38 @@ body.bc-float-panes .workspace {
 body.bc-float-panes .workspace {
   padding: var(--bc-pane-gap);
   gap: var(--bc-pane-gap);
+  /* Obsidian floats the status bar over the bottom-right of whatever is
+     beneath it. Flush, that is fine — there is nothing to cover. Floating, it
+     lands on top of the editor panel's own bottom corners, which is why they
+     looked square: they were behind it. Reserving its height puts the status
+     bar on the backdrop, where the rest of this layout already assumes it
+     is. */
+  padding-block-end: calc(var(--bc-pane-gap) + var(--bc-statusbar-height));
 }
 
+/* The card is painted on each leaf group, and the split behind them only
+   carries the gap. One pane per sidebar looks exactly as it did; two stop
+   pretending to be one. */
 body.bc-float-panes .workspace-split.mod-left-split,
 body.bc-float-panes .workspace-split.mod-right-split,
+body.bc-float-panes .workspace-split.mod-left-split .workspace-split,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
+  background-color: transparent;
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split .workspace-tabs,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-tabs,
 body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
+  /* Each is its own card now, so the hairline that separated them when they
+     were flush would be a line inside a rounded corner. */
+  box-shadow: none;
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  background-color: var(--tab-container-background);
 }
 
 body.bc-float-panes
@@ -3607,8 +3732,8 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
    **Square panel corners** turns the clipping off for anyone who finds a
    plugin that does draw outside its panel. */
 
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split .workspace-tabs,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split .workspace-tabs,
 body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
   overflow: clip;
 }

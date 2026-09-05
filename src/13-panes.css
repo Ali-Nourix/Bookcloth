@@ -32,6 +32,18 @@ body,
   box-shadow: none;
 }
 
+/* Two panes stacked in one sidebar — a calendar above an outline, say — are
+   two panels, not one. Flush, they are separated by a hairline; floating,
+   they become two cards with the same gap as everything else. Without this
+   they run together into a single tall surface and the seam between two
+   unrelated views disappears. */
+.workspace-split.mod-left-split .workspace-tabs + .workspace-tabs,
+.workspace-split.mod-right-split .workspace-tabs + .workspace-tabs,
+.workspace-split.mod-left-split .workspace-tabs:not(:first-child),
+.workspace-split.mod-right-split .workspace-tabs:not(:first-child) {
+  box-shadow: inset 0 1px 0 0 var(--background-modifier-border);
+}
+
 /* Every layer inside a sidebar is transparent, so the panel's own colour is
    the only one there is. .view-content is on the list because a pane that
    paints its own background is a pane whose bottom corners are square
@@ -111,12 +123,38 @@ body.bc-float-panes .workspace {
 body.bc-float-panes .workspace {
   padding: var(--bc-pane-gap);
   gap: var(--bc-pane-gap);
+  /* Obsidian floats the status bar over the bottom-right of whatever is
+     beneath it. Flush, that is fine — there is nothing to cover. Floating, it
+     lands on top of the editor panel's own bottom corners, which is why they
+     looked square: they were behind it. Reserving its height puts the status
+     bar on the backdrop, where the rest of this layout already assumes it
+     is. */
+  padding-block-end: calc(var(--bc-pane-gap) + var(--bc-statusbar-height));
 }
 
+/* The card is painted on each leaf group, and the split behind them only
+   carries the gap. One pane per sidebar looks exactly as it did; two stop
+   pretending to be one. */
 body.bc-float-panes .workspace-split.mod-left-split,
 body.bc-float-panes .workspace-split.mod-right-split,
+body.bc-float-panes .workspace-split.mod-left-split .workspace-split,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
+  background-color: transparent;
+  gap: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-split.mod-left-split .workspace-tabs,
+body.bc-float-panes .workspace-split.mod-right-split .workspace-tabs,
 body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
+  /* Each is its own card now, so the hairline that separated them when they
+     were flush would be a line inside a rounded corner. */
+  box-shadow: none;
+}
+
+body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
+  background-color: var(--tab-container-background);
 }
 
 body.bc-float-panes
@@ -154,8 +192,8 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
    **Square panel corners** turns the clipping off for anyone who finds a
    plugin that does draw outside its panel. */
 
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split .workspace-tabs,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split .workspace-tabs,
 body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
   overflow: clip;
 }

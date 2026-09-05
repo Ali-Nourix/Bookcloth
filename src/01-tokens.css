@@ -109,6 +109,10 @@ body {
   --bc-row-height: calc(var(--bc-row-base) * var(--bc-density));
   --bc-row-inset: 8px;
 
+  /* What Obsidian's floating status bar occupies. Only the floating layout
+     reads it, to keep the panels clear of it. */
+  --bc-statusbar-height: 26px;
+
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
   --modal-radius: var(--bc-modal-radius);

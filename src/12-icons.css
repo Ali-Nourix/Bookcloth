@@ -24,8 +24,13 @@ body {
   --icon-l-stroke-width: calc(1.75px * var(--bc-icon-weight));
   --icon-xl-stroke-width: calc(1.4px * var(--bc-icon-weight));
 
-  --icon-size: var(--icon-s);
-  --icon-stroke: var(--icon-s-stroke-width);
+  /* 18px is the default, not 16. Anything the theme does not name explicitly
+     is an icon button somewhere in the chrome, and coming out one step below
+     its neighbours is exactly how the sidebar collapse control ended up as
+     the smallest thing in the corner of the app. The two smaller sizes are
+     opted into below. */
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
 }
 
 /* Every icon that sits at a given size gets that size's stroke. Without this
@@ -47,8 +52,10 @@ body {
    Inside a chrome icon button the size is the button's to decide, so it is
    set on the element itself rather than left to a variable nobody else
    reads. Descendant, not child: the icon may be wrapped. */
+.clickable-icon:not(.mod-inline) svg,
 .side-dock-ribbon-action svg,
 .sidebar-toggle-button svg,
+.workspace-ribbon svg,
 .workspace-tab-header-container .clickable-icon svg,
 .workspace-tab-header-inner-icon svg,
 .workspace-tab-header-new-tab svg,
@@ -64,11 +71,21 @@ button:has(> :only-child svg) svg {
   flex: 0 0 auto;
 }
 
-/* The two that are deliberately smaller keep their size back. */
+/* The ones that are deliberately smaller take their size back. */
 .workspace-tab-header-inner-close-button svg,
-.search-input-container svg {
+.search-input-container svg,
+.collapse-icon svg,
+.tree-item-icon svg,
+.metadata-property-key svg,
+.suggestion-flair svg {
   width: var(--icon-xs);
   height: var(--icon-xs);
+}
+
+.menu-item-icon svg,
+.callout-icon svg {
+  width: var(--icon-s);
+  height: var(--icon-s);
 }
 
 /* Three roles, three sizes, and every icon in a given row shares one of them —
@@ -93,8 +110,13 @@ button:has(> :only-child svg) svg {
    are read with the words beside them, so they match the words' scale. */
 .menu-item-icon .svg-icon,
 .callout-icon .svg-icon {
-  --icon-size: var(--icon-s);
-  --icon-stroke: var(--icon-s-stroke-width);
+  /* 18px is the default, not 16. Anything the theme does not name explicitly
+     is an icon button somewhere in the chrome, and coming out one step below
+     its neighbours is exactly how the sidebar collapse control ended up as
+     the smallest thing in the corner of the app. The two smaller sizes are
+     opted into below. */
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
 }
 
 /* 18px: every icon that is a button in the chrome. The ribbon, the sidebar

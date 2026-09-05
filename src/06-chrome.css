@@ -121,7 +121,9 @@ body.bc-indent-guides {
 .workspace-ribbon {
   border: none;
   align-items: center;
-  gap: var(--bc-gap-1);
+  /* 4px, not 2. Two 28px squares two pixels apart read as one bar with a
+     seam in it rather than as two buttons. */
+  gap: var(--bc-gap-2);
 }
 
 .workspace-ribbon.mod-left::before,
@@ -221,7 +223,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 .workspace-split.mod-left-split .workspace-tab-header-container,
 .workspace-split.mod-right-split .workspace-tab-header-container {
   padding-inline: var(--bc-gap-3);
-  gap: var(--bc-gap-1);
+  gap: var(--bc-gap-2);
 }
 
 /* Sidebar tabs are icon-only, so their hit area has to be square. Left at
@@ -310,7 +312,7 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 }
 
 .nav-files-container {
-  padding-bottom: var(--bc-gap-5);
+  padding-bottom: var(--bc-gap-2);
 }
 
 /* The pane's own action row lines up with the rows beneath it: same inset,
@@ -320,7 +322,11 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 }
 
 .nav-header .nav-buttons-container {
-  gap: var(--bc-gap-1);
+  gap: var(--bc-gap-2);
+}
+
+.view-actions {
+  gap: var(--bc-gap-2);
 }
 
 .tree-item-self.mod-collapsible .tree-item-inner {
@@ -372,7 +378,11 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
    it is. Only the block end is padded. */
 .workspace-split.mod-left-split .view-content,
 .workspace-split.mod-right-split .view-content {
-  padding-block-end: var(--bc-gap-6);
+  /* Enough that the last row is not read as cut off, and no more. This was
+     24px of padding on top of the list's own 16px, which showed up as forty
+     pixels of nothing above a plugin's footer bar. The scroll reserve stays
+     larger — it costs nothing until you scroll to the end. */
+  padding-block-end: var(--bc-gap-3);
   scroll-padding-block-end: var(--bc-gap-6);
 }
 
@@ -407,6 +417,10 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
      here added the whole width of the window controls as a second time, and
      opened a gap beside the right sidebar that nothing was in. */
   padding-inline: var(--bc-gap-3);
+}
+
+.workspace-split.mod-root .workspace-tab-header-status-container {
+  gap: var(--bc-gap-2);
 }
 
 .workspace-split.mod-root .workspace-tab-header {
@@ -479,7 +493,7 @@ body.bc-tabs-underline
   /* Set rather than added to, so the inset is the same whatever Obsidian's
      own padding happens to be in the version underneath. */
   padding-inline: var(--bc-gap-4);
-  gap: var(--bc-gap-1);
+  gap: var(--bc-gap-2);
 }
 
 .view-header-title {
