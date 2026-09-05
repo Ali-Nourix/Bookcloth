@@ -1,0 +1,335 @@
+/* ==========================================================================
+   EDITOR
+   Live Preview and Reading View are styled together wherever possible so the
+   two modes don't visibly jump when you switch.
+   ========================================================================== */
+
+body {
+  --embed-background: transparent;
+  --embed-border-left: 2px solid var(--bc-control-border);
+  --embed-border-right: none;
+  --embed-border-top: none;
+  --embed-border-bottom: none;
+  --embed-padding: 0 0 0 1.15em;
+  --embed-font-style: inherit;
+  --embed-block-shadow-hover: none;
+
+  --code-background: var(--bc-surface-sunken);
+  --code-normal: var(--text-normal);
+  --code-comment: var(--text-faint);
+  --code-function: var(--color-purple);
+  --code-important: var(--color-orange);
+  --code-keyword: var(--color-pink);
+  --code-operator: var(--text-muted);
+  --code-property: var(--color-cyan);
+  --code-punctuation: var(--text-muted);
+  --code-string: var(--color-green);
+  --code-tag: var(--color-red);
+  --code-value: var(--color-blue);
+
+  --callout-border-width: 0px;
+  --callout-border-opacity: 0.2;
+  --callout-padding: var(--bc-gap-4) var(--bc-gap-5);
+  --callout-blend-mode: normal;
+  --callout-title-color: inherit;
+  --callout-title-padding: 0;
+  --callout-title-size: inherit;
+  --callout-title-weight: var(--font-semibold);
+  --callout-content-padding: 0;
+  --callout-content-background: transparent;
+
+  --table-background: transparent;
+  --table-border-width: 1px;
+  --table-border-color: var(--background-modifier-border);
+  --table-white-space: normal;
+  --table-header-background: transparent;
+  --table-header-background-hover: var(--background-modifier-hover);
+  --table-header-border-width: 1px;
+  --table-header-border-color: var(--background-modifier-border-hover);
+  --table-row-background-hover: var(--background-modifier-hover);
+  --table-row-alt-background: transparent;
+  --table-row-last-border-width: 0px;
+  --table-selection: var(--bc-ac-a10);
+  --table-selection-border-color: var(--bc-ac-500);
+  --table-column-first-border-width: 0px;
+  --table-column-last-border-width: 0px;
+  --table-drag-handle-background-active: var(--bc-select-bg);
+  --table-drag-handle-color-active: var(--bc-select-fg);
+
+  --metadata-background: transparent;
+  --metadata-divider-color: var(--background-modifier-border);
+  --metadata-gap: var(--bc-gap-2);
+  --metadata-padding: var(--bc-gap-3) 0;
+  --metadata-property-padding: var(--bc-gap-1) 0;
+  --metadata-property-radius: var(--radius-s);
+  --metadata-property-background-hover: var(--background-modifier-hover);
+  --metadata-label-background-hover: transparent;
+  --metadata-label-font-size: var(--font-ui-small);
+  --metadata-label-font-weight: var(--font-normal);
+  --metadata-label-text-color: var(--text-faint);
+  --metadata-input-text-color: var(--text-normal);
+  --metadata-input-font-size: var(--font-ui-small);
+  --metadata-input-background: transparent;
+  --metadata-input-background-hover: var(--background-modifier-hover);
+  --metadata-input-background-active: var(--background-modifier-form-field);
+  --metadata-sidebar-label-color: var(--text-faint);
+  --metadata-sidebar-value-color: var(--text-muted);
+
+  --indentation-guide-width: 1px;
+  --indentation-guide-width-active: 1px;
+  --indentation-guide-color: var(--background-modifier-border);
+  --indentation-guide-color-active: var(--background-modifier-border-hover);
+}
+
+/* --- Code ---------------------------------------------------------------- */
+
+.markdown-rendered code,
+.cm-s-obsidian .cm-inline-code {
+  background-color: var(--bc-surface-sunken);
+  border-radius: var(--radius-s);
+  padding: 0.12em 0.34em;
+  font-size: var(--code-size);
+}
+
+.markdown-rendered pre,
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-bg,
+.cm-s-obsidian .HyperMD-codeblock {
+  border: none;
+}
+
+.markdown-rendered pre {
+  padding: var(--bc-gap-4) var(--bc-gap-5);
+  border-radius: var(--code-radius);
+  line-height: 1.55;
+}
+
+.markdown-rendered pre > code {
+  background: none;
+  padding: 0;
+  font-size: 1em;
+}
+
+/* A code block in the editor should read as one block, not as a stack of
+   individually-shaded lines: only the first and last row get corners. */
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-begin {
+  border-radius: var(--code-radius) var(--code-radius) 0 0;
+  padding-top: var(--bc-gap-3);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-end {
+  border-radius: 0 0 var(--code-radius) var(--code-radius);
+  padding-bottom: var(--bc-gap-3);
+}
+
+.markdown-rendered .copy-code-button,
+.markdown-rendered pre:hover .copy-code-button {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-muted);
+  border: none;
+  border-radius: var(--radius-s);
+  font-size: var(--font-ui-smaller);
+}
+
+/* --- Callouts ------------------------------------------------------------ */
+/* Soft fill by default: no border, low-alpha wash of the callout's own hue,
+   title in that hue, body in normal text. */
+
+/* Mixing in oklab rather than compositing an alpha keeps the wash chromatic.
+   A 7% alpha of a dark blue over warm paper turns grey; the same amount of
+   blue mixed perceptually stays blue, which is what makes a set of callouts
+   read as a family instead of as smudges. */
+.callout {
+  background-color: color-mix(
+    in oklab,
+    rgb(var(--callout-color)) var(--bc-wash),
+    var(--background-primary)
+  );
+  mix-blend-mode: var(--callout-blend-mode);
+  border-radius: var(--callout-radius);
+}
+
+.callout-title {
+  color: rgb(var(--callout-color));
+  align-items: center;
+  gap: var(--bc-gap-2);
+}
+
+.callout-icon {
+  color: rgb(var(--callout-color));
+}
+
+.callout-content {
+  color: var(--text-normal);
+  margin-top: var(--bc-gap-2);
+}
+
+.callout-content > :first-child {
+  margin-top: 0;
+}
+
+.callout-content > :last-child {
+  margin-bottom: 0;
+}
+
+.theme-dark .callout {
+  background-color: color-mix(
+    in oklab,
+    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.3),
+    var(--background-primary)
+  );
+}
+
+/* Left-rule variant: no fill, one coloured hairline. */
+body.bc-callout-rule .callout {
+  background-color: transparent;
+  border-radius: 0;
+  border-inline-start: 2px solid rgb(var(--callout-color));
+  padding-inline: var(--bc-gap-4);
+}
+
+/* --- Checkboxes and tasks ------------------------------------------------ */
+
+input[type="checkbox"] {
+  border-radius: var(--checkbox-radius);
+  border-width: 1.5px;
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    border-color var(--bc-speed) var(--bc-ease);
+}
+
+body.bc-check-circle input[type="checkbox"] {
+  border-radius: 50%;
+}
+
+body.bc-no-fade-done {
+  --checklist-done-color: var(--text-normal);
+  --checklist-done-decoration: line-through;
+}
+
+.markdown-rendered .task-list-item-checkbox:checked ~ * {
+  transition: color var(--bc-speed) var(--bc-ease);
+}
+
+/* --- Tables -------------------------------------------------------------- */
+
+.markdown-rendered table {
+  border-collapse: collapse;
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+  /* `start`, not `left`: a right-to-left table aligns itself. */
+  text-align: start;
+}
+
+.markdown-rendered th {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.markdown-rendered td,
+.markdown-rendered th {
+  padding: var(--bc-gap-2) var(--bc-gap-4);
+}
+
+.markdown-rendered tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Lists --------------------------------------------------------------- */
+
+.markdown-rendered ul > li::marker {
+  color: var(--list-marker-color);
+}
+
+.markdown-rendered ol > li::marker {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Rules and separators ------------------------------------------------ */
+
+.markdown-rendered hr {
+  border: none;
+  border-top: var(--hr-thickness) solid var(--hr-color);
+  margin-block: 2em;
+}
+
+/* --- Properties / frontmatter -------------------------------------------- */
+
+.metadata-container {
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: var(--bc-gap-3);
+  margin-bottom: var(--bc-gap-5);
+}
+
+.metadata-property-key-input {
+  font-weight: var(--font-normal);
+}
+
+.metadata-add-button {
+  color: var(--text-faint);
+}
+
+/* --- Embeds and images --------------------------------------------------- */
+
+.markdown-rendered img,
+.markdown-rendered video {
+  border-radius: var(--radius-m);
+}
+
+.markdown-embed-title {
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+}
+
+.internal-embed .markdown-embed {
+  margin-inline-start: 0;
+  border-left: none;
+  border-right: none;
+  border-inline-start: var(--embed-border-left);
+  padding: 0;
+  padding-inline-start: 1.15em;
+}
+
+/* --- Selection ----------------------------------------------------------- */
+
+.cm-editor .cm-selectionBackground,
+.markdown-rendered ::selection,
+.cm-line ::selection {
+  background-color: var(--text-selection);
+}
+
+.cm-editor .cm-cursor,
+.cm-editor .cm-dropCursor {
+  border-left-width: 2px;
+  border-left-color: var(--caret-color);
+}
+
+/* The active line gets no fill — a moving grey band across a page of prose is
+   more distracting than helpful. The caret already marks the position. */
+.cm-editor .cm-active.cm-line {
+  background-color: transparent;
+}
+
+body.bc-active-line .cm-editor .cm-active.cm-line {
+  background-color: var(--background-modifier-hover);
+}
+
+.cm-editor .cm-activeLineGutter {
+  background-color: transparent;
+  color: var(--text-muted);
+}
+
+/* --- Footnotes and small print ------------------------------------------- */
+
+.markdown-rendered .footnotes {
+  font-size: 0.88em;
+  color: var(--text-muted);
+  border-top: 1px solid var(--background-modifier-border);
+  margin-top: 3em;
+  padding-top: var(--bc-gap-4);
+}
+
+.markdown-rendered .footnotes hr {
+  display: none;
+}

@@ -1,0 +1,211 @@
+/* ==========================================================================
+   TYPOGRAPHY
+   Sizes are relative to --font-text-size so Obsidian's own font-size slider
+   keeps working. Nothing here fixes a pixel value on body text.
+   ========================================================================== */
+
+body {
+  --font-weight: 400;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+
+  --line-height-normal: var(--bc-line-height);
+  --line-height-tight: 1.3;
+
+  /* Notion and Slite both run their interface at 14px with a 12px secondary
+     step. Obsidian's default 13px reads cramped next to them, and a 12px nav
+     row is where the sidebar starts looking like a settings dialog. */
+  --font-ui-smaller: 12px;
+  --font-ui-small: 13px;
+  --font-ui-medium: 14px;
+  --font-ui-large: 16px;
+
+  --file-line-width: var(--bc-line-width);
+  --file-margins: var(--bc-gap-6) max(var(--bc-gap-6), 5vw) var(--bc-gap-6);
+
+  --p-spacing: 0.9em;
+  --p-spacing-empty: 0em;
+
+  /* Headings ------------------------------------------------------------
+     A quiet 1.2-ish scale. h1 is a heading, not a billboard — the note title
+     is already doing that job above it. Colour stays at --text-normal:
+     hierarchy comes from size, weight and the space around it. */
+  --h1-size: calc(1.8em * var(--bc-h-scale));
+  --h2-size: calc(1.44em * var(--bc-h-scale));
+  --h3-size: calc(1.2em * var(--bc-h-scale));
+  --h4-size: calc(1.02em * var(--bc-h-scale));
+  --h5-size: calc(0.95em * var(--bc-h-scale));
+  --h6-size: calc(0.88em * var(--bc-h-scale));
+
+  --h1-weight: var(--bc-h-weight);
+  --h2-weight: var(--bc-h-weight);
+  --h3-weight: var(--bc-h-weight);
+  --h4-weight: var(--bc-h-weight);
+  --h5-weight: var(--bc-h-weight);
+  --h6-weight: var(--bc-h-weight);
+
+  --h1-color: var(--text-normal);
+  --h2-color: var(--text-normal);
+  --h3-color: var(--text-normal);
+  --h4-color: var(--text-normal);
+  --h5-color: var(--text-normal);
+  --h6-color: var(--text-muted);
+
+  --h1-line-height: 1.22;
+  --h2-line-height: 1.28;
+  --h3-line-height: 1.34;
+  --h4-line-height: 1.4;
+  --h5-line-height: 1.4;
+  --h6-line-height: 1.4;
+
+  --h1-font: inherit;
+  --h2-font: inherit;
+  --h3-font: inherit;
+  --h4-font: inherit;
+  --h5-font: inherit;
+  --h6-font: inherit;
+
+  --h6-variant: normal;
+
+  --inline-title-color: var(--text-normal);
+  --inline-title-size: calc(2em * var(--bc-h-scale));
+  --inline-title-weight: var(--bc-h-weight);
+  --inline-title-line-height: 1.2;
+  --inline-title-font: inherit;
+
+  --bold-weight: 650;
+  --bold-color: var(--text-normal);
+  --italic-color: inherit;
+
+  --blockquote-border-thickness: 2px;
+  --blockquote-border-color: var(--bc-control-border);
+  --blockquote-font-style: normal;
+  --blockquote-color: var(--text-muted);
+  --blockquote-background-color: transparent;
+
+  --hr-color: var(--background-modifier-border);
+  --hr-thickness: 1px;
+
+  --list-indent: 1.6em;
+  --list-spacing: 0.1em;
+  --list-marker-color: var(--text-faint);
+  --list-marker-color-hover: var(--text-muted);
+  --list-marker-color-collapsed: var(--text-accent);
+  --list-bullet-size: 0.32em;
+  --list-bullet-radius: 50%;
+
+  --code-size: calc(1em * var(--bc-code-size));
+  --code-white-space: pre-wrap;
+
+  --table-text-size: 0.92em;
+  --table-line-height: 1.45;
+  --table-header-size: 0.82em;
+  --table-header-weight: var(--font-semibold);
+  --table-header-color: var(--text-muted);
+}
+
+/* Optical tightening. Large type wants less tracking than small type;
+   leaving both at 0 is what makes headings look pasted on. */
+.markdown-rendered h1,
+.markdown-rendered h2,
+.HyperMD-header-1,
+.HyperMD-header-2,
+.inline-title,
+.view-header-title,
+.modal-title {
+  letter-spacing: -0.018em;
+}
+
+.markdown-rendered h3,
+.markdown-rendered h4,
+.HyperMD-header-3,
+.HyperMD-header-4 {
+  letter-spacing: -0.008em;
+}
+
+/* Space above a heading belongs to the heading; space below belongs to the
+   content it introduces. Obsidian's defaults give both the same value, which
+   is why long notes read as an undifferentiated column. */
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  margin-block-start: 1.9em;
+  margin-block-end: 0.55em;
+}
+
+.markdown-rendered h1:first-child,
+.markdown-rendered h2:first-child,
+.markdown-rendered h3:first-child {
+  margin-block-start: 0.2em;
+}
+
+.markdown-rendered h6 {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.inline-title {
+  margin-bottom: 0.45em;
+}
+
+/* Headings stay body-ink by default; hierarchy comes from size and space.
+   Colouring them is available, not assumed. */
+body.bc-accent-headings {
+  --h1-color: var(--text-accent);
+  --h2-color: var(--text-accent);
+  --inline-title-color: var(--text-accent);
+}
+
+body.bc-link-underline {
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+}
+
+/* Serif body option — editor only. The interface stays sans so the note
+   stands apart from the app around it. */
+body.bc-serif-body {
+  --font-text-theme: var(--bc-stack-serif);
+  --bc-line-height: 1.7;
+}
+
+/* Serif sets slightly narrower: the same measure in characters. */
+body.bc-serif-body {
+  --file-line-width: calc(var(--bc-line-width) - 2rem);
+}
+
+/* Links: underline on hover only, so a note dense with links still reads as
+   prose rather than as a form. */
+.markdown-rendered a,
+.cm-s-obsidian .cm-link,
+.cm-s-obsidian .cm-hmd-internal-link {
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  transition: color var(--bc-speed) var(--bc-ease);
+}
+
+.markdown-rendered a.internal-link.is-unresolved {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--background-modifier-border-hover);
+}
+
+/* Blockquotes: a hairline rule, no italics, no background. Written with
+   logical properties so the rule lands on the correct side in a
+   right-to-left note without a second set of rules to maintain. */
+.markdown-rendered blockquote {
+  border-left: none;
+  border-right: none;
+  border-inline-start: var(--blockquote-border-thickness) solid
+    var(--blockquote-border-color);
+  padding: 0;
+  padding-inline-start: 1.15em;
+  margin-inline-start: 0;
+}
+
+.markdown-rendered mark {
+  border-radius: var(--radius-s);
+  padding: 0.08em 0.14em;
+}

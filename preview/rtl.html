@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="app-shim.css"><link rel="stylesheet" href="theme.css">
+<style>svg{display:block}
+.stage{height:100vh;background:var(--background-secondary);padding:24px;display:flex;gap:16px}
+.pane{flex:1;background:var(--background-primary);border-radius:var(--radius-l);overflow:auto}
+</style></head>
+<body class="theme-light bc-rtl is-focused">
+<div class="stage">
+  <div class="pane">
+    <div class="markdown-preview-view markdown-rendered" dir="rtl">
+      <div class="markdown-preview-sizer">
+        <div class="inline-title">آزمون چیدمان راست‌به‌چپ</div>
+        <p>این پاراگراف برای بررسی فاصله‌ی سطرها، وزن حروف و رفتار متن فارسی نوشته شده است. متن شامل <strong>پررنگ</strong>، <em>مورب</em>، <mark>هایلایت</mark>، <code>کد درون‌خطی</code> و یک <a class="internal-link" href="#">پیوند داخلی</a> است.</p>
+        <h2>فهرست‌ها و کارها</h2>
+        <ul class="contains-task-list">
+          <li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">بررسی اندازه‌ی آیکن‌ها در هر مقیاس</span></li>
+          <li class="task-list-item is-checked"><input class="task-list-item-checkbox" type="checkbox" checked><span class="task-list-item-text">اندازه‌گیری کنتراست در هر دو حالت</span></li>
+        </ul>
+        <ul><li>یک گلوله‌ی ساده</li><li>مورد دوم<ul><li>تودرتو، برای بررسی تورفتگی</li></ul></li></ul>
+        <h2>نقل‌قول و هشدار</h2>
+        <blockquote><p>کروم باید عقب بنشیند و نوشته نباید.</p></blockquote>
+        <div class="callout" data-callout="warning"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="callout-title-inner">هشدار</div></div><div class="callout-content"><p>کال‌اوت‌ها رنگ‌های معنایی تم را به ارث می‌برند.</p></div></div>
+        <h2>کد</h2>
+        <pre><code>const ramp = ({ h, s, l }) =&gt; `hsl(${h} ${s}% ${l}%)`;</code></pre>
+        <table><thead><tr><th>مؤلفه</th><th>روشن</th><th>تیره</th></tr></thead>
+        <tbody><tr><td>متن اصلی</td><td>۱۷.۵</td><td>۱۲.۶</td></tr><tr><td>متن کم‌رنگ</td><td>۵.۲</td><td>۵.۹</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

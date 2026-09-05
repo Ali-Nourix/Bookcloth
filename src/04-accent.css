@@ -1,0 +1,203 @@
+/* ==========================================================================
+   ACCENT DISTRIBUTION
+   One hue in, a whole interface out. Nothing below this line hard-codes a
+   colour: every accented surface reads from the ramp built in 01-tokens.
+   ========================================================================== */
+
+/* Warmth. Bleeds a little of the accent hue into the chrome so the greys
+   belong to the palette instead of sitting beside it. Written at body-level
+   specificity so it lands after the per-theme ramps. */
+body.theme-light {
+  --background-secondary: color-mix(
+    in srgb,
+    var(--color-base-20),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --background-secondary-alt: color-mix(
+    in srgb,
+    var(--color-base-25),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --bc-surface-sunken: color-mix(
+    in srgb,
+    var(--color-base-10),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+}
+
+body.theme-dark {
+  --background-secondary: color-mix(
+    in srgb,
+    var(--color-base-00),
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --background-secondary-alt: color-mix(
+    in srgb,
+    #1a1a19,
+    var(--bc-ac-500) var(--bc-tint)
+  );
+  --bc-surface-sunken: color-mix(
+    in srgb,
+    #1c1b1a,
+    var(--bc-ac-500) var(--bc-tint)
+  );
+}
+
+/* Semantic hues are authored as RGB triples so a single Style Settings control
+   drives both the solid colour and every wash derived from it. */
+body {
+  --color-red: rgb(var(--color-red-rgb));
+  --color-orange: rgb(var(--color-orange-rgb));
+  --color-yellow: rgb(var(--color-yellow-rgb));
+  --color-green: rgb(var(--color-green-rgb));
+  --color-cyan: rgb(var(--color-cyan-rgb));
+  --color-blue: rgb(var(--color-blue-rgb));
+  --color-purple: rgb(var(--color-purple-rgb));
+  --color-pink: rgb(var(--color-pink-rgb));
+}
+
+body {
+  /* Obsidian's own accent trio */
+  --color-accent: var(--bc-ac-500);
+  --color-accent-1: var(--bc-ac-400);
+  --color-accent-2: var(--bc-ac-300);
+
+  /* Interactive */
+  --interactive-normal: var(--background-modifier-form-field);
+  --interactive-hover: var(--background-modifier-hover);
+  /* Filled controls sit one step down the ramp in light mode so white label
+     text clears 4.5:1; dark mode uses the base step against dark ink. */
+  --interactive-accent: var(--bc-ac-600);
+  --interactive-accent-hover: var(--bc-ac-700);
+  --interactive-accent-hsl: var(--accent-h), var(--bc-ac-s), var(--bc-ac-l);
+
+  /* Text and links */
+  --text-accent: var(--bc-ac-600);
+  --text-accent-hover: var(--bc-ac-700);
+  --link-color: var(--bc-ac-600);
+  --link-color-hover: var(--bc-ac-700);
+  --link-external-color: var(--bc-ac-600);
+  --link-external-color-hover: var(--bc-ac-700);
+  --link-unresolved-color: var(--text-faint);
+  --link-unresolved-opacity: 1;
+  --link-unresolved-filter: none;
+  --link-unresolved-decoration-style: dotted;
+  --link-decoration: none;
+  --link-decoration-hover: underline;
+  --link-decoration-thickness: 1px;
+  --link-external-decoration: none;
+  --link-external-decoration-hover: underline;
+
+  --caret-color: var(--bc-ac-500);
+
+  /* Selection tokens used by chrome — nav rows, tabs, list items.
+     Neutral by default. In Notion and Slite the selected page in the sidebar
+     is a plain grey slab with ordinary dark text; colouring it is what makes
+     a sidebar look like a dashboard. The accent is kept for links, the caret,
+     checkboxes and focus, where it actually carries meaning. Accent
+     intensity → Vivid puts the colour back. */
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.055);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.085);
+  --bc-select-fg: var(--text-normal);
+
+  /* Form controls */
+  --checkbox-radius: var(--radius-s);
+  --checkbox-size: 1em;
+  --checkbox-color: var(--interactive-accent);
+  --checkbox-color-hover: var(--interactive-accent-hover);
+  --checkbox-border-color: var(--bc-control-border);
+  --checkbox-border-color-hover: var(--interactive-accent);
+  --checkbox-marker-color: var(--text-on-accent);
+  --checklist-done-color: var(--text-faint);
+  --checklist-done-decoration: line-through;
+
+  --toggle-border-width: 1px;
+  --toggle-thumb-color: #ffffff;
+  --toggle-thumb-radius: 50%;
+  --toggle-radius: 2em;
+
+  --slider-thumb-border-color: var(--background-modifier-border-hover);
+  --slider-thumb-border-width: 1px;
+  --slider-thumb-radius: 50%;
+  --slider-track-background: var(--background-modifier-border);
+  --slider-track-height: 3px;
+
+  /* Icons */
+  --icon-color: var(--text-muted);
+  --icon-color-hover: var(--text-normal);
+  --icon-color-active: var(--bc-select-fg);
+  --icon-color-focused: var(--text-normal);
+  --icon-opacity: 1;
+  --icon-opacity-hover: 1;
+  --icon-opacity-active: 1;
+  --icon-stroke: 1.6px;
+
+  /* Chrome icons sit a step below the text they label — the row is the
+     content, the icon is a marker. */
+  --icon-color: var(--text-faint);
+  --collapse-icon-color: var(--text-faint);
+  /* A rust arrow beside a plain folder name is noise: rotation already says
+     collapsed, so the chevron stays neutral. */
+  --collapse-icon-color-collapsed: var(--text-muted);
+
+  /* Tags */
+  --tag-color: var(--text-muted);
+  --tag-color-hover: var(--text-normal);
+  --tag-background: rgba(var(--mono-rgb-100), 0.06);
+  --tag-background-hover: rgba(var(--mono-rgb-100), 0.1);
+  --tag-border-width: 0px;
+  --tag-border-color: transparent;
+  --tag-decoration: none;
+  --tag-decoration-hover: none;
+  --tag-padding-x: 0.55em;
+  --tag-padding-y: 0.2em;
+  --tag-size: 0.82em;
+  --tag-weight: var(--font-medium);
+
+  /* Graph */
+  --graph-line: var(--background-modifier-border-hover);
+  --graph-node: var(--text-muted);
+  --graph-node-tag: var(--color-green);
+  --graph-node-attachment: var(--color-yellow);
+  --graph-node-unresolved: var(--text-faint);
+  --graph-node-focused: var(--bc-ac-500);
+  --graph-text: var(--text-muted);
+}
+
+.theme-dark {
+  --text-accent: var(--bc-ac-400);
+  --text-accent-hover: var(--bc-ac-300);
+  --link-color: var(--bc-ac-400);
+  --link-color-hover: var(--bc-ac-300);
+  --link-external-color: var(--bc-ac-400);
+  --link-external-color-hover: var(--bc-ac-300);
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.07);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.11);
+  --toggle-thumb-color: #f5f4ee;
+  --interactive-accent: var(--bc-ac-500);
+  --interactive-accent-hover: var(--bc-ac-400);
+}
+
+/* Accent intensity -------------------------------------------------------
+   Subtle drops the selected row to a whisper; Vivid is the old behaviour,
+   with the accent washing through the chrome. */
+body.bc-accent-subtle {
+  --bc-select-bg: rgba(var(--mono-rgb-100), 0.035);
+  --bc-select-bg-strong: rgba(var(--mono-rgb-100), 0.055);
+}
+
+body.bc-accent-vivid {
+  --bc-select-bg: var(--bc-ac-a10);
+  --bc-select-bg-strong: var(--bc-ac-a16);
+  --bc-select-fg: var(--bc-ac-700);
+  --tag-color: var(--bc-ac-700);
+  --tag-background: var(--bc-ac-a10);
+  --tag-background-hover: var(--bc-ac-a16);
+}
+
+body.theme-dark.bc-accent-vivid {
+  --bc-select-fg: var(--bc-ac-300);
+  --bc-select-bg: var(--bc-ac-a16);
+  --bc-select-bg-strong: var(--bc-ac-a24);
+  --tag-color: var(--bc-ac-300);
+}

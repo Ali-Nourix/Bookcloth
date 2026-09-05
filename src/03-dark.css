@@ -1,0 +1,102 @@
+/* ==========================================================================
+   DARK — warm ink
+   ========================================================================== */
+
+.theme-dark {
+  /* Any hue needs lifting on a dark ground, including one the user picked
+     while in light mode. Shifting the ramp rather than hard-coding a second
+     accent keeps both themes tied to the same single choice. */
+  --bc-ac-lift: 8%;
+
+  --color-base-00: #191918;
+  --color-base-05: #1c1c1b;
+  --color-base-10: #1f1f1e;
+  --color-base-20: #242423;
+  --color-base-25: #2a2a28;
+  --color-base-30: #3a3a37;
+  --color-base-35: #454541;
+  --color-base-40: #56564f;
+  --color-base-50: #6b6a64;
+  --color-base-60: #97968f;
+  --color-base-70: #bfbeb6;
+  --color-base-100: #f5f4ee;
+
+  --mono-rgb-0: 20, 20, 19;
+  --mono-rgb-100: 245, 244, 238;
+
+  --color-red-rgb: 224, 138, 124;
+  --color-orange-rgb: 224, 161, 113;
+  --color-yellow-rgb: 214, 190, 124;
+  --color-green-rgb: 143, 191, 147;
+  --color-cyan-rgb: 126, 188, 190;
+  --color-blue-rgb: 150, 173, 214;
+  --color-purple-rgb: 178, 156, 219;
+  --color-pink-rgb: 219, 148, 184;
+
+  /* Here the editor is the *lighter* plane and the chrome sits behind it,
+     which is the reverse of Obsidian's default dark ordering. */
+  --bc-bg-primary: var(--color-base-10);
+  --bc-bg-secondary: var(--color-base-00);
+  --bc-bg-raised: var(--color-base-25);
+  --bc-bg-sunken: #171716;
+
+  --background-primary: var(--bc-bg-primary);
+  --background-primary-alt: var(--color-base-20);
+  --background-secondary: var(--bc-bg-secondary);
+  --background-secondary-alt: #141413;
+  --bc-surface-raised: var(--bc-bg-raised);
+  --bc-surface-sunken: var(--bc-bg-sunken);
+
+  --background-modifier-hover: rgba(245, 244, 238, 0.055);
+  --background-modifier-active-hover: var(--bc-ac-a24);
+  --background-modifier-border: rgba(245, 244, 238, calc(var(--bc-border-strength) * 0.1));
+  --background-modifier-border-hover: rgba(245, 244, 238, calc(var(--bc-border-strength) * 0.22));
+  --background-modifier-border-focus: var(--bc-ac-a40);
+  --background-modifier-form-field: rgba(245, 244, 238, 0.04);
+  --bc-control-border: rgba(245, 244, 238, calc(var(--bc-border-strength) * 0.3));
+  --background-modifier-message: rgba(10, 10, 9, 0.9);
+
+  --background-modifier-error-rgb: var(--color-red-rgb);
+  --background-modifier-error: rgba(var(--color-red-rgb), 0.14);
+  --background-modifier-error-hover: rgba(var(--color-red-rgb), 0.22);
+  --background-modifier-success-rgb: var(--color-green-rgb);
+  --background-modifier-success: rgba(var(--color-green-rgb), 0.16);
+
+  --bc-ink-normal: #e6e4dd;
+  --bc-ink-muted: #a2a099;
+  --bc-ink-faint: #78766f;
+
+  --text-normal: var(--bc-ink-normal);
+  --text-muted: var(--bc-ink-muted);
+  --text-faint: var(--bc-ink-faint);
+  --text-on-accent: #17110e;
+  --text-on-accent-inverted: #f5f4ee;
+  --text-error: #e39184;
+  --text-warning: #d9bd7f;
+  --text-success: #93c497;
+
+  --text-selection: var(--bc-ac-a24);
+  --text-highlight-bg: rgba(var(--color-yellow-rgb), 0.24);
+  --text-highlight-bg-active: rgba(var(--color-orange-rgb), 0.38);
+  --text-blockquote: var(--text-muted);
+
+  --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --shadow-l: 0 2px 8px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.45);
+
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: rgba(245, 244, 238, 0.13);
+  --scrollbar-active-thumb-bg: rgba(245, 244, 238, 0.26);
+
+  --workspace-background-translucent: rgba(25, 25, 24, 0.72);
+}
+
+/* Dark accents need a touch less saturation to stop them vibrating. */
+body.theme-dark {
+  --bc-ac-sat: 0.92;
+}
+body.theme-dark.bc-accent-subtle {
+  --bc-ac-sat: 0.66;
+}
+body.theme-dark.bc-accent-vivid {
+  --bc-ac-sat: 1.1;
+}

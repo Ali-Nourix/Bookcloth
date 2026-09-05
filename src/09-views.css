@@ -1,0 +1,161 @@
+/* ==========================================================================
+   VIEWS
+   Search, outline, backlinks, graph, canvas, tables, PDF.
+   ========================================================================== */
+
+body {
+  --graph-controls-width: 240px;
+  --canvas-color-1: var(--color-red-rgb);
+  --canvas-color-2: var(--color-orange-rgb);
+  --canvas-color-3: var(--color-yellow-rgb);
+  --canvas-color-4: var(--color-green-rgb);
+  --canvas-color-5: var(--color-cyan-rgb);
+  --canvas-color-6: var(--color-purple-rgb);
+  --canvas-background: var(--background-secondary);
+  --canvas-card-label-color: var(--text-faint);
+  --canvas-dot-pattern: var(--background-modifier-border);
+}
+
+/* --- Search -------------------------------------------------------------- */
+
+.search-input-container input {
+  border-radius: var(--input-radius);
+}
+
+.search-result-file-title {
+  border-radius: var(--radius-m);
+  font-weight: var(--font-medium);
+  color: var(--text-normal);
+}
+
+.search-result-file-match {
+  border-radius: var(--radius-m);
+  padding: var(--bc-gap-2) var(--bc-gap-3);
+  margin-bottom: var(--bc-gap-1);
+  color: var(--text-muted);
+  background-color: transparent;
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.search-result-file-match:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+.search-result-file-match::before {
+  display: none;
+}
+
+.search-result-file-matched-text {
+  background-color: var(--bc-ac-a24);
+  color: var(--text-normal);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.search-empty-state {
+  color: var(--text-faint);
+}
+
+/* --- Outline, backlinks, tags -------------------------------------------- */
+
+.outline .tree-item-self,
+.backlink-pane .tree-item-self,
+.tag-container .tree-item-self {
+  border-radius: var(--radius-m);
+}
+
+.backlink-pane .search-result-file-matches {
+  border-inline-start: 1px solid var(--background-modifier-border);
+  margin-inline-start: var(--bc-gap-3);
+  padding-inline-start: var(--bc-gap-2);
+}
+
+.tag-pane-tag-count {
+  background-color: transparent;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+/* --- Graph --------------------------------------------------------------- */
+
+.graph-controls {
+  border-radius: var(--radius-l);
+  border: 1px solid var(--background-modifier-border);
+  background-color: var(--bc-surface-raised);
+  box-shadow: var(--shadow-s);
+  padding: var(--bc-gap-3);
+}
+
+.workspace-leaf-content[data-type="graph"] .view-content,
+.workspace-leaf-content[data-type="localgraph"] .view-content {
+  background-color: var(--background-primary);
+}
+
+/* --- Canvas -------------------------------------------------------------- */
+
+.canvas-node-container {
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-s);
+}
+
+.canvas-node-content {
+  border-radius: var(--radius-l);
+}
+
+.canvas-card-menu,
+.canvas-control-group {
+  border-radius: var(--radius-l);
+  border: 1px solid var(--background-modifier-border);
+  background-color: var(--bc-surface-raised);
+  box-shadow: var(--shadow-s);
+}
+
+.canvas-control-item {
+  border-radius: var(--radius-s);
+}
+
+/* --- Bases / table views -------------------------------------------------- */
+
+.bases-toolbar,
+.bases-table-container {
+  border-radius: var(--radius-m);
+}
+
+.bases-table-header-cell {
+  color: var(--text-muted);
+  font-weight: var(--font-medium);
+  font-size: var(--font-ui-small);
+}
+
+/* --- PDF ----------------------------------------------------------------- */
+
+.pdf-toolbar {
+  background-color: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.pdf-container {
+  background-color: var(--background-secondary);
+}
+
+.pdf-page {
+  border-radius: var(--radius-s);
+  box-shadow: var(--shadow-s);
+}
+
+/* --- Empty states -------------------------------------------------------- */
+
+.empty-state-title,
+.empty-state-action {
+  color: var(--text-muted);
+}
+
+.empty-state-action:hover {
+  color: var(--text-accent);
+}
+
+/* --- File recovery, sync and other list panes ---------------------------- */
+
+.tree-item-children .tree-item-self.is-clickable {
+  border-radius: var(--radius-m);
+}

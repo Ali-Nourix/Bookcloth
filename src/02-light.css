@@ -1,0 +1,99 @@
+/* ==========================================================================
+   LIGHT — warm paper
+   ========================================================================== */
+
+.theme-light {
+  --bc-ac-lift: 0%;
+
+  /* Warm neutral ramp. Obsidian derives a lot from these, so anything this
+     theme forgets to style still lands somewhere sensible. */
+  /* Lighter and less chromatic than before. Notion and Slite both work on a
+     near-white page with a warm-grey ink; keeping the cream but raising the
+     value is what moves this from "tinted paper" to "clean document". */
+  --color-base-00: #fcfbf7;
+  --color-base-05: #f9f8f3;
+  --color-base-10: #f7f6f1;
+  --color-base-20: #f4f3ee;
+  --color-base-25: #eeece5;
+  --color-base-30: #e6e4db;
+  --color-base-35: #dcdad0;
+  --color-base-40: #c8c6bb;
+  --color-base-50: #aeaca2;
+  --color-base-60: #8a8881;
+  --color-base-70: #62615b;
+  --color-base-100: #37352f;
+
+  --mono-rgb-0: 255, 255, 255;
+  --mono-rgb-100: 55, 53, 47;
+
+  /* Semantic hues, pulled toward earth so they sit inside the palette
+     rather than on top of it. Callouts, tags, syntax and most plugins
+     inherit from these. */
+  --color-red-rgb: 179, 69, 58;
+  --color-orange-rgb: 167, 95, 43;
+  --color-yellow-rgb: 138, 109, 18;
+  --color-green-rgb: 79, 122, 85;
+  --color-cyan-rgb: 55, 122, 124;
+  --color-blue-rgb: 62, 108, 158;
+  --color-purple-rgb: 118, 92, 162;
+  --color-pink-rgb: 168, 82, 128;
+
+  /* Surfaces ------------------------------------------------------------
+     The editor is the lightest plane; chrome recedes behind it. */
+  /* Overridable in Style Settings; everything else derives from these four. */
+  --bc-bg-primary: var(--color-base-00);
+  --bc-bg-secondary: var(--color-base-20);
+  --bc-bg-raised: #ffffff;
+  --bc-bg-sunken: var(--color-base-10);
+
+  --background-primary: var(--bc-bg-primary);
+  --background-primary-alt: var(--color-base-10);
+  --background-secondary: var(--bc-bg-secondary);
+  --background-secondary-alt: var(--color-base-25);
+  --bc-surface-raised: var(--bc-bg-raised);
+  --bc-surface-sunken: var(--bc-bg-sunken);
+
+  --background-modifier-hover: rgba(55, 53, 47, 0.05);
+  --background-modifier-active-hover: var(--bc-ac-a16);
+  --background-modifier-border: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.09));
+  --background-modifier-border-hover: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.18));
+  --background-modifier-border-focus: var(--bc-ac-a40);
+  --background-modifier-form-field: #ffffff;
+  --bc-control-border: rgba(55, 53, 47, calc(var(--bc-border-strength) * 0.28));
+  --background-modifier-message: rgba(55, 53, 47, 0.88);
+
+  --background-modifier-error-rgb: var(--color-red-rgb);
+  --background-modifier-error: rgba(var(--color-red-rgb), 0.1);
+  --background-modifier-error-hover: rgba(var(--color-red-rgb), 0.18);
+  --background-modifier-success-rgb: var(--color-green-rgb);
+  --background-modifier-success: rgba(var(--color-green-rgb), 0.14);
+
+  /* Ink ------------------------------------------------------------------ */
+  --bc-ink-normal: #37352f;
+  --bc-ink-muted: #6f6d66;
+  --bc-ink-faint: #8b8a83;
+
+  --text-normal: var(--bc-ink-normal);
+  --text-muted: var(--bc-ink-muted);
+  --text-faint: var(--bc-ink-faint);
+  --text-on-accent: #ffffff;
+  --text-on-accent-inverted: #37352f;
+  --text-error: #a03d33;
+  --text-warning: #96650f;
+  --text-success: #43684a;
+
+  --text-selection: var(--bc-ac-a16);
+  --text-highlight-bg: rgba(var(--color-yellow-rgb), 0.28);
+  --text-highlight-bg-active: rgba(var(--color-orange-rgb), 0.42);
+  --text-blockquote: var(--text-muted);
+
+  --shadow-s: 0 1px 2px rgba(15, 15, 13, 0.05), 0 2px 6px rgba(15, 15, 13, 0.04);
+  --shadow-l: 0 2px 6px rgba(15, 15, 13, 0.06),
+    0 12px 32px rgba(15, 15, 13, 0.1);
+
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: rgba(55, 53, 47, 0.16);
+  --scrollbar-active-thumb-bg: rgba(55, 53, 47, 0.3);
+
+  --workspace-background-translucent: rgba(252, 251, 247, 0.72);
+}

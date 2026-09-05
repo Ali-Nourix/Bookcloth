@@ -1,0 +1,64 @@
+/* --------------------------------------------------------------------------
+   Tasks
+   Tested against Tasks 7.x. The metadata chips are the only real addition:
+   dates, priorities and recurrence are set as quiet pills so a task list
+   still scans as a list rather than as a table of symbols.
+   -------------------------------------------------------------------------- */
+
+body:not(.bc-off-tasks) .tasks-list-text {
+  line-height: var(--line-height-normal);
+}
+
+body:not(.bc-off-tasks) .task-metadata,
+body:not(.bc-off-tasks) .tasks-backlink,
+body:not(.bc-off-tasks) [class^="task-due"],
+body:not(.bc-off-tasks) [class^="task-scheduled"],
+body:not(.bc-off-tasks) [class^="task-start"],
+body:not(.bc-off-tasks) [class^="task-created"],
+body:not(.bc-off-tasks) [class^="task-recurring"],
+body:not(.bc-off-tasks) [class^="task-done"] {
+  font-size: 0.82em;
+  color: var(--text-faint);
+}
+
+body:not(.bc-off-tasks) .task-priority-high {
+  color: var(--color-red);
+}
+
+body:not(.bc-off-tasks) .task-priority-medium {
+  color: var(--color-orange);
+}
+
+body:not(.bc-off-tasks) .task-priority-low {
+  color: var(--text-faint);
+}
+
+body:not(.bc-off-tasks) .tasks-backlink a {
+  color: var(--text-faint);
+  text-decoration: none;
+}
+
+body:not(.bc-off-tasks) .tasks-backlink a:hover {
+  color: var(--text-accent);
+}
+
+body:not(.bc-off-tasks) .tasks-edit,
+body:not(.bc-off-tasks) .tasks-postpone {
+  opacity: 0;
+  transition: opacity var(--bc-speed) var(--bc-ease);
+}
+
+body:not(.bc-off-tasks) li:hover .tasks-edit,
+body:not(.bc-off-tasks) li:hover .tasks-postpone {
+  opacity: 1;
+}
+
+body:not(.bc-off-tasks) .tasks-modal .setting-item {
+  border-top: none;
+  padding-block: var(--bc-gap-2);
+}
+
+body:not(.bc-off-tasks) .tasks-group-heading {
+  color: var(--text-muted);
+  font-weight: var(--font-semibold);
+}

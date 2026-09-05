@@ -1,0 +1,494 @@
+/* ==========================================================================
+   CHROME
+   Sidebar, ribbon, tabs, header, status bar. The rule for all of it: recede.
+   Chrome is separated from the editor by tone, never by a drawn line.
+   ========================================================================== */
+
+body {
+  --header-height: 40px;
+  --divider-width: 1px;
+  --divider-width-hover: 3px;
+  --divider-color: transparent;
+  --divider-color-hover: var(--bc-ac-a40);
+  --divider-vertical-height: 100%;
+
+  --ribbon-background: var(--background-secondary);
+  --ribbon-background-collapsed: var(--background-secondary);
+  --ribbon-width: 44px;
+  --ribbon-padding: var(--bc-band-pad) var(--bc-gap-2);
+
+  --sidebar-markdown-font-size: 0.9em;
+  --sidebar-tab-text-display: none;
+
+  --vault-name-font-size: var(--font-ui-small);
+  --vault-name-font-weight: var(--font-medium);
+  --vault-name-color: var(--text-muted);
+
+  --status-bar-background: transparent;
+  --status-bar-border-color: transparent;
+  --status-bar-border-width: 0px;
+  --status-bar-font-size: var(--font-ui-smaller);
+  --status-bar-text-color: var(--text-faint);
+
+  --titlebar-background: var(--background-secondary);
+  --titlebar-background-focused: var(--background-secondary);
+  --titlebar-border-width: 0px;
+  --titlebar-border-color: transparent;
+  --titlebar-text-color: var(--text-faint);
+  --titlebar-text-color-focused: var(--text-muted);
+  --titlebar-text-weight: var(--font-medium);
+
+  --file-header-font-size: var(--font-ui-small);
+  --file-header-font-weight: var(--font-medium);
+  --file-header-border: none;
+  --file-header-justify: flex-start;
+
+  /* Tabs ---------------------------------------------------------------- */
+  --tab-container-background: var(--background-secondary);
+  --tab-background-active: var(--background-primary);
+  --tab-divider-color: transparent;
+  --tab-outline-color: transparent;
+  --tab-outline-width: 0px;
+  --tab-curve: 0px;
+  --tab-font-size: var(--font-ui-medium);
+  --tab-font-weight: var(--font-medium);
+  --tab-text-color: var(--text-faint);
+  --tab-text-color-active: var(--text-muted);
+  --tab-text-color-focused: var(--text-muted);
+  --tab-text-color-focused-active: var(--text-normal);
+  --tab-text-color-focused-highlighted: var(--bc-select-fg);
+  --tab-text-color-focused-active-current: var(--text-normal);
+  --tab-max-width: 240px;
+
+  /* Navigation ---------------------------------------------------------- */
+  --nav-item-size: var(--font-ui-medium);
+  --nav-item-weight: var(--font-normal);
+  --nav-item-weight-hover: var(--font-normal);
+  --nav-item-weight-active: var(--font-medium);
+  --nav-item-color: var(--text-muted);
+  --nav-item-color-hover: var(--text-normal);
+  --nav-item-color-active: var(--bc-select-fg);
+  --nav-item-color-selected: var(--bc-select-fg);
+  --nav-item-background-hover: var(--background-modifier-hover);
+  --nav-item-background-active: var(--bc-select-bg);
+  --nav-item-background-selected: var(--bc-select-bg-strong);
+  --nav-item-padding: calc(var(--bc-gap-2) + 1px) var(--bc-gap-3);
+  --nav-item-radius: var(--radius-m);
+  --nav-item-parent-padding: var(--nav-item-padding);
+  --nav-item-children-padding-left: var(--bc-gap-4);
+  --nav-item-children-margin-left: var(--bc-gap-3);
+  --nav-item-white-space: nowrap;
+
+  --nav-indentation-guide-width: 1px;
+  --nav-indentation-guide-color: var(--background-modifier-border);
+
+  --nav-heading-color: var(--text-faint);
+  --nav-heading-color-hover: var(--text-muted);
+  --nav-heading-color-collapsed: var(--text-faint);
+  --nav-heading-weight: var(--font-semibold);
+  --nav-heading-weight-hover: var(--font-semibold);
+}
+
+/* --- Workspace shell ----------------------------------------------------- */
+
+.workspace {
+  background-color: var(--background-secondary);
+}
+
+/* Give the editor pane its own rounded plane floating on the backdrop. This
+   is the single structural idea in the theme, so nothing else needs a border.
+   Corners go on the pane's two end pieces rather than on a clipping
+   container: `overflow: hidden` here would swallow anything a plugin renders
+   past its own bounds — Kanban date pickers, Excalidraw panels, Dataview
+   menus. Pane geometry and the backdrop behind it live in 13-panes. */
+.workspace-split.mod-root .workspace-tab-header-container {
+  border-start-start-radius: var(--bc-pane-radius);
+  border-start-end-radius: var(--bc-pane-radius);
+}
+
+.workspace-split.mod-root .workspace-leaf-content {
+  background-color: var(--background-primary);
+  border-end-start-radius: var(--bc-pane-radius);
+  border-end-end-radius: var(--bc-pane-radius);
+}
+
+/* --- Ribbon -------------------------------------------------------------- */
+
+.workspace-ribbon {
+  border: none;
+}
+
+.workspace-ribbon.mod-left::before,
+.workspace-ribbon.mod-right::before {
+  display: none;
+}
+
+/* Every ribbon control is the same square, centred on the same axis. Obsidian
+   gives the sidebar-toggle button a different container from the plugin
+   actions below it, so left to itself the top icon sits off the column the
+   rest of them share. Sizing them all identically is what lines them up. */
+.workspace-ribbon {
+  align-items: center;
+}
+
+.side-dock-ribbon-action,
+.workspace-ribbon .clickable-icon,
+.workspace-ribbon .sidebar-toggle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--bc-hit);
+  height: var(--bc-hit);
+  min-width: var(--bc-hit);
+  min-height: var(--bc-hit);
+  padding: 0;
+  margin: 0;
+  border-radius: var(--radius-m);
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+.side-dock-ribbon-action:hover,
+.workspace-ribbon .clickable-icon:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+body.bc-hide-ribbon .workspace-ribbon.mod-left {
+  opacity: 0;
+  transition: opacity 200ms var(--bc-ease);
+}
+
+body.bc-hide-ribbon .workspace-ribbon.mod-left:hover,
+body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
+  opacity: 1;
+}
+
+/* --- The top band -------------------------------------------------------
+   Obsidian spreads the controls across this row over four separate
+   containers: the ribbon column, the left tab strip, the editor tab bar and
+   the right tab strip. Each brings its own padding, so the sidebar-toggle
+   button ends up a few pixels above the tabs beside it and the row reads as
+   three rows. Giving all of them the same band padding and the same control
+   height puts every icon on one centre line. */
+
+.workspace-tab-header-container {
+  align-items: center;
+  min-height: calc(var(--bc-hit) + var(--bc-band-pad) * 2);
+  padding-block: var(--bc-band-pad);
+}
+
+.workspace-tab-header,
+.workspace-tab-header-new-tab,
+.workspace-tab-header-status-container,
+.workspace-tab-header-status-container .clickable-icon,
+.sidebar-toggle-button,
+.sidebar-toggle-button .clickable-icon {
+  height: var(--bc-hit);
+  align-self: center;
+}
+
+.sidebar-toggle-button,
+.sidebar-toggle-button .clickable-icon,
+.workspace-tab-header-new-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--bc-hit);
+  padding: 0;
+  border-radius: var(--radius-m);
+}
+
+/* --- Sidebars ------------------------------------------------------------ */
+
+.workspace-drawer,
+.workspace-split.mod-horizontal.mod-left-split,
+.workspace-split.mod-horizontal.mod-right-split {
+  border: none;
+  box-shadow: none;
+}
+
+.workspace-tab-header-container {
+  border-bottom: none;
+}
+
+.workspace-split.mod-left-split .workspace-tab-header-container,
+.workspace-split.mod-right-split .workspace-tab-header-container {
+  padding-inline: var(--bc-gap-2);
+  gap: var(--bc-gap-1);
+}
+
+/* Sidebar tabs are icon-only, so their hit area has to be square. Left at
+   Obsidian's width it is half again as wide as it is tall, and with any
+   rounding at all that background reads as a lozenge rather than a button.
+   The background moves to the inner element so it wraps the icon, not the
+   whole tab slot. */
+.workspace-split.mod-left-split .workspace-tab-header,
+.workspace-split.mod-right-split .workspace-tab-header {
+  padding: 0;
+  background-color: transparent;
+  border-radius: var(--radius-m);
+}
+
+.workspace-split.mod-left-split .workspace-tab-header-inner,
+.workspace-split.mod-right-split .workspace-tab-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--bc-hit);
+  height: var(--bc-hit);
+  padding: 0;
+  border-radius: var(--radius-m);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.workspace-split.mod-left-split
+  .workspace-tab-header:hover
+  .workspace-tab-header-inner,
+.workspace-split.mod-right-split
+  .workspace-tab-header:hover
+  .workspace-tab-header-inner {
+  background-color: var(--background-modifier-hover);
+}
+
+.workspace-split.mod-left-split
+  .workspace-tab-header.is-active
+  .workspace-tab-header-inner,
+.workspace-split.mod-right-split
+  .workspace-tab-header.is-active
+  .workspace-tab-header-inner {
+  background-color: var(--bc-select-bg-strong);
+  color: var(--text-normal);
+}
+
+.workspace-leaf-content[data-type="file-explorer"] .view-content,
+.workspace-leaf-content[data-type="search"] .view-content,
+.workspace-leaf-content[data-type="bookmarks"] .view-content,
+.workspace-leaf-content[data-type="tag"] .view-content,
+.workspace-leaf-content[data-type="outline"] .view-content {
+  padding-inline: var(--bc-gap-2);
+}
+
+/* The active ribbon glyph is marked by a tinted slab, not by recolouring the
+   glyph itself — one accented shape per region is enough. */
+.side-dock-ribbon-action.is-active {
+  background-color: var(--bc-select-bg);
+}
+
+/* Nav rows: a soft rounded slab, inset from the panel edge. */
+.tree-item-self {
+  border-radius: var(--nav-item-radius);
+  transition: background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+.tree-item-self.is-clickable:hover {
+  background-color: var(--nav-item-background-hover);
+}
+
+.nav-file-title.is-active,
+.tree-item-self.is-active {
+  background-color: var(--nav-item-background-active);
+  color: var(--nav-item-color-active);
+}
+
+.nav-folder-title {
+  color: var(--text-muted);
+}
+
+.nav-folder.mod-root > .nav-folder-title {
+  display: none;
+}
+
+.nav-files-container {
+  padding-bottom: var(--bc-gap-5);
+}
+
+body.bc-no-indent-guides {
+  --nav-indentation-guide-color: transparent;
+}
+
+/* Drop target while dragging a note into a folder. */
+.nav-folder.is-being-dragged-over > .nav-folder-title,
+.tree-item-self.is-being-dragged-over {
+  background-color: var(--bc-ac-a06);
+  box-shadow: inset 0 0 0 1px var(--bc-ac-a40);
+}
+
+.tree-item-flair,
+.tree-item-flair-outer {
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+/* Containment. A pane that has been inset by a gap is narrower than before,
+   so every row in it needs somewhere to give. Without a min-width of zero a
+   flex child refuses to shrink below its content and the text runs under the
+   rounded corner instead of ellipsising. */
+.workspace-leaf-content,
+.workspace-tabs,
+.view-content,
+.nav-files-container,
+.tree-item,
+.tree-item-self {
+  min-width: 0;
+}
+
+.tree-item-inner,
+.nav-file-title-content,
+.nav-folder-title-content,
+.view-header-title-container {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Counts and badges keep their width; the filename gives way first. */
+.tree-item-flair-outer,
+.tree-item-flair {
+  flex: 0 0 auto;
+}
+
+/* Room at the foot of every scrolling pane. Without it the last item in a
+   sidebar list sits underneath the status bar and is read as cut off — which
+   it is. Only the block end is padded: giving plugin panes horizontal padding
+   is how a theme breaks the ones that lay out their own. */
+.workspace-split.mod-left-split .view-content,
+.workspace-split.mod-right-split .view-content {
+  padding-block-end: var(--bc-gap-6);
+  scroll-padding-block-end: var(--bc-gap-6);
+}
+
+.workspace-split.mod-root .view-content {
+  scroll-padding-block-end: var(--bc-gap-5);
+}
+
+/* Vault name reads as a label, not a title. */
+.workspace-drawer-vault-name,
+.nav-header .vault-name {
+  letter-spacing: 0.01em;
+}
+
+/* --- Root tabs ----------------------------------------------------------- */
+
+.workspace-split.mod-root .workspace-tab-header-container {
+  background-color: var(--background-secondary);
+  padding-inline: var(--bc-gap-2);
+  gap: var(--bc-gap-1);
+}
+
+.workspace-split.mod-root .workspace-tab-header {
+  border-radius: var(--radius-m);
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+.workspace-split.mod-root .workspace-tab-header-inner {
+  display: flex;
+  align-items: center;
+  height: var(--bc-hit);
+  padding-block: 0;
+  padding-inline: var(--bc-gap-3);
+  border-radius: var(--radius-m);
+}
+
+.workspace-split.mod-root .workspace-tab-header:not(.is-active):hover {
+  background-color: var(--background-modifier-hover);
+}
+
+/* Underline variant: flat tabs with a hairline marker instead of a slab. */
+body.bc-tabs-underline
+  .workspace-split.mod-root
+  .workspace-tab-header.is-active {
+  background-color: transparent;
+  box-shadow: inset 0 -2px 0 0 var(--bc-ac-500);
+  border-radius: 0;
+}
+
+.workspace-tab-header-new-tab {
+  border-radius: var(--radius-m);
+}
+
+.workspace-tab-header-status-container {
+  padding-inline-end: var(--bc-gap-2);
+}
+
+/* --- View header ---------------------------------------------------------
+   Only the chrome is restyled here. Padding is left to Obsidian so a plugin
+   view that lays out its own header keeps working. */
+
+.view-header {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.view-header-title {
+  font-size: var(--font-ui-medium);
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+}
+
+.view-header-icon,
+.view-action {
+  border-radius: var(--radius-s);
+}
+
+.view-header-breadcrumb {
+  color: var(--text-faint);
+}
+
+/* --- Status bar ----------------------------------------------------------
+   The status bar floats over the bottom of whatever pane is beneath it, so
+   panes reserve room for it rather than letting their last row be sliced in
+   half by it. The reserve lives on the panes, below. */
+
+.status-bar {
+  border-top: none;
+  padding-inline-end: var(--bc-gap-3);
+  backdrop-filter: none;
+}
+
+.status-bar-item {
+  padding-inline: var(--bc-gap-2);
+}
+
+body.bc-hide-statusbar .status-bar {
+  opacity: 0;
+  transition: opacity 200ms var(--bc-ease);
+}
+
+body.bc-hide-statusbar .status-bar:hover {
+  opacity: 1;
+}
+
+/* --- Split handles ------------------------------------------------------- */
+
+.workspace-leaf-resize-handle {
+  transition: background-color 120ms var(--bc-ease);
+}
+
+/* --- Scrollbars ---------------------------------------------------------- */
+/* Thumb only, no track, and it stays out of the way until the pane is used. */
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 8px;
+  transition: background-color 160ms var(--bc-ease);
+}
+
+:hover::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-active-thumb-bg);
+}

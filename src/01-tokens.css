@@ -1,0 +1,143 @@
+/* ==========================================================================
+   TOKENS
+   The only place raw numbers live. Everything downstream reads from here.
+   ========================================================================== */
+
+body {
+  /* --- Accent source of truth ------------------------------------------
+     Obsidian writes the user's chosen accent onto <body> as an inline style,
+     which outranks these declarations. So these are defaults, not overrides:
+     pick an accent in Appearance settings and the whole ramp follows it. */
+  --accent-h: 15;
+  --accent-s: 56%;
+  --accent-l: 52%;
+
+  /* Per-theme lightness shift, so one hue reads correctly on paper and on ink */
+  --bc-ac-lift: 0%;
+  /* Saturation multiplier, driven by the "Accent intensity" setting */
+  --bc-ac-sat: 1;
+
+  --bc-ac-s: calc(var(--accent-s) * var(--bc-ac-sat));
+  --bc-ac-l: calc(var(--accent-l) + var(--bc-ac-lift));
+
+  /* --- Accent ramp ------------------------------------------------------
+     The full ramp is documented in the README as a stable surface for user
+     snippets, so the outermost steps stay defined even where the theme itself
+     has no use for them. */
+  --bc-ac-50: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) + 40%));
+  --bc-ac-100: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) + 32%));
+  --bc-ac-200: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) + 23%));
+  --bc-ac-300: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) + 13%));
+  --bc-ac-400: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) + 6%));
+  --bc-ac-500: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l));
+  --bc-ac-600: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 7%));
+  --bc-ac-700: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 15%));
+  --bc-ac-800: hsl(var(--accent-h) var(--bc-ac-s) calc(var(--bc-ac-l) - 24%));
+
+  /* Transparent accent washes — used for selection, hover and active fills.
+     Alpha beats a mixed hex here: it survives on any surface underneath. */
+  --bc-ac-a03: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.03);
+  --bc-ac-a06: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.06);
+  --bc-ac-a10: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.1);
+  --bc-ac-a16: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.16);
+  --bc-ac-a24: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.24);
+  --bc-ac-a40: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / 0.4);
+
+  /* Warmth injected into the neutral ramp. 0% gives dead-neutral greys. */
+  --bc-tint: 4%;
+  /* Multiplier on every border alpha. 0 removes lines entirely. */
+  --bc-border-strength: 1;
+  /* How much colour a callout or wash carries. */
+  --bc-wash: 10%;
+
+  /* --- Shape ----------------------------------------------------------- */
+  /* Two independent radii. The interface scale is small — Notion and Slite
+     sit around 4-6px on rows, chips and buttons, and anything larger makes a
+     28px row read as a lozenge. Panels are a separate, bigger figure, because
+     a floating panel is a card and wants to look like one. */
+  --bc-radius-scale: 1;
+  --radius-s: calc(3px * var(--bc-radius-scale));
+  --radius-m: calc(5px * var(--bc-radius-scale));
+  --radius-l: calc(8px * var(--bc-radius-scale));
+  --radius-xl: calc(12px * var(--bc-radius-scale));
+
+  --bc-pane-radius: 10px;
+
+  /* Square hit areas for every icon-only control, so a wide button can never
+     turn its background into a lozenge. */
+  --bc-hit: 28px;
+
+  /* The inset above and below every top-band control. Shared by the ribbon,
+     both sidebar tab strips and the editor tab bar, because those four rows
+     live in different containers and only line up if they are told to. */
+  --bc-band-pad: 4px;
+
+  --input-radius: var(--radius-m);
+  --button-radius: var(--radius-m);
+  --modal-radius: var(--bc-pane-radius);
+  --checkbox-radius: var(--radius-s);
+  --code-radius: var(--radius-l);
+  --callout-radius: var(--radius-l);
+  --tag-radius: calc(2em * var(--bc-radius-scale));
+  --tab-radius: var(--radius-m);
+  --tab-radius-active: var(--radius-m);
+  --menu-radius: var(--radius-l);
+  --swatch-radius: var(--radius-s);
+  --border-width: 1px;
+
+  /* --- Density --------------------------------------------------------- */
+  --bc-density: 1;
+  --bc-gap-1: calc(2px * var(--bc-density));
+  --bc-gap-2: calc(4px * var(--bc-density));
+  --bc-gap-3: calc(8px * var(--bc-density));
+  --bc-gap-4: calc(12px * var(--bc-density));
+  --bc-gap-5: calc(16px * var(--bc-density));
+  --bc-gap-6: calc(24px * var(--bc-density));
+
+  /* --- Type ------------------------------------------------------------ */
+  --bc-font-interface: Inter;
+  --bc-font-text: Inter;
+  --bc-font-mono: ui-monospace;
+
+  --bc-stack-ui: var(--bc-font-interface), "Söhne", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --bc-stack-text: var(--bc-font-text), "Söhne", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --bc-stack-serif: "Iowan Old Style", "Source Serif 4", "Source Serif Pro",
+    Charter, "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --bc-stack-mono: var(--bc-font-mono), "SF Mono", "JetBrains Mono",
+    "IBM Plex Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --font-interface-theme: var(--bc-stack-ui);
+  --font-text-theme: var(--bc-stack-text);
+  --font-monospace-theme: var(--bc-stack-mono);
+
+  --bc-code-size: 0.875;
+  --bc-pane-gap: 6px;
+  --bc-h-scale: 1;
+  --bc-h-weight: 600;
+  --bc-line-height: 1.6;
+  --bc-line-width: 42rem;
+
+  /* --- Motion ---------------------------------------------------------- */
+  --bc-ease: cubic-bezier(0.2, 0, 0, 1);
+  --bc-speed: 140ms;
+}
+
+/* Accent intensity ------------------------------------------------------- */
+body.bc-accent-subtle {
+  --bc-ac-sat: 0.72;
+}
+body.bc-accent-vivid {
+  --bc-ac-sat: 1.18;
+}
+
+/* Density ---------------------------------------------------------------- */
+body.bc-density-compact {
+  --bc-density: 0.75;
+}
+body.bc-density-comfortable {
+  --bc-density: 1.3;
+}

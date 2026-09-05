@@ -1,0 +1,94 @@
+/* ==========================================================================
+   PERSIAN / ARABIC AND RIGHT-TO-LEFT
+   Opt-in via the "Persian / Arabic typography" toggle. Two separate problems
+   are handled here: the script needs different fonts and more leading, and
+   the layout needs its directional details un-hardcoded.
+   ========================================================================== */
+
+body.bc-rtl {
+  --bc-stack-ui: var(--bc-font-interface), "Vazirmatn", "Estedad", "Sahel",
+    "Segoe UI", Tahoma, -apple-system, BlinkMacSystemFont, sans-serif;
+  --bc-stack-text: var(--bc-font-text), "Vazirmatn", "Estedad", "Sahel",
+    "Segoe UI", Tahoma, -apple-system, BlinkMacSystemFont, sans-serif;
+  --bc-stack-serif: "Vazirmatn RD", "Estedad", "Iowan Old Style",
+    "Source Serif 4", Georgia, serif;
+
+  /* Arabic-script letterforms carry more vertical detail, so the same
+     leading that suits Latin looks cramped here. */
+  --bc-line-height: 1.85;
+  --h1-line-height: 1.45;
+  --h2-line-height: 1.45;
+  --h3-line-height: 1.5;
+  --inline-title-line-height: 1.4;
+}
+
+/* Digits stay Latin in the interface even when the note is Persian —
+   line numbers, word counts and dates are easier to scan that way. */
+body.bc-rtl .status-bar,
+body.bc-rtl .cm-lineNumbers,
+body.bc-rtl .metadata-input-longtext {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Tracking that helps Latin display type hurts joined scripts. */
+body.bc-rtl .markdown-rendered h1,
+body.bc-rtl .markdown-rendered h2,
+body.bc-rtl .markdown-rendered h3,
+body.bc-rtl .markdown-rendered h4,
+body.bc-rtl .inline-title,
+body.bc-rtl .HyperMD-header-1,
+body.bc-rtl .HyperMD-header-2 {
+  letter-spacing: 0;
+}
+
+/* --- Direction-aware layout ----------------------------------------------
+   Obsidian puts dir="rtl" on the element that holds the content, which is the
+   same element that carries .markdown-rendered — not an ancestor of it. So
+   these selectors match on any descendant of a right-to-left container and
+   never assume where the class sits. Blockquotes, embeds, lists and tables
+   need nothing here: their base rules are already written with logical
+   properties. What is left is the handful of cases where direction genuinely
+   has to be overridden. */
+
+/* Code is left-to-right even inside a right-to-left note. Without this the
+   bidi algorithm reorders punctuation and a line of JavaScript comes out with
+   its semicolon at the wrong end. */
+[dir="rtl"] pre,
+[dir="rtl"] pre code,
+[dir="rtl"] .HyperMD-codeblock,
+[dir="rtl"] .cm-inline-code {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Inline code sits inside a sentence, so it keeps the paragraph's flow while
+   its own contents run left-to-right. */
+[dir="rtl"] .markdown-rendered code:not(pre code) {
+  unicode-bidi: isolate;
+}
+
+/* Latin fragments — URLs, filenames, inline maths — inside Persian prose. */
+[dir="rtl"] .math,
+[dir="rtl"] .external-link {
+  unicode-bidi: isolate;
+}
+
+[dir="rtl"] .callout {
+  text-align: start;
+}
+
+body.bc-callout-rule [dir="rtl"] .callout {
+  border-left: none;
+  border-inline-start: 2px solid rgb(var(--callout-color));
+}
+
+[dir="rtl"] .footnotes {
+  text-align: start;
+}
+
+/* Right-to-left notes in the file tree and outline keep their own direction
+   without dragging the surrounding interface with them. */
+[dir="rtl"] .list-bullet,
+[dir="rtl"] .cm-formatting-list {
+  unicode-bidi: isolate;
+}

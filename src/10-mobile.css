@@ -1,0 +1,135 @@
+/* ==========================================================================
+   MOBILE
+   Bigger targets, no hover-dependent affordances, safe areas respected.
+   ========================================================================== */
+
+body.is-mobile {
+  --bc-density: 1.25;
+  --nav-item-size: 15px;
+  --font-ui-small: 14px;
+  --font-ui-medium: 15px;
+  --file-margins: var(--bc-gap-5) var(--bc-gap-5) 40vh;
+  --radius-l: calc(14px * var(--bc-radius-scale));
+}
+
+/* Nothing on a touch screen may hide behind :hover. */
+body.is-mobile.bc-hide-statusbar .status-bar,
+body.is-mobile.bc-hide-ribbon .workspace-ribbon.mod-left {
+  opacity: 1;
+}
+
+body.is-mobile ::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-bg);
+}
+
+/* Floating panes are a desktop idea. On a phone the pane is the whole screen,
+   so the gap would only eat into it. */
+body.is-mobile .workspace {
+  padding: 0;
+  gap: 0;
+}
+
+body.is-mobile .workspace-split.mod-root .workspace-tabs,
+body.is-mobile .workspace-split.mod-root .workspace-leaf,
+body.is-mobile .workspace-split.mod-root .workspace-leaf-content,
+body.is-mobile .workspace-split.mod-left-split,
+body.is-mobile .workspace-split.mod-right-split {
+  border-radius: 0;
+}
+
+body.is-mobile .app-container,
+body.is-mobile .horizontal-main-container,
+body.is-mobile .workspace {
+  background-color: var(--background-secondary);
+}
+
+/* Touch targets, enforced here rather than globally. */
+body.is-mobile .clickable-icon,
+body.is-mobile button.clickable-icon,
+body.is-mobile .nav-action-button,
+body.is-mobile .side-dock-ribbon-action {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+body.is-mobile .tree-item-self {
+  padding-block: var(--bc-gap-3);
+  min-height: 40px;
+}
+
+body.is-mobile .menu-item {
+  min-height: 44px;
+  padding-block: var(--bc-gap-3);
+}
+
+body.is-mobile .suggestion-item {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+body.is-mobile .modal,
+body.is-mobile .prompt {
+  border-radius: var(--radius-xl);
+}
+
+/* Toolbar above the keyboard */
+body.is-mobile .mobile-toolbar {
+  background-color: var(--background-secondary);
+  border-top: 1px solid var(--background-modifier-border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+body.is-mobile .mobile-toolbar-options-container .clickable-icon {
+  border-radius: var(--radius-m);
+}
+
+body.is-mobile .workspace-drawer {
+  background-color: var(--background-secondary);
+}
+
+body.is-mobile .workspace-drawer-header {
+  padding-top: max(var(--bc-gap-4), env(safe-area-inset-top));
+}
+
+body.is-mobile .workspace-drawer-active-tab-container,
+body.is-mobile .workspace-drawer-tab-option {
+  border-radius: var(--radius-m);
+}
+
+body.is-phone {
+  --bc-line-width: 100%;
+}
+
+/* --- Print --------------------------------------------------------------- */
+
+@media print {
+  body {
+    --background-primary: #ffffff;
+    --background-secondary: #ffffff;
+    --text-normal: #000000;
+    --text-muted: #333333;
+    --text-faint: #666666;
+    --file-line-width: 100%;
+  }
+
+  .workspace-ribbon,
+  .status-bar,
+  .workspace-tab-header-container,
+  .view-header,
+  .titlebar {
+    display: none;
+  }
+
+  .markdown-rendered pre,
+  .markdown-rendered code,
+  .callout {
+    background-color: transparent;
+    border: 1px solid #cccccc;
+  }
+
+  .markdown-rendered a {
+    color: #000000;
+    text-decoration: underline;
+  }
+}
