@@ -230,113 +230,6 @@ preferences, and both sit behind Obsidian selectors that carry an extra class or
 element depending on platform and frame mode. `node measure.mjs` checks it first:
 it and the three controls beside it all have to return a centre-y of 20.
 
-## The window frame
-
-On Windows and Linux, Obsidian draws the minimise, maximise and close buttons
-itself and leaves them at the platform's colours — a grey block in the corner
-of an otherwise quiet interface. They are restyled like anything else: flat,
-the same muted glyph as every other icon, a grey hover, and the one red that
-platform convention reserves for close.
-
-## The top band
-
-Obsidian spreads the controls along the top of the window across four separate
-containers: the ribbon column, the left sidebar's tab strip, the editor tab bar
-and the right sidebar's tab strip. Each brings its own padding, so left alone
-the sidebar-toggle button sits a few pixels above the tabs beside it and what
-should be one row reads as three.
-
-Bookcloth gives all four the same 40px band and the same 28px control, so every
-icon in that row shares one centre line — and the same 6px between them, which
-is its own setting because how far apart 28px squares sit is the one number
-that decides whether a toolbar reads as a row of buttons or as one bar with
-seams in it.
-
-The sidebar collapse control took six releases to get right, for a reason worth
-writing down: **the class it was being styled with does not exist.** Obsidian
-calls it `.workspace-ribbon-collapse-btn`. `.sidebar-toggle-button` — the name
-this theme aimed at — does not appear once in 769 KB of Minimal and Things, so
-every rule written for it matched nothing at all, six times in a row, while the
-screenshots kept coming back identical. A selector that is merely wrong looks
-exactly like a selector that is being outranked, which is what kept sending the
-fix in the wrong direction. Both names are carried now.
-
-Reading the real element instead of guessing at it turned up two more things.
-Obsidian ships it at `opacity: 0` and reveals it on ribbon hover — which is the
-whole story behind those screenshots, because the box that kept appearing
-around it was the hover state, and it was the only ribbon item that ever looked
-boxed. It is always visible here: a control that hides an entire sidebar should
-not have to be hunted for. And the ribbon's actions are not its siblings; they
-are nested inside `.side-dock-actions`, so the gap set on `.workspace-ribbon`
-never reached them.
-
-What the theme does *not* do to it is the other half of the lesson. Two
-releases tried to move it onto the band — pulling it into the ribbon's column,
-ordering it first, giving it the band's height — and both broke the ribbon in
-opposite directions: one left a 40px hole where the glyph should have been, the
-other pushed every action down by the height of a control Obsidian had already
-reserved space for. Obsidian floats this element out of the flow precisely so
-it costs nothing. Its position, its box and its padding are left alone, and so
-is the margin on `.side-dock-actions`, which is where that reservation lives.
-Fixed is what was actually wrong: it was invisible, and its glyph was a size
-smaller than everything around it.
-
-## The window frame
-
-On Windows and Linux, Obsidian draws the minimise, maximise and close buttons
-itself and leaves them at the platform's colours — a grey block in the corner
-of an otherwise quiet interface. They are restyled like anything else: flat,
-the same muted glyph as every other icon, a grey hover, and the one red that
-platform convention reserves for close.
-
-## The top band
-
-Obsidian spreads the controls along the top of the window across four separate
-containers: the ribbon column, the left sidebar's tab strip, the editor tab bar
-and the right sidebar's tab strip. Each brings its own padding, so left alone
-the sidebar-toggle button sits a few pixels above the tabs beside it and what
-should be one row reads as three.
-
-Bookcloth gives all four the same 40px band and the same 28px control, so every
-icon in that row shares one centre line — and the same 6px between them, which
-is its own setting because how far apart 28px squares sit is the one number
-that decides whether a toolbar reads as a row of buttons or as one bar with
-seams in it.
-
-The sidebar collapse control is the exception that proves it, and it took six
-releases to get right for a reason worth writing down: **the class it was being
-styled with does not exist.** Obsidian calls it `.workspace-ribbon-collapse-btn`.
-`.sidebar-toggle-button` — the name this theme aimed at — does not appear once
-in 769 KB of Minimal and Things, so every rule written for it matched nothing
-at all, six times in a row, while the screenshots kept coming back identical.
-Both names are carried now.
-
-The same reading of the real DOM turned up a second one. The ribbon's actions
-are not siblings of the collapse control; they are nested inside
-`.side-dock-actions`, so a gap set on `.workspace-ribbon` never reached them.
-
-A third thing fell out of the same reading. Obsidian ships that control at
-`opacity: 0` and reveals it when the ribbon is hovered — which is the whole
-story behind the screenshots, because the box that kept appearing around it was
-the hover state, and it was the only ribbon item that ever looked boxed. It is
-always visible here: a control that hides an entire sidebar should not have to
-be hunted for. It is also forced back into the ribbon's column, since Obsidian
-floats it out of the flow, and its padding is left alone — in some builds the
-glyph is a background image sized by that padding, and zeroing it leaves a 40px
-hole in the ribbon with nothing in it.
-
-The control itself is the only item in that row that is *not* a 28px square: it
-takes the band's full height, so its icon centres on the band rather than on a
-hit area that happens to start wherever Obsidian stacked it, and it is ordered
-to the top because what sits above it varies by platform and release.
-`node measure.mjs` checks it first, in the real ribbon markup with a plugin item
-deliberately above it: it and the three controls beside it all have to return a
-centre-y of 20. Measured rather than eyeballed: ribbon
-action, both sidebar toggles, both sidebar tab strips and the new-tab button all
-return a centre of exactly 20px. The editor tabs are the deliberate exception —
-they are 34px and aligned to the bottom of the band, because they merge with the
-page rather than float in the strip.
-
 ## One radius, and everything is a ratio of it
 
 Notion's whole interface sits between 3px and 8px, and the relationships
@@ -502,6 +395,37 @@ ln -s "$(pwd)" /path/to/vault/.obsidian/themes/Bookcloth
 `preview/` holds a browser harness that reproduces Obsidian's DOM so you can
 look at changes — and take screenshots and measure contrast — without launching
 the app. See `preview/README.md`.
+
+## Measuring the real app
+
+A harness is only as good as its idea of the app, and the collapse control
+proved that an idea can be wrong for eight releases while every screenshot looks
+plausible. `tools/probe.js` removes the guessing: paste it into Obsidian's
+devtools console (Ctrl+Shift+I) in a real vault and it dumps the actual
+geometry — position, margin, padding, radius, gap, flex, overflow, computed
+colour — of every region the theme touches.
+
+```
+bcProbe()                    every section
+bcProbe('ribbon','editor')   only those
+bcProbe('tree')              DOM skeleton with real class names
+await bcBaseline('tokens')   the same run with the theme off, then restored
+copy(__bc)                   last output to the clipboard
+```
+
+Sections: `env`, `tokens`, `frame`, `ribbon`, `leftsplit`, `rightsplit`, `root`,
+`editor`, `tasks`, `controls`, `overlays`, `icons`, `tree`.
+
+`bcBaseline` is the one that matters for the harness. `app-shim.css` is supposed
+to reproduce *Obsidian*, not Bookcloth, so the numbers it should encode are the
+ones the app computes with the theme switched off. It measures once with the
+default theme, once with Bookcloth, restores the theme, and prints both — and
+the difference between the two runs is exactly the theme's effect, with nothing
+inferred.
+
+`icons` is worth running on its own: it groups every SVG on screen by rendered
+size and names what owns each one, which is how a plugin shipping a hardcoded
+13px glyph gets found without hunting for it.
 
 ## Accessibility
 
