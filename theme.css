@@ -1,4 +1,4 @@
-/* Bookcloth 3.4.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.5.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -9,16 +9,16 @@ id: bookcloth
 settings:
     -
         id: bc-info
-        title: About
-        description: Bookcloth follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
+        title: Bookcloth
+        description: Follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
         type: heading
         level: 1
-        collapsed: true
+        collapsed: false
     -
         id: bc-accent-head
         title: Accent
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: accent
@@ -66,7 +66,7 @@ settings:
         id: bc-surface-head
         title: Surfaces
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-bg-primary
@@ -115,7 +115,7 @@ settings:
         id: bc-ink-head
         title: Text colours
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-ink-normal
@@ -148,7 +148,7 @@ settings:
         title: Semantic colours
         description: Notion's own palette. Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: color-red-rgb
@@ -218,7 +218,7 @@ settings:
         id: bc-typo-head
         title: Typography
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-font-interface
@@ -351,7 +351,7 @@ settings:
         id: bc-shape-head
         title: Shape and density
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-radius
@@ -476,7 +476,7 @@ settings:
         title: Floating panels
         description: Off by default. Notion's layout is flush; turning this on lifts every region onto its own rounded card, with a darker backdrop behind them.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-float-panes
@@ -500,7 +500,7 @@ settings:
         title: Glow strength
         description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
         type: variable-number-slider
-        default: 14
+        default: 16
         min: 0
         max: 45
         step: 1
@@ -533,9 +533,9 @@ settings:
     -
         id: bc-edge-fade-height
         title: Fade height
-        description: How far up the page the fade reaches.
+        description: How far up the page the fade reaches. It is built as four stacked layers at doubling radii, so the number is the height of the outermost and faintest one; the strong end is always the last quarter of it.
         type: variable-number-slider
-        default: 150
+        default: 70
         min: 40
         max: 320
         step: 10
@@ -543,11 +543,11 @@ settings:
     -
         id: bc-edge-fade-blur
         title: Fade blur
-        description: "The strength at the very bottom. One masked layer ramps it: at half alpha the blurred result is composited half and half with the untouched page, which is a partial blur rather than a hidden one."
+        description: The radius of the innermost layer, at the very bottom edge. The three above it run at a half, a quarter and an eighth of it, and because each sits inside the next one's backdrop the radii compound — so the bottom is blurrier than this number alone.
         type: variable-number-slider
-        default: 14
+        default: 22
         min: 0
-        max: 24
+        max: 40
         step: 1
         format: px
     -
@@ -570,7 +570,7 @@ settings:
         id: bc-icon-head
         title: Icons
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-icon-scale
@@ -593,7 +593,7 @@ settings:
         id: bc-ui-head
         title: Interface
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-tab-style
@@ -662,7 +662,7 @@ settings:
         id: bc-editor-head
         title: Editor
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-callout-style
@@ -680,7 +680,7 @@ settings:
     -
         id: bc-embed-padding
         title: Embed padding
-        description: The space inside a transcluded block — `![[Note#Heading]]`. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
+        description: The space inside a transcluded block — a heading section pulled into another note. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
         type: variable-number-slider
         default: 12
         min: 0
@@ -811,7 +811,7 @@ settings:
         title: Plugin support
         description: Plugin styling is on by default. Turn an item on here to opt out and let that plugin fall back to its own styles.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-off-dataview
@@ -854,7 +854,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.4.0";
+  --bc-version: "3.5.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -4722,37 +4722,27 @@ body {
     rgb(0 0 0 / 0) 100%
   );
 
-  --bc-edge-fade-height: 150px;
-  --bc-edge-fade-blur: 14px;
-  /* The bottom eighth is held at full strength before the ramp starts, because
-     the last line is the one the effect exists for and it was the weakest.
-
-     And the ramp reaches zero at 78% rather than trailing to it. That tail was
-     costing a visible band: measured down 170px of empty pane in dark mode, the
-     old curve produced three distinct greys — 25, 24 and 23 — where there is
-     nothing to blur and the answer should be one colour. Compositing a blurred
-     backdrop over itself at an alpha of a few percent rounds to plus or minus
-     one at eight bits per channel, and on a flat dark ground one level is a
-     visible edge. Above 78% the mask is exactly zero, so nothing composites at
-     all. */
-  --bc-edge-fade-falloff: linear-gradient(
+  /* Lower and shorter than it was. The effect belongs to the last few lines,
+     and a tall field is a haze over the middle of the page. */
+  --bc-edge-fade-height: 70px;
+  --bc-edge-fade-blur: 22px;
+  /* Zero, and the reason is worth keeping. These layers used to hang below the
+     pane on the theory that a backdrop-filter thins at its own bottom edge with
+     nothing left to sample. Measured, that is not what happens — pressed to the
+     floor the bottom sixteen pixels come back at 0.05 of their original edge
+     sharpness with no overhang at all. What the overhang did do was sample the
+     window behind the pane and blur it upwards, which over an empty page showed
+     as a band of the wrong colour: 41/255 darker in dark mode and 32 lighter in
+     light. That was the two-tone edge, and this is where it came from. */
+  --bc-edge-fade-overshoot: 0px;
+  --bc-edge-fade-band: linear-gradient(
     to top,
     rgb(0 0 0 / 1) 0%,
-    rgb(0 0 0 / 1) 13%,
-    rgb(0 0 0 / 0.88) 26%,
-    rgb(0 0 0 / 0.66) 40%,
-    rgb(0 0 0 / 0.42) 54%,
-    rgb(0 0 0 / 0.22) 66%,
-    rgb(0 0 0 / 0.08) 74%,
-    rgb(0 0 0 / 0) 78%,
+    rgb(0 0 0 / 1) 62%,
+    rgb(0 0 0 / 0.72) 78%,
+    rgb(0 0 0 / 0.3) 90%,
     rgb(0 0 0 / 0) 100%
   );
-  /* How far the blurring box hangs below the pane. backdrop-filter has nothing
-     to sample past its own bottom edge, so it clamps there and the blur weakens
-     over the last few pixels — which is exactly where the last line of the note
-     sits. Hanging the box over the edge puts that weak band outside the card,
-     where the pane's own clip removes it. */
-  --bc-edge-fade-overshoot: 28px;
 
   --bc-lift: translateY(-1px);
   --bc-press: scale(0.96);
@@ -5228,40 +5218,72 @@ body.bc-motion-expressive .view-header:focus-within .view-actions {
 }
 
 /* --- The bottom of the page ----------------------------------------------
-   One layer, not two. A gradient mask over a backdrop-filter does not just
-   hide part of the blur — at 50% alpha the blurred result is composited half
-   and half with the untouched backdrop, which *is* a partial blur. So the
-   strength ramps inside a single element and the second element the first
-   version used was paying twice for what one mask already does. Masked
-   backdrop-filter is the most expensive thing in this theme; halving it
-   matters more than any of its settings.
+   Four layers, each fully opaque where it matters, each blurring what the one
+   beneath it already blurred.
 
-   And no colour. The first version laid the page colour over the bottom as
-   well, which dissolves text nicely and is also visible as a band across the
-   empty space under a short note — a haze over nothing. A blur of a flat
-   background is indistinguishable from the background, so with the colour
-   gone the effect simply is not there when there is nothing to blur. */
+   The one-layer version was wrong, and wrong in a way worth writing down. A
+   mask over a backdrop-filter composites `alpha x blurred + (1 - alpha) x
+   sharp` — so at half alpha the page shows the blurred text *and* the original
+   text, through each other. That is not a partial blur, it is a double image,
+   and it was reported exactly that way: "I can see the blur and I can see the
+   text". A ramp of alpha cannot make a ramp of blur, because alpha does not
+   attenuate a blur, it cross-fades to the unblurred original.
 
+   What does work is a ladder. Each layer is solid across its own band and only
+   feathers in at its top edge, so almost nowhere is a sharp copy showing
+   through — and because a lower layer sits inside the backdrop of the one
+   above, the radii compound rather than compete. Four of them at doubling
+   radii give a smooth ramp with no ghosting anywhere.
+
+   It costs four backdrop-filters instead of one. The single layer was cheaper
+   and did not do the job; this is the price of the effect actually being the
+   effect. */
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf,
 body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content {
   position: relative;
 }
 
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::before,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::after,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before,
 body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
   content: "";
   position: absolute;
   inset-inline: 0;
+  /* Kept as a knob, but zero: see the token. Anything above zero pulls the
+     window from below the pane up into it. */
   inset-block-end: calc(var(--bc-edge-fade-overshoot) * -1);
-  height: calc(var(--bc-edge-fade-height) + var(--bc-edge-fade-overshoot));
   pointer-events: none;
   z-index: 2;
+  /* Solid across its band, feathered only at the top. Everything below 62% of
+     its own height is fully opaque, which is where the ghosting would be. */
+  -webkit-mask-image: var(--bc-edge-fade-band);
+  mask-image: var(--bc-edge-fade-band);
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::before {
+  height: calc(var(--bc-edge-fade-height) + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.125));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.125));
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::after {
+  height: calc(var(--bc-edge-fade-height) * 0.72 + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.25));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.25));
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before {
+  height: calc(var(--bc-edge-fade-height) * 0.46 + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.5));
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  height: calc(var(--bc-edge-fade-height) * 0.24 + var(--bc-edge-fade-overshoot));
   backdrop-filter: blur(var(--bc-edge-fade-blur));
   -webkit-backdrop-filter: blur(var(--bc-edge-fade-blur));
-  /* Eased rather than linear, and with enough stops that the ramp has no
-     shoulder in it. A linear alpha over a blur reads as a hard line where the
-     mask starts, because the eye finds the moment blur begins long before it
-     finds the moment it is strongest. */
-  -webkit-mask-image: var(--bc-edge-fade-falloff);
-  mask-image: var(--bc-edge-fade-falloff);
 }
 
 /* --- Levels ---------------------------------------------------------------

@@ -1,12 +1,12 @@
 /* Sanity-check the built stylesheet: every rule keeps at least one
    declaration, and every declaration is one the engine actually accepts.
 
-     node check.mjs [path to theme.css]
+     node check.mjs [path to theme.css]   (defaults to the built ../theme.css)
 */
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 
-const file = process.argv[2] || 'theme.css';
+const file = process.argv[2] || '../theme.css';
 const css = fs.readFileSync(file, 'utf8');
 
 /* Split declarations out of the source. Quote state is tracked because the

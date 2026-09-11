@@ -66,6 +66,14 @@ const REQUIRED = {
 const COLOR_FORMATS = new Set(['hsl', 'hsl-values', 'hsl-split', 'hsl-split-decimal',
   'rgb', 'rgb-values', 'rgb-split', 'hex']);
 
+/* A description is not plain text: Style Settings hands it to Obsidian's
+   markdown renderer. Wiki syntax in one is asking the app to resolve a link
+   from a context that has no file to resolve it against, and an embed is
+   asking it to render a note that does not exist. Neither belongs in a label.
+   This is checked because one of them shipped: `![[Note#Heading]]` sat in a
+   description for several releases as an illustration of what the setting
+   affects. */
+const WIKI = /!?\[\[|%%|\^[a-z0-9-]{6,}/i;
 const fails = [];
 const seen = new Map();
 const entries = doc.settings || [];
@@ -78,6 +86,11 @@ entries.forEach((e, i) => {
 
   for (const k of REQUIRED[e.type]) {
     if (e[k] === undefined || e[k] === null) fails.push(`${where}: ${e.type} needs "${k}"`);
+  }
+  for (const k of ['title', 'description']) {
+    if (typeof e[k] === 'string' && WIKI.test(e[k])) {
+      fails.push(`${where}: ${k} contains wiki syntax — Obsidian renders these as markdown`);
+    }
   }
   if (e.id !== undefined) {
     if (seen.has(e.id)) fails.push(`${where}: id repeats #${seen.get(e.id) + 1}`);
@@ -118,6 +131,61 @@ entries.forEach((e, i) => {
     }
   }
 });
+
+/* The heading tree, run exactly as Style Settings runs it.
+
+   The plugin makes the first entry the root of the section and then, for every
+   later heading, compares its level with the one it is standing on:
+
+     level <  current   walk up until it is not, then add as a sibling
+     level == current   add to the current heading's PARENT
+     level >  current   add to the current heading
+
+   The root's parent is the container element, not a heading — it has no
+   addSettingChild — so the moment a second heading arrives at the root's own
+   level, the plugin throws while rendering and the whole tab dies. That is what
+   a block full of level-1 headings does, and it is silent in every other check
+   here because the YAML is perfectly valid. So walk it the same way, with the
+   root's parent set to a bare object, and report the throw as ours.  */
+const headingTree = () => {
+  if (!entries.length) return;
+  const node = (setting, parent) => ({ setting, parent, children: [] });
+  const add = (p, setting) => {
+    if (!p || typeof p.children === 'undefined') {
+      throw new Error(`heading "${setting.id}" is handed to something that is not a heading`);
+    }
+    const n = node(setting, p);
+    p.children.push(n);
+    return n;
+  };
+  const rootParent = { container: true };          // the plugin's containerEl
+  const root = node(entries[0], rootParent);
+  let cur = root;
+  for (const e of entries.slice(1)) {
+    if (!e || e.type !== 'heading') continue;
+    const lvl = e.level;
+    if (lvl < cur.setting.level) {
+      while (lvl < cur.setting.level) {
+        cur = cur.parent;
+        if (!cur || !cur.setting) throw new Error(`heading "${e.id}" at level ${lvl} walks off the top of the tree`);
+      }
+      cur = cur.setting.id === root.setting.id ? add(cur, e) : add(cur.parent, e);
+    } else if (lvl === cur.setting.level) {
+      cur = add(cur.parent, e);
+    } else {
+      cur = add(cur, e);
+    }
+  }
+};
+
+if (entries.length && entries[0].type !== 'heading') {
+  fails.push('the first entry is not a heading — the plugin makes it the root of the section regardless');
+}
+try {
+  headingTree();
+} catch (err) {
+  fails.push(`heading levels: ${err.message}`);
+}
 
 console.log(`${entries.length} settings, ${new Set(entries.map((e) => e && e.type)).size} types`);
 if (fails.length) {

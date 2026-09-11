@@ -181,6 +181,27 @@ Semantic colours are authored as RGB triples, so one picker drives both the
 solid colour and every wash derived from it — change Blue and the note callout,
 the blue tag, the syntax token and the graph node all follow.
 
+### The heading level that crashed the plugin
+
+Worth writing down, because the YAML was valid and every other check passed.
+Style Settings makes the **first** entry of the block the root of the section
+and then, for each later heading, compares its level with the heading it is
+standing on: lower walks up and adds a sibling, *equal* adds to the current
+heading's parent, higher adds to the current heading. The root's parent is the
+container element — not a heading, and with no `addSettingChild` on it. So the
+moment a second heading appears at the root's own level, the plugin throws
+while rendering and the whole settings tab dies.
+
+This block had twelve `level: 1` headings. Every one after the first was a
+crash. The fix is that there is exactly one level 1 — the theme's own name,
+which everything else nests under — and every group heading is level 2.
+
+`preview/check-settings.mjs` now walks the heading tree the same way the plugin
+does, with the root's parent set to a bare object, so the throw happens in the
+build instead of in the app. It was written against the plugin's own source
+rather than from memory, after a first version written from memory falsely
+flagged eight good entries.
+
 ## Glow and motion
 
 A soft wash of the accent across the top of each panel, fading out down the
@@ -209,32 +230,56 @@ amount of colour shows less against a dark ground.
 
 **The foot of the page** dissolves: a progressive blur where the nearer a line
 is to the bottom of the pane the more it goes, so the column reads as
-continuing past the edge rather than being cut off at it.
+continuing past the edge rather than being cut off at it. It is short on
+purpose — 70px, about three lines — because the effect belongs to the last few
+lines and a tall field is a haze over the middle of the page.
 
-It holds full strength across the bottom eighth before the ramp begins,
-because the last line is the one the effect exists for and it was the weakest
-part of it. It also hangs 28px below the pane: `backdrop-filter` has nothing to
-sample past its own bottom edge, so it clamps there and the blur thins over the
-last few pixels — exactly where that last line sits. Hanging the box over the
-edge puts the weak band outside the card, where the pane's own clip removes it.
-Measured as the loss of detail against the same page with the fade off: 1.00 at
-130px up, 0.87, 0.78, and 0.51 at the bottom.
+It is **four** layers, and the single-layer version it replaced is the clearest
+lesson in this file. A gradient mask over a `backdrop-filter` composites
+`alpha x blurred + (1 - alpha) x sharp`. Both terms fall together with alpha,
+so contrast drops and it reads as a ramp — but at half alpha the page is
+showing the blurred text *and* the original text, through each other. That is
+not a partial blur, it is a double image, and it was reported in exactly those
+words: I can see the blur and I can see the text. A ramp of alpha cannot make a
+ramp of blur, because alpha does not attenuate a blur, it cross-fades back to
+the unblurred original.
 
-One thing it cannot fix. On a flat dark ground a **masked** `backdrop-filter`
-shifts the colour by one level in 255 — greys 25 and 24 either side of a line,
-which reads as a faint band over the empty part of a short note. It is the mask
-that does it, not the blur and not the alpha: with a flat `opacity` at every
-value from 0 to 1 the measured grey never moves, and with any mask — alpha or
-luminance, with the overshoot or without — it does. Stacking unmasked bands
-instead would trade it for several hard edges and five more blur layers. At
-0.4% it is the cheaper of the two.
+What works is a ladder. Each layer is solid across its own band and feathers in
+only at its top edge, so almost nowhere is a sharp copy showing through, and
+because each layer sits inside the backdrop of the one above it the radii
+compound instead of competing. Four of them at doubling radii — an eighth, a
+quarter, a half and the full setting — give a smooth ramp with no ghost
+anywhere. Where a layer *is* feathered, its radius is the small one, so the
+cross-fade that remains is a cross-fade of an almost-invisible blur.
 
-It is **one** layer. A gradient mask over a `backdrop-filter` does not merely
-hide part of the blur — at 50% alpha the blurred result is composited half and
-half with the untouched backdrop, which *is* a partial blur. The first version
-stacked two elements to ramp the strength and was paying twice for what one
-mask already does; masked `backdrop-filter` is the most expensive thing in this
-theme, so halving it matters more than any of its settings.
+It costs four `backdrop-filter`s instead of one. The single layer was cheaper
+and did not do the job.
+
+**The overhang was the band.** These layers used to hang 28px below the pane on
+the theory that a `backdrop-filter` thins at its own bottom edge with nothing
+left to sample. Measured, that is not what happens: with no overhang at all the
+bottom sixteen pixels come back at 0.05 of their original edge sharpness. What
+the overhang did do was sample the window *behind* the pane and blur it upward
+into the page — which over the empty part of a short note showed as a band of
+the wrong colour, 41/255 too dark in dark mode and 32/255 too light in light.
+That was the two-tone edge, and an earlier version of this file blamed it on a
+1/255 rounding artefact in masked `backdrop-filter`. It was not subtle and it
+was not inherent. With the overhang at zero the same measurement reads 2/255 in
+dark and 0 in light.
+
+The measurement is in `preview/fade-lab.mjs`, and it is the part worth keeping.
+Contrast alone cannot tell a blur from a cross-fade, because both lower it. So
+it takes `sd`, the contrast across a row of pixels, and `hf`, the mean step
+between neighbours, and reports `hf/sd` against the same page with the fade
+off. That ratio is scale free: dim a row and it does not move, blur a row and
+it collapses. 1.00 means the edges are exactly as crisp as they were and every
+bit of the lost contrast was a cross-fade.
+
+The one masked layer reads **0.81** across the bottom 32px — the text under it
+is very nearly as sharp as text with no fade on it at all, which is the
+double image, measured. The ladder reads **0.05** over the same rows, and 1.00
+by 75px up. Both candidates are still in `fade-lab.mjs`, so the difference can
+be re-run rather than taken on trust.
 
 And no colour. The first version laid the page colour over the bottom as well,
 which dissolves text nicely and is also plainly visible as a band across the
@@ -242,14 +287,13 @@ empty space under a short note — a haze over nothing. A blur of a flat
 background is indistinguishable from the background, so with the colour gone
 the effect simply is not there when there is nothing to blur.
 
-**In the editor**, one thing is not possible and is not pretended: a
-per-character pop as you type. CSS has no way to know a character was just
-entered — there is no selector for "this text node is newer than that one",
-CodeMirror does not mark new characters, and nothing in a stylesheet watches a
-keystroke. That needs a plugin. A *line* is an element, though, and a new one is
-inserted as you write; `@starting-style` gives it a state to come from, which is
-the same effect at the granularity CSS actually has, and it runs on the lines
-CodeMirror builds as it scrolls too.
+**In the editor, nothing moves.** Not as a limitation — as the decision. A
+per-character pop as you type is not possible in CSS at all (there is no
+selector for "this text node is newer than that one", CodeMirror does not mark
+new characters, and nothing in a stylesheet watches a keystroke), but a *line*
+is an element and `@starting-style` gave it a state to come from. That was
+built, shipped, and taken out again, along with the scroll-driven reveal and
+the pop on a ticked checkbox. See below for why.
 
 **Expressive** is the fourth level and the one that behaves like a designed
 interface rather than a styled one. A menu opened by a right-click grows out of
@@ -755,6 +799,16 @@ scalar**. YAML reads `description: it works like this: a nested mapping` as
 exactly that, the parse fails, and Style Settings shows the theme no settings
 at all — which reads to a user as the plugin being broken rather than as one
 piece of punctuation.
+
+It also walks the heading tree exactly as the plugin does, which is the check
+that would have caught the crash described under Settings. A valid block is not
+a working one.
+
+`node fade-lab.mjs [light|dark]` measures the bottom fade two ways — with the
+note's last lines pressed against the pane floor, and again with the pane empty
+under them — and reports whether the blur is a blur or a cross-fade. It exists
+because a screenshot of a cross-fade and a screenshot of a blur look similar
+enough to argue about, and the numbers do not.
 
 ## Measuring the real app
 

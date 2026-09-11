@@ -5,16 +5,16 @@ id: bookcloth
 settings:
     -
         id: bc-info
-        title: About
-        description: Bookcloth follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
+        title: Bookcloth
+        description: Follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
         type: heading
         level: 1
-        collapsed: true
+        collapsed: false
     -
         id: bc-accent-head
         title: Accent
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: accent
@@ -62,7 +62,7 @@ settings:
         id: bc-surface-head
         title: Surfaces
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-bg-primary
@@ -111,7 +111,7 @@ settings:
         id: bc-ink-head
         title: Text colours
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-ink-normal
@@ -144,7 +144,7 @@ settings:
         title: Semantic colours
         description: Notion's own palette. Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: color-red-rgb
@@ -214,7 +214,7 @@ settings:
         id: bc-typo-head
         title: Typography
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-font-interface
@@ -347,7 +347,7 @@ settings:
         id: bc-shape-head
         title: Shape and density
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-radius
@@ -472,7 +472,7 @@ settings:
         title: Floating panels
         description: Off by default. Notion's layout is flush; turning this on lifts every region onto its own rounded card, with a darker backdrop behind them.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-float-panes
@@ -496,7 +496,7 @@ settings:
         title: Glow strength
         description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
         type: variable-number-slider
-        default: 14
+        default: 16
         min: 0
         max: 45
         step: 1
@@ -529,9 +529,9 @@ settings:
     -
         id: bc-edge-fade-height
         title: Fade height
-        description: How far up the page the fade reaches.
+        description: How far up the page the fade reaches. It is built as four stacked layers at doubling radii, so the number is the height of the outermost and faintest one; the strong end is always the last quarter of it.
         type: variable-number-slider
-        default: 150
+        default: 70
         min: 40
         max: 320
         step: 10
@@ -539,11 +539,11 @@ settings:
     -
         id: bc-edge-fade-blur
         title: Fade blur
-        description: "The strength at the very bottom. One masked layer ramps it: at half alpha the blurred result is composited half and half with the untouched page, which is a partial blur rather than a hidden one."
+        description: The radius of the innermost layer, at the very bottom edge. The three above it run at a half, a quarter and an eighth of it, and because each sits inside the next one's backdrop the radii compound — so the bottom is blurrier than this number alone.
         type: variable-number-slider
-        default: 14
+        default: 22
         min: 0
-        max: 24
+        max: 40
         step: 1
         format: px
     -
@@ -566,7 +566,7 @@ settings:
         id: bc-icon-head
         title: Icons
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-icon-scale
@@ -589,7 +589,7 @@ settings:
         id: bc-ui-head
         title: Interface
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-tab-style
@@ -658,7 +658,7 @@ settings:
         id: bc-editor-head
         title: Editor
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-callout-style
@@ -676,7 +676,7 @@ settings:
     -
         id: bc-embed-padding
         title: Embed padding
-        description: The space inside a transcluded block — `![[Note#Heading]]`. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
+        description: The space inside a transcluded block — a heading section pulled into another note. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
         type: variable-number-slider
         default: 12
         min: 0
@@ -807,7 +807,7 @@ settings:
         title: Plugin support
         description: Plugin styling is on by default. Turn an item on here to opt out and let that plugin fall back to its own styles.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-off-dataview
