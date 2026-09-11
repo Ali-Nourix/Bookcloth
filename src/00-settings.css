@@ -541,7 +541,7 @@ settings:
         title: Fade blur
         description: "The strength at the very bottom. One masked layer ramps it: at half alpha the blurred result is composited half and half with the untouched page, which is a partial blur rather than a hidden one."
         type: variable-number-slider
-        default: 6
+        default: 14
         min: 0
         max: 24
         step: 1

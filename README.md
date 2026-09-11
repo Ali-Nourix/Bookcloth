@@ -211,6 +211,24 @@ amount of colour shows less against a dark ground.
 is to the bottom of the pane the more it goes, so the column reads as
 continuing past the edge rather than being cut off at it.
 
+It holds full strength across the bottom eighth before the ramp begins,
+because the last line is the one the effect exists for and it was the weakest
+part of it. It also hangs 28px below the pane: `backdrop-filter` has nothing to
+sample past its own bottom edge, so it clamps there and the blur thins over the
+last few pixels — exactly where that last line sits. Hanging the box over the
+edge puts the weak band outside the card, where the pane's own clip removes it.
+Measured as the loss of detail against the same page with the fade off: 1.00 at
+130px up, 0.87, 0.78, and 0.51 at the bottom.
+
+One thing it cannot fix. On a flat dark ground a **masked** `backdrop-filter`
+shifts the colour by one level in 255 — greys 25 and 24 either side of a line,
+which reads as a faint band over the empty part of a short note. It is the mask
+that does it, not the blur and not the alpha: with a flat `opacity` at every
+value from 0 to 1 the measured grey never moves, and with any mask — alpha or
+luminance, with the overshoot or without — it does. Stacking unmasked bands
+instead would trade it for several hard edges and five more blur layers. At
+0.4% it is the cheaper of the two.
+
 It is **one** layer. A gradient mask over a `backdrop-filter` does not merely
 hide part of the blur — at 50% alpha the blurred result is composited half and
 half with the untouched backdrop, which *is* a partial blur. The first version
@@ -242,28 +260,14 @@ for the first six, because past that the delay outlasts the time it takes to
 look at the menu. The tick draws itself into a checkbox by animating the mask
 it is already made of. The spring overshoots by four percent, once.
 
-**Blocks and editor lines resolve as they come up the page**, and the story of
-that effect is the most useful thing in this file. It was written, measured,
-removed, and brought back.
-
-It was written with `animation-fill-mode: both`, and the harness measured every
-callout and table on the page stranded at opacity 0.35, permanently. The
-diagnosis at the time — "an inactive view timeline pins the element at its
-from-state" — was half right and led to the wrong conclusion, that the
-technique was unusable. The real rule is simpler: **anything already on screen
-when a note opens is *behind* its entry range**, and a backwards fill paints
-the before-phase. The fill was the bug, not the timeline.
-
-With no fill at all, an element outside its range is simply itself. Measured
-again: at rest every block reads opacity 1; mid-scroll the one crossing the
-edge reads 0.39 and resolves as it rises. Nothing can be stranded because there
-is no state to be stranded in. It is safe on `.cm-line` for the same reason the
-rest of this layer is — `transform` and `opacity` change no layout box, so
-CodeMirror's line measurement never sees it.
-
-`invariants.mjs` now fails on any block sitting below full opacity or displaced
-at rest, with a sub-pixel tolerance so a finishing entrance is not mistaken for
-a stranded one. That check is why the effect could come back.
+**What was taken out, and why it is recorded here.** A scroll-driven reveal, a
+per-line entrance on typing, a pop on a ticked checkbox and a tick that drew
+itself in were all built, shipped, and removed at the reader's request. They
+worked. The lesson is not about the technique — it is that motion inside the
+text you are writing is not the same as motion in the chrome around it. A menu
+that grows out of the corner you opened it from is a control acknowledging you.
+A line that animates as you type it is the document arguing with you. The layer
+that survived is entirely in the chrome.
 
 Two rules govern the motion layer. **Only `transform` and `opacity` are
 animated** — those are the two the compositor can run without laying the page

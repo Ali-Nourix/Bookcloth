@@ -69,18 +69,36 @@ body {
   );
 
   --bc-edge-fade-height: 150px;
-  --bc-edge-fade-blur: 6px;
+  --bc-edge-fade-blur: 14px;
+  /* The bottom eighth is held at full strength before the ramp starts, because
+     the last line is the one the effect exists for and it was the weakest.
+
+     And the ramp reaches zero at 78% rather than trailing to it. That tail was
+     costing a visible band: measured down 170px of empty pane in dark mode, the
+     old curve produced three distinct greys — 25, 24 and 23 — where there is
+     nothing to blur and the answer should be one colour. Compositing a blurred
+     backdrop over itself at an alpha of a few percent rounds to plus or minus
+     one at eight bits per channel, and on a flat dark ground one level is a
+     visible edge. Above 78% the mask is exactly zero, so nothing composites at
+     all. */
   --bc-edge-fade-falloff: linear-gradient(
     to top,
     rgb(0 0 0 / 1) 0%,
-    rgb(0 0 0 / 0.92) 12%,
-    rgb(0 0 0 / 0.72) 28%,
-    rgb(0 0 0 / 0.46) 46%,
-    rgb(0 0 0 / 0.24) 64%,
-    rgb(0 0 0 / 0.09) 80%,
-    rgb(0 0 0 / 0.02) 92%,
+    rgb(0 0 0 / 1) 13%,
+    rgb(0 0 0 / 0.88) 26%,
+    rgb(0 0 0 / 0.66) 40%,
+    rgb(0 0 0 / 0.42) 54%,
+    rgb(0 0 0 / 0.22) 66%,
+    rgb(0 0 0 / 0.08) 74%,
+    rgb(0 0 0 / 0) 78%,
     rgb(0 0 0 / 0) 100%
   );
+  /* How far the blurring box hangs below the pane. backdrop-filter has nothing
+     to sample past its own bottom edge, so it clamps there and the blur weakens
+     over the last few pixels — which is exactly where the last line of the note
+     sits. Hanging the box over the edge puts that weak band outside the card,
+     where the pane's own clip removes it. */
+  --bc-edge-fade-overshoot: 28px;
 
   --bc-lift: translateY(-1px);
   --bc-press: scale(0.96);
@@ -276,26 +294,6 @@ body:is(.bc-motion-full, .bc-motion-expressive) .side-dock-ribbon-action:active,
 body:is(.bc-motion-full, .bc-motion-expressive) .workspace-tab-header-new-tab:active,
 body:is(.bc-motion-full, .bc-motion-expressive) .sidebar-toggle-button:active {
   transform: var(--bc-press);
-}
-
-/* --- Checkboxes -----------------------------------------------------------
-   Ticking something off is the one interaction in a notes app that is supposed
-   to feel good. The box pops once, slightly past its own size and back. */
-
-@keyframes bc-check-pop {
-  0% {
-    transform: scale(1);
-  }
-  38% {
-    transform: scale(1.22);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-body:is(.bc-motion-full, .bc-motion-expressive) input[type="checkbox"]:checked {
-  animation: bc-check-pop calc(var(--bc-speed) * 3) var(--bc-ease-spring);
 }
 
 /* --- Floating layers ------------------------------------------------------
@@ -565,28 +563,6 @@ body.bc-motion-expressive .side-dock-ribbon-action .svg-icon,
 body.bc-motion-expressive .clickable-icon .svg-icon {
   transition: transform calc(var(--bc-speed) * 2) var(--bc-ease-spring);
 }
-
-/* The tick draws itself in rather than appearing complete. Animating the mask
-   size costs nothing — the glyph is already a mask — and it is the one place
-   in a notes app where a half-second of theatre is earned. */
-@keyframes bc-tick-in {
-  from {
-    -webkit-mask-size: 0%;
-    mask-size: 0%;
-    opacity: 0;
-  }
-  to {
-    -webkit-mask-size: 74%;
-    mask-size: 74%;
-    opacity: 1;
-  }
-}
-
-body.bc-motion-expressive input[type="checkbox"]:checked::after {
-  animation: bc-tick-in calc(var(--bc-speed) * 2.6) var(--bc-ease-spring);
-}
-
-/* Pane actions stay out of the way until the pane is under the pointer. */
 body.bc-motion-expressive .view-header .view-actions {
   opacity: 0.55;
   transition: opacity calc(var(--bc-speed) * 2) var(--bc-ease);
@@ -595,82 +571,6 @@ body.bc-motion-expressive .view-header .view-actions {
 body.bc-motion-expressive .workspace-leaf:hover .view-header .view-actions,
 body.bc-motion-expressive .view-header:focus-within .view-actions {
   opacity: 1;
-}
-
-/* --- Written in as you scroll --------------------------------------------
-   Blocks and editor lines resolve as they come up the page. This was removed
-   once and the removal was half right: the technique is sound, `fill: both`
-   was not. With a fill, an element that has not reached its range yet is
-   painted at its from-state — and everything already on screen when a note
-   opens is *behind* its entry range, so the harness measured every callout on
-   the page stranded at opacity 0.35, permanently.
-
-   With no fill at all, an element outside its range is simply itself. Measured
-   in the harness: at rest every block reads opacity 1; mid-scroll the one
-   crossing the edge reads 0.39 and resolves as it rises. Nothing can be
-   stranded, because there is no state to be stranded in.
-
-   Transform and opacity only, so CodeMirror's line measurement is untouched —
-   neither changes a layout box, which is the whole reason this is safe to put
-   on .cm-line at all. */
-
-@supports (animation-timeline: view()) {
-  body.bc-motion-expressive .markdown-preview-view .callout,
-  body.bc-motion-expressive .markdown-preview-view .markdown-embed,
-  body.bc-motion-expressive .markdown-preview-view img,
-  body.bc-motion-expressive .markdown-preview-view table,
-  body.bc-motion-expressive .markdown-preview-view pre {
-    animation: bc-settle linear;
-    animation-timeline: view();
-    animation-range: entry 0% entry 45%;
-  }
-
-  /* Shorter for a line of text: a paragraph can afford to resolve over half
-     its own height, a line cannot or the page reads as permanently loading. */
-  body.bc-motion-expressive .cm-content > .cm-line {
-    animation: bc-settle-line linear;
-    animation-timeline: view();
-    animation-range: entry 0% entry 26%;
-  }
-
-  @keyframes bc-settle {
-    from {
-      opacity: 0.32;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes bc-settle-line {
-    from {
-      opacity: 0.25;
-      transform: translateY(5px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-}
-
-/* And the note itself when it opens. Runs once on mount, no fill. */
-body.bc-motion-expressive .markdown-preview-sizer,
-body.bc-motion-expressive .markdown-source-view .cm-content {
-  animation: bc-page-in calc(var(--bc-speed) * 3) var(--bc-ease-out);
-}
-
-@keyframes bc-page-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 /* --- The bottom of the page ----------------------------------------------
@@ -696,8 +596,8 @@ body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
   content: "";
   position: absolute;
   inset-inline: 0;
-  inset-block-end: 0;
-  height: var(--bc-edge-fade-height);
+  inset-block-end: calc(var(--bc-edge-fade-overshoot) * -1);
+  height: calc(var(--bc-edge-fade-height) + var(--bc-edge-fade-overshoot));
   pointer-events: none;
   z-index: 2;
   backdrop-filter: blur(var(--bc-edge-fade-blur));
@@ -708,79 +608,6 @@ body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
      finds the moment it is strongest. */
   -webkit-mask-image: var(--bc-edge-fade-falloff);
   mask-image: var(--bc-edge-fade-falloff);
-}
-
-/* --- The editor -----------------------------------------------------------
-   What is not possible, so it is not pretended: a per-character pop as you
-   type. CSS has no way to know a character was just entered — there is no
-   selector for "this text node is newer than that one", CodeMirror does not
-   mark new characters, and nothing in a stylesheet can watch a keystroke. That
-   one needs a plugin, not a theme.
-
-   A line, though, is an element, and a new one is inserted as you write.
-   @starting-style gives it a state to come from, which is the same effect at
-   the granularity CSS actually has. It runs on lines CodeMirror creates as it
-   scrolls too, which is the "lines write themselves in" part. */
-
-@supports (transition-behavior: allow-discrete) {
-  body.bc-motion-expressive .cm-content > .cm-line {
-    transition:
-      opacity calc(var(--bc-speed) * 2.4) var(--bc-ease-out),
-      transform calc(var(--bc-speed) * 2.4) var(--bc-ease-spring),
-      filter calc(var(--bc-speed) * 2.4) var(--bc-ease-out);
-  }
-
-  /* The state a line is born in. Short enough not to be a page turn, long
-     enough to be seen — the first version ran in 140ms flat and the report
-     back was that none of it registered. */
-  @starting-style {
-    body.bc-motion-expressive .cm-content > .cm-line {
-      opacity: 0;
-      transform: translateY(6px) scale(0.985);
-      filter: blur(1.5px);
-    }
-  }
-}
-
-/* The line being written on lifts a shade out of the page. Not a highlight —
-   a highlight is a band of colour that moves with the caret and is the fastest
-   way to make an editor feel busy. This is the surrounding text stepping back
-   instead, which reads as focus rather than as decoration. */
-body.bc-motion-expressive .cm-editor .cm-line {
-  transition: opacity calc(var(--bc-speed) * 2) var(--bc-ease);
-}
-
-body.bc-motion-expressive .cm-editor.cm-focused .cm-line:not(.cm-active) {
-  opacity: 0.92;
-}
-
-/* The caret. A hard blink is a terminal; a caret that breathes is an editor. */
-body.bc-motion-expressive .cm-editor .cm-cursor,
-body.bc-motion-expressive .cm-editor .cm-dropCursor {
-  animation: bc-caret 1.1s var(--bc-ease) infinite;
-}
-
-@keyframes bc-caret {
-  0%,
-  42% {
-    opacity: 1;
-  }
-  58%,
-  92% {
-    opacity: 0.15;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* A task marker pops in when it is ticked and settles back out when it is
-   cleared. A transition rather than an animation, so it plays both ways. */
-body.bc-motion-expressive input[type="checkbox"] {
-  transition:
-    background-color var(--bc-speed) var(--bc-ease),
-    border-color var(--bc-speed) var(--bc-ease),
-    transform calc(var(--bc-speed) * 2.2) var(--bc-ease-spring);
 }
 
 /* --- Levels ---------------------------------------------------------------
