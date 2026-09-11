@@ -454,7 +454,7 @@ settings:
         type: class-toggle
         default: true
     -
-        id: bc-glow-strength
+        id: bc-glow-base
         title: Glow strength
         description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
         type: variable-number-slider
@@ -463,6 +463,15 @@ settings:
         max: 45
         step: 1
         format: '%'
+    -
+        id: bc-glow-stroke-strength
+        title: Glow stroke strength
+        description: The edge of the panel, relative to the wash. It starts thick at the top and thins as it fades — two rings over each other, because a single stroke can fade in colour or hold its width, not both.
+        type: variable-number-slider
+        default: 2.35
+        min: 0
+        max: 6
+        step: 0.05
     -
         id: bc-glow-height
         title: Glow height

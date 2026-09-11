@@ -188,6 +188,19 @@ page, and the panel you are working in glows a little harder than the rest.
 That last part is the reason the whole thing earns its place: it is a "you are
 here" that costs no border, no shadow and nothing that moves.
 
+It lands on every surface, not just the panes: the ribbon, menus, modals, the
+quick switcher, popovers and toasts. A right-click that opens something wearing
+the theme's own light reads as part of the app rather than as a system menu
+that wandered in. The pseudo-elements take `border-radius: inherit`, which is
+how one block covers a pane card, a ribbon and a menu without any of them
+naming a radius — and why none of them need `overflow: hidden` to stop the wash
+escaping a rounded corner, which on a menu would have clipped its submenu.
+
+The ribbon is a card in float mode for the same reason every other region is.
+It had been left flush against the backdrop, which is only invisible while the
+sidebar beside it is open and covers the join; collapse the sidebar and the
+ribbon was a square-cornered strip standing alone among rounded panels.
+
 It is drawn as a pseudo-element on the pane card rather than as a background on
 the card itself. The card's background is a surface colour a reader can set,
 and a gradient painted into it could not be turned off without taking the
@@ -204,12 +217,25 @@ colour fades and drops everything that moves; None stops all of it, including
 animation a plugin adds. `prefers-reduced-motion` overrides whichever is
 picked, because motion is not a preference the theme gets to argue with.
 
-One thing worth recording, because it shipped invisible for a whole render:
-the glow's alpha was written `calc(var(--bc-glow-strength) / 100)` to turn 14%
+Three things in this layer are worth recording, because each shipped invisible
+and each looked exactly like the feature being absent.
+
+The glow's alpha was written `calc(var(--bc-glow-strength) / 100)` to turn 14%
 into 0.14. **A percentage divided by a number is still a percentage** — the
-alpha came out at 0.14%, every stop in the gradient computed to fully
-transparent, and the screenshot of it looked exactly like a screenshot of
-nothing. An alpha channel takes a percentage directly, so it is the percentage.
+alpha came out at 0.14% and every stop computed fully transparent. An alpha
+channel takes a percentage directly, so it is the percentage.
+
+Then the stroke's strength was written as a percentage and multiplied by the
+glow's. **A percentage times a percentage is a square percentage**, which is
+not a thing: `calc()` gives up, the `hsl()` around it is invalid, and the whole
+`box-shadow` computes to `none`. A multiplier is a number.
+
+And the per-surface strength did nothing at first, because it went through an
+intermediate `--bc-glow-a: var(--bc-glow-strength)` declared on `body`. **A
+custom property is substituted where it is declared** — body's strength was
+frozen into it, so a menu re-declaring the strength further down still got the
+body's number. The multiplier is applied at the point of use, which is the only
+place both halves are in scope.
 
 ## The window frame
 

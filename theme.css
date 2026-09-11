@@ -1,4 +1,4 @@
-/* Bookcloth 2.9.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.9.1 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -458,7 +458,7 @@ settings:
         type: class-toggle
         default: true
     -
-        id: bc-glow-strength
+        id: bc-glow-base
         title: Glow strength
         description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
         type: variable-number-slider
@@ -467,6 +467,15 @@ settings:
         max: 45
         step: 1
         format: '%'
+    -
+        id: bc-glow-stroke-strength
+        title: Glow stroke strength
+        description: The edge of the panel, relative to the wash. It starts thick at the top and thins as it fades — two rings over each other, because a single stroke can fade in colour or hold its width, not both.
+        type: variable-number-slider
+        default: 2.35
+        min: 0
+        max: 6
+        step: 0.05
     -
         id: bc-glow-height
         title: Glow height
@@ -778,7 +787,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.9.0";
+  --bc-version: "2.9.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -4549,6 +4558,23 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-resize-handle {
   background-color: transparent;
 }
 
+/* The ribbon is a region, so in float mode it is a card like every other one.
+   It had been left flush against the backdrop, which is only invisible while
+   the sidebar beside it is open and its card covers the join — collapse the
+   sidebar and the ribbon is suddenly a square-cornered strip standing on its
+   own next to rounded panels. */
+body.bc-float-panes .workspace-ribbon.mod-left,
+body.bc-float-panes .workspace-ribbon.mod-right {
+  background-color: var(--background-secondary);
+  border-radius: var(--bc-pane-radius);
+  margin-block: var(--bc-pane-gap);
+  margin-inline-start: var(--bc-pane-gap);
+}
+
+body.bc-float-panes .workspace-ribbon.mod-right {
+  margin-inline: 0 var(--bc-pane-gap);
+}
+
 body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
 body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
 body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
@@ -4575,22 +4601,34 @@ body {
      percentage so the setting reads as one, and the alphas below are fractions
      of it on a quadratic falloff — a straight two-stop gradient in sRGB dips
      muddy through its middle, and on a large soft wash that shows as a band. */
-  --bc-glow-strength: 10%;
+  --bc-glow-base: 10%;
+  --bc-glow-strength: var(--bc-glow-base);
   --bc-glow-height: 160px;
   /* The edge reads far stronger than the wash at the same alpha — a hairline
      is one pixel of pure colour where the wash is a hundred and sixty of
      almost none — so it is a multiple of the one setting rather than a second
      number to keep in step. */
-  --bc-glow-stroke: calc(var(--bc-glow-strength) * 3.4);
+  /* Unitless, deliberately. A percentage times a percentage is a square
+     percentage, which is not a thing: calc() gives up, the hsl() around it is
+     invalid, and the whole box-shadow computes to none. The stroke vanished
+     exactly that way once already, one release after the wash vanished for the
+     same family of reason. A multiplier is a number. */
+  --bc-glow-stroke-strength: 2.35;
+  --bc-glow-stroke: calc(var(--bc-glow-strength) * var(--bc-glow-stroke-strength));
   --bc-glow-stroke-w: 1px;
-  --bc-glow-stroke-peak-w: 2.5px;
+  --bc-glow-stroke-peak-w: 2px;
   /* Used as the alpha channel directly, because an alpha channel takes a
      percentage. Dividing by 100 first looks like it turns 14% into 0.14 and
      does not: a percentage over a number is still a percentage, so the alpha
      came out at 0.14% and every stop in the gradient computed to fully
      transparent. It rendered as nothing at all, which is exactly what a
      screenshot of it looked like. */
-  --bc-glow-a: var(--bc-glow-strength);
+  /* NOT a --bc-glow-a token. A custom property is substituted where it is
+     declared, so `--bc-glow-a: var(--bc-glow-strength)` on body freezes body's
+     strength into it — and a menu re-declaring the strength further down got
+     the body's number anyway. The multiplier is applied at the point of use,
+     which is the only place both halves are in scope. */
+  --bc-glow-mult: 1;
 
   --bc-glow-falloff: linear-gradient(
     to bottom,
@@ -4629,8 +4667,28 @@ body {
    holds sits over it without needing a z-index war. pointer-events: none so it
    never eats a click meant for the tab strip under it. */
 
-body.bc-pane-glow .workspace-tabs {
+body.bc-pane-glow .workspace-tabs,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon {
   position: relative;
+}
+
+/* Menus, modals and popovers get the same treatment at a smaller scale — they
+   are surfaces too, and a right-click that opens something wearing the theme's
+   own light reads as part of the app rather than as a system menu that wandered
+   in. No position here: every one of these is already positioned, and making a
+   menu `relative` would drop it where it stands. */
+body.bc-pane-glow .menu,
+body.bc-pane-glow .modal,
+body.bc-pane-glow .prompt,
+body.bc-pane-glow .suggestion-container,
+body.bc-pane-glow .popover.hover-popover,
+body.bc-pane-glow .notice {
+  --bc-glow-height: 72px;
+  --bc-glow-strength: calc(var(--bc-glow-base) * 1.5);
+}
+
+body.bc-pane-glow .modal {
+  --bc-glow-height: 132px;
 }
 
 /* The wash and the edge fade together, so the fade lives in a mask rather than
@@ -4641,22 +4699,47 @@ body.bc-pane-glow .workspace-tabs {
    through its middle, and across a hundred and sixty pixels that shows as a
    band. */
 body.bc-pane-glow .workspace-tabs::before,
-body.bc-pane-glow .workspace-tabs::after {
+body.bc-pane-glow .workspace-tabs::after,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::before,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::after,
+body.bc-pane-glow .menu::before,
+body.bc-pane-glow .menu::after,
+body.bc-pane-glow .modal::before,
+body.bc-pane-glow .modal::after,
+body.bc-pane-glow .prompt::before,
+body.bc-pane-glow .prompt::after,
+body.bc-pane-glow .suggestion-container::before,
+body.bc-pane-glow .suggestion-container::after,
+body.bc-pane-glow .popover.hover-popover::before,
+body.bc-pane-glow .popover.hover-popover::after,
+body.bc-pane-glow .notice::before,
+body.bc-pane-glow .notice::after {
   content: "";
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
   pointer-events: none;
-  /* top corners only: the bottom of the box is fully masked out, so its
-     corners are never drawn and rounding them would do nothing */
-  border-radius: var(--bc-pane-radius) var(--bc-pane-radius) 0 0;
+  /* inherit, so the same block works on a pane card, a ribbon, a menu and a
+     modal without any of them naming its own radius. The bottom corners round
+     inside the pseudo rather than at the card's foot, which is invisible: the
+     mask has taken that end to nothing before it gets there. And inheriting
+     the radius is why none of these need overflow: hidden to stop the wash
+     spilling out of a rounded corner — a clip on a menu would cut a submenu. */
+  border-radius: inherit;
   transition: opacity calc(var(--bc-speed) * 3) var(--bc-ease-out);
 }
 
-body.bc-pane-glow .workspace-tabs::before {
+body.bc-pane-glow .workspace-tabs::before,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::before,
+body.bc-pane-glow .menu::before,
+body.bc-pane-glow .modal::before,
+body.bc-pane-glow .prompt::before,
+body.bc-pane-glow .suggestion-container::before,
+body.bc-pane-glow .popover.hover-popover::before,
+body.bc-pane-glow .notice::before {
   height: var(--bc-glow-height);
   opacity: 0.62;
-  background-color: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / var(--bc-glow-a));
+  background-color: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / calc(var(--bc-glow-strength) * var(--bc-glow-mult)));
   box-shadow: inset 0 0 0 var(--bc-glow-stroke-w)
     hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / var(--bc-glow-stroke));
   -webkit-mask-image: var(--bc-glow-falloff);
@@ -4668,7 +4751,14 @@ body.bc-pane-glow .workspace-tabs::before {
    colour or hold its width, not both. Two rings over each other — a heavy one
    that is gone in the first third, a hairline that runs the whole way — read
    as one stroke that starts thick and thins out. */
-body.bc-pane-glow .workspace-tabs::after {
+body.bc-pane-glow .workspace-tabs::after,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::after,
+body.bc-pane-glow .menu::after,
+body.bc-pane-glow .modal::after,
+body.bc-pane-glow .prompt::after,
+body.bc-pane-glow .suggestion-container::after,
+body.bc-pane-glow .popover.hover-popover::after,
+body.bc-pane-glow .notice::after {
   height: calc(var(--bc-glow-height) * 0.4);
   opacity: 0.62;
   box-shadow: inset 0 0 0 var(--bc-glow-stroke-peak-w)
@@ -4688,8 +4778,8 @@ body.bc-pane-glow .workspace-tabs:focus-within::after {
 
 /* A dark page takes more tint to show the same amount of colour, and the
    accent sits on a dark ground rather than under a white one. */
-body.theme-dark.bc-pane-glow .workspace-tabs::before {
-  --bc-glow-a: calc(var(--bc-glow-strength) * 1.35);
+body.theme-dark {
+  --bc-glow-mult: 1.35;
 }
 
 /* --- Rows -----------------------------------------------------------------
@@ -4850,6 +4940,91 @@ body.bc-motion-full .markdown-rendered a.external-link {
 body.bc-motion-full .markdown-rendered a.internal-link:hover,
 body.bc-motion-full .markdown-rendered a.external-link:hover {
   text-decoration-color: currentColor;
+}
+
+/* --- Menus, suggestions, settings -----------------------------------------
+   A right-click menu is where a theme is judged fastest: it is the one surface
+   a reader opens dozens of times an hour and never looks at for long. The row
+   fills, and its icon leans a pixel toward the words it belongs to. One pixel
+   is not a decoration — it is the row saying which way it reads, which in an
+   RTL note is the other way, hence the logical property. */
+
+.menu-item,
+.suggestion-item,
+.setting-item {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+body.bc-motion-full .menu-item-icon,
+body.bc-motion-full .suggestion-flair {
+  transition: transform calc(var(--bc-speed) * 2) var(--bc-ease-spring);
+}
+
+body.bc-motion-full .menu-item:hover .menu-item-icon,
+body.bc-motion-full .suggestion-item.is-selected .suggestion-flair {
+  transform: translateX(1px);
+}
+
+body.bc-rtl.bc-motion-full .menu-item:hover .menu-item-icon,
+body.bc-rtl.bc-motion-full .suggestion-item.is-selected .suggestion-flair {
+  transform: translateX(-1px);
+}
+
+/* --- The switch -----------------------------------------------------------
+   The thumb overshoots slightly and settles. A switch is the one control whose
+   whole job is to show it changed, so it is worth the extra 60ms. */
+
+body.bc-motion-full .checkbox-container::after {
+  transition: transform calc(var(--bc-speed) * 2.4) var(--bc-ease-spring) !important;
+}
+
+/* --- Inputs ---------------------------------------------------------------
+   The focus ring grows into place rather than appearing, which is the
+   difference between the field noticing you and the field flashing at you. */
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+textarea,
+select,
+.dropdown {
+  transition:
+    box-shadow calc(var(--bc-speed) * 1.6) var(--bc-ease-out),
+    background-color var(--bc-speed) var(--bc-ease),
+    border-color var(--bc-speed) var(--bc-ease);
+}
+
+/* --- Tags, table rows, small surfaces ------------------------------------- */
+
+.markdown-rendered .tag,
+.markdown-rendered tr,
+.markdown-rendered th,
+.markdown-rendered td,
+.callout {
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+body.bc-motion-full .markdown-rendered a.tag {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease),
+    transform calc(var(--bc-speed) * 1.6) var(--bc-ease-spring);
+}
+
+body.bc-motion-full .markdown-rendered a.tag:hover {
+  transform: var(--bc-lift);
+}
+
+/* --- Folding --------------------------------------------------------------
+   The chevron turns rather than swapping. Obsidian sets the rotation itself;
+   all this adds is the time it takes. */
+
+.collapse-icon,
+.collapse-indicator,
+.tree-item-icon {
+  transition: transform calc(var(--bc-speed) * 1.6) var(--bc-ease-out);
 }
 
 /* --- Levels ---------------------------------------------------------------
