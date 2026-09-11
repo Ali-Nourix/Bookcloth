@@ -531,7 +531,7 @@ settings:
         title: Fade height
         description: How far up the page the fade reaches.
         type: variable-number-slider
-        default: 120
+        default: 150
         min: 40
         max: 320
         step: 10
@@ -539,9 +539,9 @@ settings:
     -
         id: bc-edge-fade-blur
         title: Fade blur
-        description: The strength at the very bottom. The band above it runs at 40% of this, which is what makes it a gradient of blur rather than a step.
+        description: "The strength at the very bottom. One masked layer ramps it: at half alpha the blurred result is composited half and half with the untouched page, which is a partial blur rather than a hidden one."
         type: variable-number-slider
-        default: 7
+        default: 6
         min: 0
         max: 24
         step: 1
@@ -639,7 +639,7 @@ settings:
         title: Animation speed
         description: How long hovers, toggles and menus take. Zero turns transitions off; the theme also respects the system's reduce-motion setting on its own.
         type: variable-number-slider
-        default: 100
+        default: 170
         min: 0
         max: 400
         step: 10

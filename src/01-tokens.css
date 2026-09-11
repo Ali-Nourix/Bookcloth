@@ -12,7 +12,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.2.0";
+  --bc-version: "3.3.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -203,7 +203,11 @@ body {
      Notion's transitions are short enough to read as instant feedback rather
      than as animation. */
   --bc-ease: cubic-bezier(0.2, 0, 0, 1);
-  --bc-speed: 100ms;
+  /* 100ms was Notion's, and Notion is not animating anything you are meant to
+     notice. Everything in the motion layer is a multiple of this, so a single
+     step up is what turns a set of effects that technically run into a set
+     that registers. */
+  --bc-speed: 170ms;
 }
 
 /* Accent intensity ------------------------------------------------------- */

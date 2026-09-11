@@ -209,11 +209,20 @@ amount of colour shows less against a dark ground.
 
 **The foot of the page** dissolves: a progressive blur where the nearer a line
 is to the bottom of the pane the more it goes, so the column reads as
-continuing past the edge rather than being cut off at it. A blur cannot be a
-gradient, so a gradient of blur is built out of layers — a long weak band and a
-short strong one, each masked to the stretch where its strength is right. It is
-masked `backdrop-filter`, the most expensive thing in the theme, which is why
-it is a setting of its own and off by default.
+continuing past the edge rather than being cut off at it.
+
+It is **one** layer. A gradient mask over a `backdrop-filter` does not merely
+hide part of the blur — at 50% alpha the blurred result is composited half and
+half with the untouched backdrop, which *is* a partial blur. The first version
+stacked two elements to ramp the strength and was paying twice for what one
+mask already does; masked `backdrop-filter` is the most expensive thing in this
+theme, so halving it matters more than any of its settings.
+
+And no colour. The first version laid the page colour over the bottom as well,
+which dissolves text nicely and is also plainly visible as a band across the
+empty space under a short note — a haze over nothing. A blur of a flat
+background is indistinguishable from the background, so with the colour gone
+the effect simply is not there when there is nothing to blur.
 
 **In the editor**, one thing is not possible and is not pretended: a
 per-character pop as you type. CSS has no way to know a character was just
@@ -729,6 +738,19 @@ ln -s "$(pwd)" /path/to/vault/.obsidian/themes/Bookcloth
 `preview/` holds a browser harness that reproduces Obsidian's DOM so you can
 look at changes — and take screenshots and measure contrast — without launching
 the app. See `preview/README.md`.
+
+`node check-settings.mjs` validates the Style Settings block against the
+plugin's **own** shapes — `SettingType` and the interfaces in
+`SettingHandlers.ts`, fetched rather than remembered. The first version of it
+was written from memory and flagged eight entries that were fine, because
+`rgb-values` is a real colour format and I did not think it was; writing a
+validator from memory is the same mistake as writing the theme from memory.
+
+It catches the trap that costs the most: a **colon-space inside an unquoted
+scalar**. YAML reads `description: it works like this: a nested mapping` as
+exactly that, the parse fails, and Style Settings shows the theme no settings
+at all — which reads to a user as the plugin being broken rather than as one
+piece of punctuation.
 
 ## Measuring the real app
 

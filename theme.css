@@ -1,4 +1,4 @@
-/* Bookcloth 3.2.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.3.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -535,7 +535,7 @@ settings:
         title: Fade height
         description: How far up the page the fade reaches.
         type: variable-number-slider
-        default: 120
+        default: 150
         min: 40
         max: 320
         step: 10
@@ -543,9 +543,9 @@ settings:
     -
         id: bc-edge-fade-blur
         title: Fade blur
-        description: The strength at the very bottom. The band above it runs at 40% of this, which is what makes it a gradient of blur rather than a step.
+        description: "The strength at the very bottom. One masked layer ramps it: at half alpha the blurred result is composited half and half with the untouched page, which is a partial blur rather than a hidden one."
         type: variable-number-slider
-        default: 7
+        default: 6
         min: 0
         max: 24
         step: 1
@@ -643,7 +643,7 @@ settings:
         title: Animation speed
         description: How long hovers, toggles and menus take. Zero turns transitions off; the theme also respects the system's reduce-motion setting on its own.
         type: variable-number-slider
-        default: 100
+        default: 170
         min: 0
         max: 400
         step: 10
@@ -854,7 +854,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.2.0";
+  --bc-version: "3.3.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -1045,7 +1045,11 @@ body {
      Notion's transitions are short enough to read as instant feedback rather
      than as animation. */
   --bc-ease: cubic-bezier(0.2, 0, 0, 1);
-  --bc-speed: 100ms;
+  /* 100ms was Notion's, and Notion is not animating anything you are meant to
+     notice. Everything in the motion layer is a multiple of this, so a single
+     step up is what turns a set of effects that technically run into a set
+     that registers. */
+  --bc-speed: 170ms;
 }
 
 /* Accent intensity ------------------------------------------------------- */
@@ -4718,8 +4722,19 @@ body {
     rgb(0 0 0 / 0) 100%
   );
 
-  --bc-edge-fade-height: 120px;
-  --bc-edge-fade-blur: 7px;
+  --bc-edge-fade-height: 150px;
+  --bc-edge-fade-blur: 6px;
+  --bc-edge-fade-falloff: linear-gradient(
+    to top,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.92) 12%,
+    rgb(0 0 0 / 0.72) 28%,
+    rgb(0 0 0 / 0.46) 46%,
+    rgb(0 0 0 / 0.24) 64%,
+    rgb(0 0 0 / 0.09) 80%,
+    rgb(0 0 0 / 0.02) 92%,
+    rgb(0 0 0 / 0) 100%
+  );
 
   --bc-lift: translateY(-1px);
   --bc-press: scale(0.96);
@@ -5313,63 +5328,40 @@ body.bc-motion-expressive .markdown-source-view .cm-content {
 }
 
 /* --- The bottom of the page ----------------------------------------------
-   A progressive blur: the closer a line is to the foot of the pane the more it
-   is dissolved, so the column reads as continuing past the edge rather than
-   being cut off at it. Two bands rather than one — a blur cannot be a gradient,
-   so a gradient of blur has to be built out of layers, each masked to the
-   stretch where its strength is right.
+   One layer, not two. A gradient mask over a backdrop-filter does not just
+   hide part of the blur — at 50% alpha the blurred result is composited half
+   and half with the untouched backdrop, which *is* a partial blur. So the
+   strength ramps inside a single element and the second element the first
+   version used was paying twice for what one mask already does. Masked
+   backdrop-filter is the most expensive thing in this theme; halving it
+   matters more than any of its settings.
 
-   It is masked backdrop-filter, which means the compositor does the work on
-   what is already painted. It is also the most expensive thing in this theme,
-   which is why it is a setting of its own rather than part of a motion level. */
+   And no colour. The first version laid the page colour over the bottom as
+   well, which dissolves text nicely and is also visible as a band across the
+   empty space under a short note — a haze over nothing. A blur of a flat
+   background is indistinguishable from the background, so with the colour
+   gone the effect simply is not there when there is nothing to blur. */
 
 body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content {
   position: relative;
 }
 
-body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before,
 body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
   content: "";
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
+  height: var(--bc-edge-fade-height);
   pointer-events: none;
   z-index: 2;
-}
-
-/* the long, weak band */
-body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before {
-  height: var(--bc-edge-fade-height);
-  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.4));
-  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.4));
-  -webkit-mask-image: linear-gradient(
-    to top,
-    rgb(0 0 0 / 1) 0%,
-    rgb(0 0 0 / 0.55) 45%,
-    rgb(0 0 0 / 0.18) 72%,
-    rgb(0 0 0 / 0) 100%
-  );
-  mask-image: linear-gradient(
-    to top,
-    rgb(0 0 0 / 1) 0%,
-    rgb(0 0 0 / 0.55) 45%,
-    rgb(0 0 0 / 0.18) 72%,
-    rgb(0 0 0 / 0) 100%
-  );
-}
-
-/* the short, strong one, plus the colour that takes the last of it away */
-body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
-  height: calc(var(--bc-edge-fade-height) * 0.46);
   backdrop-filter: blur(var(--bc-edge-fade-blur));
   -webkit-backdrop-filter: blur(var(--bc-edge-fade-blur));
-  background-image: linear-gradient(
-    to top,
-    var(--background-primary) 0%,
-    rgb(0 0 0 / 0) 100%
-  );
-  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 100%);
-  mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 100%);
+  /* Eased rather than linear, and with enough stops that the ramp has no
+     shoulder in it. A linear alpha over a blur reads as a hard line where the
+     mask starts, because the eye finds the moment blur begins long before it
+     finds the moment it is strongest. */
+  -webkit-mask-image: var(--bc-edge-fade-falloff);
+  mask-image: var(--bc-edge-fade-falloff);
 }
 
 /* --- The editor -----------------------------------------------------------
@@ -5387,16 +5379,33 @@ body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
 @supports (transition-behavior: allow-discrete) {
   body.bc-motion-expressive .cm-content > .cm-line {
     transition:
-      opacity 140ms var(--bc-ease-out),
-      transform 140ms var(--bc-ease-out);
+      opacity calc(var(--bc-speed) * 2.4) var(--bc-ease-out),
+      transform calc(var(--bc-speed) * 2.4) var(--bc-ease-spring),
+      filter calc(var(--bc-speed) * 2.4) var(--bc-ease-out);
   }
 
+  /* The state a line is born in. Short enough not to be a page turn, long
+     enough to be seen — the first version ran in 140ms flat and the report
+     back was that none of it registered. */
   @starting-style {
     body.bc-motion-expressive .cm-content > .cm-line {
       opacity: 0;
-      transform: translateY(3px);
+      transform: translateY(6px) scale(0.985);
+      filter: blur(1.5px);
     }
   }
+}
+
+/* The line being written on lifts a shade out of the page. Not a highlight —
+   a highlight is a band of colour that moves with the caret and is the fastest
+   way to make an editor feel busy. This is the surrounding text stepping back
+   instead, which reads as focus rather than as decoration. */
+body.bc-motion-expressive .cm-editor .cm-line {
+  transition: opacity calc(var(--bc-speed) * 2) var(--bc-ease);
+}
+
+body.bc-motion-expressive .cm-editor.cm-focused .cm-line:not(.cm-active) {
+  opacity: 0.92;
 }
 
 /* The caret. A hard blink is a terminal; a caret that breathes is an editor. */
