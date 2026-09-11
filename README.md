@@ -207,6 +207,27 @@ and a gradient painted into it could not be turned off without taking the
 surface with it. Dark mode takes a third more tint on its own, because the same
 amount of colour shows less against a dark ground.
 
+**Expressive** is the fourth level and the one that behaves like a designed
+interface rather than a styled one. A menu opened by a right-click grows out of
+the corner nearest the pointer instead of arriving from nowhere. Its rows
+arrive in the order they are read, 14ms apart — under the threshold where that
+registers as waiting and over the one where it registers as sequence, and only
+for the first six, because past that the delay outlasts the time it takes to
+look at the menu. The tick draws itself into a checkbox by animating the mask
+it is already made of. The spring overshoots by four percent, once.
+
+One effect was written, measured and removed, which is worth more than the ones
+that stayed. Blocks settling in as they are scrolled to —
+`animation-timeline: view()` — strands content: when a view timeline is
+inactive the fill pins the element at its from-state, and the timeline is
+inactive whenever the scroll container has nothing to scroll. A short note has
+nothing to scroll. The harness rendered every callout and every table at
+opacity 0.35, permanently. No fill mode fixes it, and `@supports` does not
+catch it because the feature *is* supported — it was the timeline that was not
+running. An effect that fails by hiding the reader's content is not an effect
+with a bug in it; it is the wrong effect. What replaced it runs once when the
+note mounts and has no fill, so the instant it ends the page is ordinary again.
+
 Two rules govern the motion layer. **Only `transform` and `opacity` are
 animated** — those are the two the compositor can run without laying the page
 out again, and a hover that animates `height` on a list of three hundred notes
@@ -575,6 +596,38 @@ Bundled styles: Dataview, Tasks, Kanban, Calendar and Periodic Notes,
 Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr, Style Settings.
 Anything not on the list inherits the correct surface, ink and radius from the
 variable layer.
+
+## Persian and Arabic typesetting
+
+**What a theme cannot do, first.** InDesign justifies Arabic script by
+stretching the letters themselves — kashida, the None / Short / Medium / Long /
+Stylistic control. No browser implements it. `text-justify: kashida` was
+Internet Explorer's and is gone, Blink has never implemented the `text-justify`
+property at all (the theme's own build check rejects every value of it), and so
+justified Persian in any Electron app can only stretch the spaces — opening
+exactly the rivers kashida exists to close. That is a text-shaping feature
+living inside InDesign's engine. A stylesheet cannot add one, and a theme that
+offers you a kashida toggle is offering you a control that does nothing.
+
+What is here instead, all of it measured:
+
+- **`text-wrap: pretty`** on paragraphs and **`balance`** on headings. Chrome's
+  slower line-breaker looks ahead instead of greedily filling each line, which
+  closes most of the gaps justification opens and stops a title ending on one
+  orphaned word.
+- **Each paragraph finds its own direction** — `unicode-bidi: plaintext`, so a
+  paragraph takes its direction from its first strong character rather than
+  from the note. Persian paragraphs stay right-aligned in a note that opens in
+  English, and the English ones stay left.
+- **No hyphenation.** Arabic script does not hyphenate, and a browser asked to
+  try will break a word at a joining letter.
+- **Shaping features** — kerning, contextual alternates, required ligatures and
+  mark positioning, so a Persian diacritic sits over the right part of its
+  letter rather than the middle of it. Stylistic sets are a text field rather
+  than a toggle, because which set does what is each font's own decision:
+  Vazirmatn's `ss01` is not Estedad's.
+- **No tracking anywhere in a Persian note**, not only on the headings. Letter
+  spacing on a cursive script pulls the joins apart.
 
 ## Persian and Arabic
 

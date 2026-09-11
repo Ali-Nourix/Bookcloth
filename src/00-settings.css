@@ -300,6 +300,24 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-rtl-autodir
+        title: Each paragraph finds its own direction
+        description: A paragraph takes its direction from its first strong character rather than from the note, so Persian paragraphs stay right-aligned in a note that also has English in it, and the English ones stay left. Needs Persian and Arabic support above.
+        type: class-toggle
+        default: true
+    -
+        id: bc-rtl-justify
+        title: Justify Persian paragraphs
+        description: "Sets both edges of the paragraph. A caution worth reading: InDesign justifies Arabic script by stretching the letters — kashida — and no browser implements that, so Obsidian can only stretch the spaces. Chrome's better line-breaker is on either way and closes up most of the gaps, but a justified column here will never be an InDesign one."
+        type: class-toggle
+        default: false
+    -
+        id: bc-rtl-features
+        title: OpenType features for Persian
+        description: "Passed straight to font-feature-settings on note text. Kerning, contextual alternates and mark positioning are on by default. Add your font's stylistic sets here — which set does what is each font's own decision, so they are yours to pick: e.g. \"kern\" 1, \"calt\" 1, \"liga\" 1, \"rlig\" 1, \"mark\" 1, \"mkmk\" 1, \"ss01\" 1"
+        type: variable-text
+        default: '"kern" 1, "calt" 1, "liga" 1, "rlig" 1, "mark" 1, "mkmk" 1'
+    -
         id: bc-rtl
         title: Persian / Arabic typography
         description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading, tracking and task alignment for Arabic script.
@@ -553,11 +571,14 @@ settings:
     -
         id: bc-motion
         title: Motion
-        description: Full adds the press, the pop on a ticked box, the accent bar sliding into a row and the rise on menus and modals. Subtle keeps the colour fades and drops everything that moves. None stops all of it, including animation a plugin adds. The system's reduce-motion setting overrides whichever is picked here.
+        description: "Expressive is everything Full has and then some: menus grow out of the corner you opened them from, their rows arrive in the order you read them, the tick draws itself into a checkbox, and blocks settle in as you scroll to them. Full adds the press, the pop on a ticked box, the accent bar sliding into a row and the rise on menus and modals. Subtle keeps the colour fades and drops everything that moves. None stops all of it, including animation a plugin adds. The system's reduce-motion setting overrides whichever is picked here."
+        default: bc-motion-expressive
         type: class-select
         allowEmpty: false
-        default: bc-motion-full
         options:
+            -
+                label: Expressive
+                value: bc-motion-expressive
             -
                 label: Full
                 value: bc-motion-full

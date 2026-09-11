@@ -213,9 +213,9 @@ body.theme-dark {
     color var(--bc-speed) var(--bc-ease);
 }
 
-body.bc-motion-full .tree-item-self::after,
-body.bc-motion-full .nav-file-title::after,
-body.bc-motion-full .nav-folder-title::after {
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-file-title::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-folder-title::after {
   content: "";
   position: absolute;
   inset-block: 2px;
@@ -231,12 +231,12 @@ body.bc-motion-full .nav-folder-title::after {
     opacity calc(var(--bc-speed) * 2) var(--bc-ease);
 }
 
-body.bc-motion-full .tree-item-self:hover::after,
-body.bc-motion-full .tree-item-self.is-active::after,
-body.bc-motion-full .tree-item-self.has-focus::after,
-body.bc-motion-full .nav-file-title:hover::after,
-body.bc-motion-full .nav-file-title.is-active::after,
-body.bc-motion-full .nav-folder-title:hover::after {
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self:hover::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self.is-active::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self.has-focus::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-file-title:hover::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-file-title.is-active::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-folder-title:hover::after {
   transform: scaleY(1);
   opacity: 1;
 }
@@ -245,22 +245,22 @@ body.bc-motion-full .nav-folder-title:hover::after {
    Press is the one place a transform earns its keep: a button that gives under
    the pointer is the difference between a picture of a button and a button. */
 
-body.bc-motion-full .clickable-icon,
-body.bc-motion-full .view-action,
-body.bc-motion-full .side-dock-ribbon-action,
-body.bc-motion-full .workspace-tab-header-new-tab,
-body.bc-motion-full .sidebar-toggle-button {
+body:is(.bc-motion-full, .bc-motion-expressive) .clickable-icon,
+body:is(.bc-motion-full, .bc-motion-expressive) .view-action,
+body:is(.bc-motion-full, .bc-motion-expressive) .side-dock-ribbon-action,
+body:is(.bc-motion-full, .bc-motion-expressive) .workspace-tab-header-new-tab,
+body:is(.bc-motion-full, .bc-motion-expressive) .sidebar-toggle-button {
   transition:
     background-color var(--bc-speed) var(--bc-ease),
     color var(--bc-speed) var(--bc-ease),
     transform calc(var(--bc-speed) * 1.2) var(--bc-ease-spring);
 }
 
-body.bc-motion-full .clickable-icon:active,
-body.bc-motion-full .view-action:active,
-body.bc-motion-full .side-dock-ribbon-action:active,
-body.bc-motion-full .workspace-tab-header-new-tab:active,
-body.bc-motion-full .sidebar-toggle-button:active {
+body:is(.bc-motion-full, .bc-motion-expressive) .clickable-icon:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .view-action:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .side-dock-ribbon-action:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .workspace-tab-header-new-tab:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .sidebar-toggle-button:active {
   transform: var(--bc-press);
 }
 
@@ -280,7 +280,7 @@ body.bc-motion-full .sidebar-toggle-button:active {
   }
 }
 
-body.bc-motion-full input[type="checkbox"]:checked {
+body:is(.bc-motion-full, .bc-motion-expressive) input[type="checkbox"]:checked {
   animation: bc-check-pop calc(var(--bc-speed) * 3) var(--bc-ease-spring);
 }
 
@@ -309,16 +309,16 @@ body.bc-motion-full input[type="checkbox"]:checked {
   }
 }
 
-body.bc-motion-full .menu,
-body.bc-motion-full .modal,
-body.bc-motion-full .prompt,
-body.bc-motion-full .suggestion-container,
-body.bc-motion-full .popover.hover-popover {
+body:is(.bc-motion-full, .bc-motion-expressive) .menu,
+body:is(.bc-motion-full, .bc-motion-expressive) .modal,
+body:is(.bc-motion-full, .bc-motion-expressive) .prompt,
+body:is(.bc-motion-full, .bc-motion-expressive) .suggestion-container,
+body:is(.bc-motion-full, .bc-motion-expressive) .popover.hover-popover {
   animation: bc-rise calc(var(--bc-speed) * 1.8) var(--bc-ease-out);
 }
 
-body.bc-motion-full .modal-bg,
-body.bc-motion-full .tooltip {
+body:is(.bc-motion-full, .bc-motion-expressive) .modal-bg,
+body:is(.bc-motion-full, .bc-motion-expressive) .tooltip {
   animation: bc-fade calc(var(--bc-speed) * 1.6) var(--bc-ease);
 }
 
@@ -334,7 +334,7 @@ body.bc-motion-full .tooltip {
   }
 }
 
-body.bc-motion-full .notice {
+body:is(.bc-motion-full, .bc-motion-expressive) .notice {
   animation: bc-notice-in calc(var(--bc-speed) * 2) var(--bc-ease-out);
 }
 
@@ -346,16 +346,16 @@ body.bc-motion-full .notice {
     color var(--bc-speed) var(--bc-ease);
 }
 
-body.bc-motion-full .markdown-rendered a.internal-link,
-body.bc-motion-full .markdown-rendered a.external-link {
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.internal-link,
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.external-link {
   transition:
     color var(--bc-speed) var(--bc-ease),
     text-decoration-color calc(var(--bc-speed) * 2) var(--bc-ease);
   text-decoration-color: transparent;
 }
 
-body.bc-motion-full .markdown-rendered a.internal-link:hover,
-body.bc-motion-full .markdown-rendered a.external-link:hover {
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.internal-link:hover,
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.external-link:hover {
   text-decoration-color: currentColor;
 }
 
@@ -374,18 +374,18 @@ body.bc-motion-full .markdown-rendered a.external-link:hover {
     color var(--bc-speed) var(--bc-ease);
 }
 
-body.bc-motion-full .menu-item-icon,
-body.bc-motion-full .suggestion-flair {
+body:is(.bc-motion-full, .bc-motion-expressive) .menu-item-icon,
+body:is(.bc-motion-full, .bc-motion-expressive) .suggestion-flair {
   transition: transform calc(var(--bc-speed) * 2) var(--bc-ease-spring);
 }
 
-body.bc-motion-full .menu-item:hover .menu-item-icon,
-body.bc-motion-full .suggestion-item.is-selected .suggestion-flair {
+body:is(.bc-motion-full, .bc-motion-expressive) .menu-item:hover .menu-item-icon,
+body:is(.bc-motion-full, .bc-motion-expressive) .suggestion-item.is-selected .suggestion-flair {
   transform: translateX(1px);
 }
 
-body.bc-rtl.bc-motion-full .menu-item:hover .menu-item-icon,
-body.bc-rtl.bc-motion-full .suggestion-item.is-selected .suggestion-flair {
+body.bc-rtl:is(.bc-motion-full, .bc-motion-expressive) .menu-item:hover .menu-item-icon,
+body.bc-rtl:is(.bc-motion-full, .bc-motion-expressive) .suggestion-item.is-selected .suggestion-flair {
   transform: translateX(-1px);
 }
 
@@ -393,7 +393,7 @@ body.bc-rtl.bc-motion-full .suggestion-item.is-selected .suggestion-flair {
    The thumb overshoots slightly and settles. A switch is the one control whose
    whole job is to show it changed, so it is worth the extra 60ms. */
 
-body.bc-motion-full .checkbox-container::after {
+body:is(.bc-motion-full, .bc-motion-expressive) .checkbox-container::after {
   transition: transform calc(var(--bc-speed) * 2.4) var(--bc-ease-spring) !important;
 }
 
@@ -423,14 +423,14 @@ select,
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
-body.bc-motion-full .markdown-rendered a.tag {
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.tag {
   transition:
     background-color var(--bc-speed) var(--bc-ease),
     color var(--bc-speed) var(--bc-ease),
     transform calc(var(--bc-speed) * 1.6) var(--bc-ease-spring);
 }
 
-body.bc-motion-full .markdown-rendered a.tag:hover {
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.tag:hover {
   transform: var(--bc-lift);
 }
 
@@ -442,6 +442,176 @@ body.bc-motion-full .markdown-rendered a.tag:hover {
 .collapse-indicator,
 .tree-item-icon {
   transition: transform calc(var(--bc-speed) * 1.6) var(--bc-ease-out);
+}
+
+/* --- Expressive -----------------------------------------------------------
+   The level that behaves like a designed interface rather than a styled one.
+   Three ideas, all of them Apple's rather than mine:
+
+   Motion comes from where you touched it. A menu opened by a right-click grows
+   out of the corner nearest the pointer instead of arriving from nowhere, which
+   is the difference between a surface appearing and a surface being opened.
+
+   Things arrive in the order they are read. A stagger of 14ms across the first
+   rows is under the threshold where it registers as waiting and over the one
+   where it registers as sequence.
+
+   And nothing bounces for its own sake. The spring overshoots by four percent,
+   once — enough to read as physical, not enough to read as a toy. */
+
+body.bc-motion-expressive .menu,
+body.bc-motion-expressive .suggestion-container,
+body.bc-motion-expressive .popover.hover-popover {
+  transform-origin: top left;
+  animation: bc-emerge calc(var(--bc-speed) * 2.2) var(--bc-ease-spring);
+}
+
+body.bc-rtl.bc-motion-expressive .menu,
+body.bc-rtl.bc-motion-expressive .suggestion-container {
+  transform-origin: top right;
+}
+
+@keyframes bc-emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.bc-motion-expressive .modal {
+  animation: bc-modal-in calc(var(--bc-speed) * 2.6) var(--bc-ease-spring);
+}
+
+@keyframes bc-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The stagger. Six rows is the whole of it — past that the delay outlasts the
+   time it takes to look at the menu, and a reader is waiting on decoration. */
+body.bc-motion-expressive .menu > .menu-item,
+body.bc-motion-expressive .prompt-results > .suggestion-item {
+  animation: bc-row-in calc(var(--bc-speed) * 2) var(--bc-ease-out) backwards;
+}
+
+@keyframes bc-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.bc-motion-expressive .menu > .menu-item:nth-child(1),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(2),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(2) {
+  animation-delay: 14ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(3),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(3) {
+  animation-delay: 28ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(4),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(4) {
+  animation-delay: 42ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(5),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(5) {
+  animation-delay: 56ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(n + 6),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(n + 6) {
+  animation-delay: 70ms;
+}
+
+/* A ribbon icon grows a little under the pointer. Four percent on an 18px
+   glyph is half a pixel — felt rather than seen, which is the point. */
+body.bc-motion-expressive .side-dock-ribbon-action:hover .svg-icon,
+body.bc-motion-expressive .clickable-icon:hover .svg-icon {
+  transform: scale(1.06);
+}
+
+body.bc-motion-expressive .side-dock-ribbon-action .svg-icon,
+body.bc-motion-expressive .clickable-icon .svg-icon {
+  transition: transform calc(var(--bc-speed) * 2) var(--bc-ease-spring);
+}
+
+/* The tick draws itself in rather than appearing complete. Animating the mask
+   size costs nothing — the glyph is already a mask — and it is the one place
+   in a notes app where a half-second of theatre is earned. */
+@keyframes bc-tick-in {
+  from {
+    -webkit-mask-size: 0%;
+    mask-size: 0%;
+    opacity: 0;
+  }
+  to {
+    -webkit-mask-size: 74%;
+    mask-size: 74%;
+    opacity: 1;
+  }
+}
+
+body.bc-motion-expressive input[type="checkbox"]:checked::after {
+  animation: bc-tick-in calc(var(--bc-speed) * 2.6) var(--bc-ease-spring);
+}
+
+/* Pane actions stay out of the way until the pane is under the pointer. */
+body.bc-motion-expressive .view-header .view-actions {
+  opacity: 0.55;
+  transition: opacity calc(var(--bc-speed) * 2) var(--bc-ease);
+}
+
+body.bc-motion-expressive .workspace-leaf:hover .view-header .view-actions,
+body.bc-motion-expressive .view-header:focus-within .view-actions {
+  opacity: 1;
+}
+
+/* What is NOT here, and why. A scroll-driven reveal — blocks settling in as
+   they are scrolled to, `animation-timeline: view()` — was written, measured
+   and removed. When the timeline is inactive the animation's fill pins the
+   element at its from-state, and a view timeline is inactive whenever the
+   scroll container has nothing to scroll. A short note has nothing to scroll.
+   The harness rendered every callout and every table on the page at opacity
+   0.35, permanently, and no fill mode fixes it: `backwards` strands the same
+   way, and `none` leaves nothing to fade from. Behind @supports it still
+   shipped, because the feature is supported — it was the timeline that was
+   not running. An effect that fails by hiding the reader's content is not an
+   effect with a bug in it, it is the wrong effect.
+
+   This is its replacement, and it cannot strand anything: the animation runs
+   once when the note mounts and has no fill, so the instant it ends the
+   element is back to being ordinary. */
+body.bc-motion-expressive .markdown-preview-sizer,
+body.bc-motion-expressive .markdown-source-view .cm-content {
+  animation: bc-page-in calc(var(--bc-speed) * 3) var(--bc-ease-out);
+}
+
+@keyframes bc-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* --- Levels ---------------------------------------------------------------
