@@ -207,6 +207,23 @@ and a gradient painted into it could not be turned off without taking the
 surface with it. Dark mode takes a third more tint on its own, because the same
 amount of colour shows less against a dark ground.
 
+**The foot of the page** dissolves: a progressive blur where the nearer a line
+is to the bottom of the pane the more it goes, so the column reads as
+continuing past the edge rather than being cut off at it. A blur cannot be a
+gradient, so a gradient of blur is built out of layers — a long weak band and a
+short strong one, each masked to the stretch where its strength is right. It is
+masked `backdrop-filter`, the most expensive thing in the theme, which is why
+it is a setting of its own and off by default.
+
+**In the editor**, one thing is not possible and is not pretended: a
+per-character pop as you type. CSS has no way to know a character was just
+entered — there is no selector for "this text node is newer than that one",
+CodeMirror does not mark new characters, and nothing in a stylesheet watches a
+keystroke. That needs a plugin. A *line* is an element, though, and a new one is
+inserted as you write; `@starting-style` gives it a state to come from, which is
+the same effect at the granularity CSS actually has, and it runs on the lines
+CodeMirror builds as it scrolls too.
+
 **Expressive** is the fourth level and the one that behaves like a designed
 interface rather than a styled one. A menu opened by a right-click grows out of
 the corner nearest the pointer instead of arriving from nowhere. Its rows
@@ -626,8 +643,21 @@ What is here instead, all of it measured:
   letter rather than the middle of it. Stylistic sets are a text field rather
   than a toggle, because which set does what is each font's own decision:
   Vazirmatn's `ss01` is not Estedad's.
-- **No tracking anywhere in a Persian note**, not only on the headings. Letter
-  spacing on a cursive script pulls the joins apart.
+- **Tracking and word spacing as numbers**, defaulting to zero. Tracking a
+  cursive script pulls the joins apart, so zero is right — but "hard-coded" and
+  "correct" are different claims, and a typesetter has reasons to move both.
+  Word spacing is the one with real leverage on a justified column: negative
+  values pull the words back together and take the worst of the rivers out.
+  That is the nearest thing to kashida CSS has, and it is not kashida — it
+  narrows the gaps rather than filling them.
+
+Note what is deliberately **not** applied to the live editor: `text-wrap` and
+`unicode-bidi`. CodeMirror measures every line itself to decide what to keep in
+the viewport, and a rule that moves the break points after that measurement
+leaves it with a width it did not compute — a horizontal scrollbar, and a view
+that jumps as you scroll past it. That shipped once, because the harness had no
+`.cm-line` in it to render the rule against. It has a CodeMirror-shaped editor
+now, and `invariants.mjs` fails on any scroll container wider than itself.
 
 ## Persian and Arabic
 

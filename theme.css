@@ -1,4 +1,4 @@
-/* Bookcloth 3.0.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.1.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -316,6 +316,26 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-rtl-tracking
+        title: Letter spacing (Persian)
+        description: Tracking on a cursive script pulls the joins apart, so zero is the right default — but a display line sometimes wants opening up. Negative tightens.
+        type: variable-number-slider
+        default: 0
+        min: -0.03
+        max: 0.08
+        step: 0.005
+        format: em
+    -
+        id: bc-rtl-word-spacing
+        title: Word spacing (Persian)
+        description: "The one with real leverage on a justified column: negative values pull the words back together and take the worst of the rivers out. It is the nearest thing to kashida that CSS has, and it is not kashida — it narrows the gaps rather than filling them."
+        type: variable-number-slider
+        default: 0
+        min: -0.12
+        max: 0.4
+        step: 0.01
+        format: em
+    -
         id: bc-rtl-features
         title: OpenType features for Persian
         description: "Passed straight to font-feature-settings on note text. Kerning, contextual alternates and mark positioning are on by default. Add your font's stylistic sets here — which set does what is each font's own decision, so they are yours to pick: e.g. \"kern\" 1, \"calt\" 1, \"liga\" 1, \"rlig\" 1, \"mark\" 1, \"mkmk\" 1, \"ss01\" 1"
@@ -503,6 +523,32 @@ settings:
         min: 40
         max: 400
         step: 10
+        format: px
+    -
+        id: bc-edge-fade
+        title: Fade the foot of the page
+        description: A progressive blur at the bottom of the editor — the nearer a line is to the edge the more it dissolves, so the column reads as continuing past the pane rather than being cut off at it. It is masked backdrop blur, which is the most expensive thing in this theme; turn it off if scrolling a long note ever feels heavy.
+        type: class-toggle
+        default: false
+    -
+        id: bc-edge-fade-height
+        title: Fade height
+        description: How far up the page the fade reaches.
+        type: variable-number-slider
+        default: 120
+        min: 40
+        max: 320
+        step: 10
+        format: px
+    -
+        id: bc-edge-fade-blur
+        title: Fade blur
+        description: The strength at the very bottom. The band above it runs at 40% of this, which is what makes it a gradient of blur rather than a step.
+        type: variable-number-slider
+        default: 7
+        min: 0
+        max: 24
+        step: 1
         format: px
     -
         id: bc-pane-gap
@@ -808,7 +854,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.0.0";
+  --bc-version: "3.1.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -4672,6 +4718,9 @@ body {
     rgb(0 0 0 / 0) 100%
   );
 
+  --bc-edge-fade-height: 120px;
+  --bc-edge-fade-blur: 7px;
+
   --bc-lift: translateY(-1px);
   --bc-press: scale(0.96);
   --bc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -5218,6 +5267,122 @@ body.bc-motion-expressive .markdown-source-view .cm-content {
   }
 }
 
+/* --- The bottom of the page ----------------------------------------------
+   A progressive blur: the closer a line is to the foot of the pane the more it
+   is dissolved, so the column reads as continuing past the edge rather than
+   being cut off at it. Two bands rather than one — a blur cannot be a gradient,
+   so a gradient of blur has to be built out of layers, each masked to the
+   stretch where its strength is right.
+
+   It is masked backdrop-filter, which means the compositor does the work on
+   what is already painted. It is also the most expensive thing in this theme,
+   which is why it is a setting of its own rather than part of a motion level. */
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content {
+  position: relative;
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* the long, weak band */
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before {
+  height: var(--bc-edge-fade-height);
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.4));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.4));
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.55) 45%,
+    rgb(0 0 0 / 0.18) 72%,
+    rgb(0 0 0 / 0) 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.55) 45%,
+    rgb(0 0 0 / 0.18) 72%,
+    rgb(0 0 0 / 0) 100%
+  );
+}
+
+/* the short, strong one, plus the colour that takes the last of it away */
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  height: calc(var(--bc-edge-fade-height) * 0.46);
+  backdrop-filter: blur(var(--bc-edge-fade-blur));
+  -webkit-backdrop-filter: blur(var(--bc-edge-fade-blur));
+  background-image: linear-gradient(
+    to top,
+    var(--background-primary) 0%,
+    rgb(0 0 0 / 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 100%);
+  mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 100%);
+}
+
+/* --- The editor -----------------------------------------------------------
+   What is not possible, so it is not pretended: a per-character pop as you
+   type. CSS has no way to know a character was just entered — there is no
+   selector for "this text node is newer than that one", CodeMirror does not
+   mark new characters, and nothing in a stylesheet can watch a keystroke. That
+   one needs a plugin, not a theme.
+
+   A line, though, is an element, and a new one is inserted as you write.
+   @starting-style gives it a state to come from, which is the same effect at
+   the granularity CSS actually has. It runs on lines CodeMirror creates as it
+   scrolls too, which is the "lines write themselves in" part. */
+
+@supports (transition-behavior: allow-discrete) {
+  body.bc-motion-expressive .cm-content > .cm-line {
+    transition:
+      opacity 140ms var(--bc-ease-out),
+      transform 140ms var(--bc-ease-out);
+  }
+
+  @starting-style {
+    body.bc-motion-expressive .cm-content > .cm-line {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+  }
+}
+
+/* The caret. A hard blink is a terminal; a caret that breathes is an editor. */
+body.bc-motion-expressive .cm-editor .cm-cursor,
+body.bc-motion-expressive .cm-editor .cm-dropCursor {
+  animation: bc-caret 1.1s var(--bc-ease) infinite;
+}
+
+@keyframes bc-caret {
+  0%,
+  42% {
+    opacity: 1;
+  }
+  58%,
+  92% {
+    opacity: 0.15;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* A task marker pops in when it is ticked and settles back out when it is
+   cleared. A transition rather than an animation, so it plays both ways. */
+body.bc-motion-expressive input[type="checkbox"] {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    border-color var(--bc-speed) var(--bc-ease),
+    transform calc(var(--bc-speed) * 2.2) var(--bc-ease-spring);
+}
+
 /* --- Levels ---------------------------------------------------------------
    Subtle keeps the transitions and drops everything that moves. None stops the
    lot, including anything a plugin animates, which is the point: a reader who
@@ -5472,9 +5637,15 @@ body.bc-rtl-justify .cm-line {
   -webkit-hyphens: none;
 }
 
+/* Reading view only, and deliberately. CodeMirror measures every line itself
+   to decide what to keep in the viewport, and `text-wrap: pretty` moves the
+   break points after that measurement has been taken: the editor ends up with
+   a content width it did not compute, which is a horizontal scrollbar and a
+   view that jumps as you scroll past it. That shipped, and it shipped because
+   the harness had no .cm-line in it to render the rule against. It has one
+   now, and an invariant that fails on exactly that overflow. */
 body.bc-rtl .markdown-rendered p,
 body.bc-rtl .markdown-rendered li,
-body.bc-rtl .cm-line,
 body.bc-rtl .inline-title,
 body.bc-rtl .markdown-rendered h1,
 body.bc-rtl .markdown-rendered h2,
@@ -5502,11 +5673,15 @@ body.bc-rtl-autodir .markdown-rendered h1,
 body.bc-rtl-autodir .markdown-rendered h2,
 body.bc-rtl-autodir .markdown-rendered h3,
 body.bc-rtl-autodir .markdown-rendered h4,
-body.bc-rtl-autodir .markdown-rendered blockquote,
-body.bc-rtl-autodir .cm-line {
+body.bc-rtl-autodir .markdown-rendered blockquote {
   unicode-bidi: plaintext;
   text-align: start;
 }
+
+/* Not on .cm-line either. CodeMirror resolves bidi for itself, down to where
+   it puts the caret in a mixed-direction line; handing the browser a second
+   opinion with unicode-bidi gives the editor two answers that disagree.
+   Obsidian's own RTL support is what does this job in the editor. */
 
 /* justify wins over the start alignment above when both are on */
 body.bc-rtl-autodir.bc-rtl-justify .markdown-rendered p,
@@ -5543,12 +5718,33 @@ body.bc-rtl .suggestion-title {
   font-variant-ligatures: common-ligatures contextual;
 }
 
-/* Tracking on a cursive script pulls the joins apart. Nothing in a Persian
-   note gets letter-spacing, not only the headings the theme sets it on. */
+/* Tracking and word spacing, as numbers rather than as a flat zero.
+
+   Zero is the right default and the reason is not taste: tracking a cursive
+   script pulls the joins apart, and the theme used to hard-code that. But
+   "hard-coded" and "correct" are different claims, and a typesetter setting a
+   book has reasons to move both — a display line that needs opening up, a
+   column that needs its spaces reined in. The defaults stay at zero; the
+   numbers are the reader's.
+
+   Word spacing is the one with real leverage on a justified column: negative
+   values pull the words back together and take the worst of the rivers out,
+   which is the nearest thing to kashida that CSS has. It is not kashida. It
+   narrows the gaps rather than filling them. */
+body.bc-rtl {
+  --bc-rtl-tracking: 0em;
+  --bc-rtl-word-spacing: 0em;
+}
+
 body.bc-rtl .markdown-rendered,
 body.bc-rtl .cm-content,
-body.bc-rtl .inline-title {
-  letter-spacing: 0;
+body.bc-rtl .inline-title,
+body.bc-rtl .markdown-rendered h1,
+body.bc-rtl .markdown-rendered h2,
+body.bc-rtl .markdown-rendered h3,
+body.bc-rtl .markdown-rendered h4 {
+  letter-spacing: var(--bc-rtl-tracking);
+  word-spacing: var(--bc-rtl-word-spacing);
 }
 
 /* --- Direction-aware layout ----------------------------------------------

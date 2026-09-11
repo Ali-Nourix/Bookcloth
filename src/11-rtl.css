@@ -77,9 +77,15 @@ body.bc-rtl-justify .cm-line {
   -webkit-hyphens: none;
 }
 
+/* Reading view only, and deliberately. CodeMirror measures every line itself
+   to decide what to keep in the viewport, and `text-wrap: pretty` moves the
+   break points after that measurement has been taken: the editor ends up with
+   a content width it did not compute, which is a horizontal scrollbar and a
+   view that jumps as you scroll past it. That shipped, and it shipped because
+   the harness had no .cm-line in it to render the rule against. It has one
+   now, and an invariant that fails on exactly that overflow. */
 body.bc-rtl .markdown-rendered p,
 body.bc-rtl .markdown-rendered li,
-body.bc-rtl .cm-line,
 body.bc-rtl .inline-title,
 body.bc-rtl .markdown-rendered h1,
 body.bc-rtl .markdown-rendered h2,
@@ -107,11 +113,15 @@ body.bc-rtl-autodir .markdown-rendered h1,
 body.bc-rtl-autodir .markdown-rendered h2,
 body.bc-rtl-autodir .markdown-rendered h3,
 body.bc-rtl-autodir .markdown-rendered h4,
-body.bc-rtl-autodir .markdown-rendered blockquote,
-body.bc-rtl-autodir .cm-line {
+body.bc-rtl-autodir .markdown-rendered blockquote {
   unicode-bidi: plaintext;
   text-align: start;
 }
+
+/* Not on .cm-line either. CodeMirror resolves bidi for itself, down to where
+   it puts the caret in a mixed-direction line; handing the browser a second
+   opinion with unicode-bidi gives the editor two answers that disagree.
+   Obsidian's own RTL support is what does this job in the editor. */
 
 /* justify wins over the start alignment above when both are on */
 body.bc-rtl-autodir.bc-rtl-justify .markdown-rendered p,
@@ -148,12 +158,33 @@ body.bc-rtl .suggestion-title {
   font-variant-ligatures: common-ligatures contextual;
 }
 
-/* Tracking on a cursive script pulls the joins apart. Nothing in a Persian
-   note gets letter-spacing, not only the headings the theme sets it on. */
+/* Tracking and word spacing, as numbers rather than as a flat zero.
+
+   Zero is the right default and the reason is not taste: tracking a cursive
+   script pulls the joins apart, and the theme used to hard-code that. But
+   "hard-coded" and "correct" are different claims, and a typesetter setting a
+   book has reasons to move both — a display line that needs opening up, a
+   column that needs its spaces reined in. The defaults stay at zero; the
+   numbers are the reader's.
+
+   Word spacing is the one with real leverage on a justified column: negative
+   values pull the words back together and take the worst of the rivers out,
+   which is the nearest thing to kashida that CSS has. It is not kashida. It
+   narrows the gaps rather than filling them. */
+body.bc-rtl {
+  --bc-rtl-tracking: 0em;
+  --bc-rtl-word-spacing: 0em;
+}
+
 body.bc-rtl .markdown-rendered,
 body.bc-rtl .cm-content,
-body.bc-rtl .inline-title {
-  letter-spacing: 0;
+body.bc-rtl .inline-title,
+body.bc-rtl .markdown-rendered h1,
+body.bc-rtl .markdown-rendered h2,
+body.bc-rtl .markdown-rendered h3,
+body.bc-rtl .markdown-rendered h4 {
+  letter-spacing: var(--bc-rtl-tracking);
+  word-spacing: var(--bc-rtl-word-spacing);
 }
 
 /* --- Direction-aware layout ----------------------------------------------

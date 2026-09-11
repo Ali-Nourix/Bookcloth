@@ -312,6 +312,26 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-rtl-tracking
+        title: Letter spacing (Persian)
+        description: Tracking on a cursive script pulls the joins apart, so zero is the right default — but a display line sometimes wants opening up. Negative tightens.
+        type: variable-number-slider
+        default: 0
+        min: -0.03
+        max: 0.08
+        step: 0.005
+        format: em
+    -
+        id: bc-rtl-word-spacing
+        title: Word spacing (Persian)
+        description: "The one with real leverage on a justified column: negative values pull the words back together and take the worst of the rivers out. It is the nearest thing to kashida that CSS has, and it is not kashida — it narrows the gaps rather than filling them."
+        type: variable-number-slider
+        default: 0
+        min: -0.12
+        max: 0.4
+        step: 0.01
+        format: em
+    -
         id: bc-rtl-features
         title: OpenType features for Persian
         description: "Passed straight to font-feature-settings on note text. Kerning, contextual alternates and mark positioning are on by default. Add your font's stylistic sets here — which set does what is each font's own decision, so they are yours to pick: e.g. \"kern\" 1, \"calt\" 1, \"liga\" 1, \"rlig\" 1, \"mark\" 1, \"mkmk\" 1, \"ss01\" 1"
@@ -499,6 +519,32 @@ settings:
         min: 40
         max: 400
         step: 10
+        format: px
+    -
+        id: bc-edge-fade
+        title: Fade the foot of the page
+        description: A progressive blur at the bottom of the editor — the nearer a line is to the edge the more it dissolves, so the column reads as continuing past the pane rather than being cut off at it. It is masked backdrop blur, which is the most expensive thing in this theme; turn it off if scrolling a long note ever feels heavy.
+        type: class-toggle
+        default: false
+    -
+        id: bc-edge-fade-height
+        title: Fade height
+        description: How far up the page the fade reaches.
+        type: variable-number-slider
+        default: 120
+        min: 40
+        max: 320
+        step: 10
+        format: px
+    -
+        id: bc-edge-fade-blur
+        title: Fade blur
+        description: The strength at the very bottom. The band above it runs at 40% of this, which is what makes it a gradient of blur rather than a step.
+        type: variable-number-slider
+        default: 7
+        min: 0
+        max: 24
+        step: 1
         format: px
     -
         id: bc-pane-gap

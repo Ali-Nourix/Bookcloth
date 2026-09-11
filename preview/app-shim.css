@@ -184,6 +184,17 @@ body {
 .markdown-rendered mark { background-color: var(--text-highlight-bg); color: inherit; }
 .markdown-rendered hr { border: none; border-top: var(--hr-thickness) solid var(--hr-color); }
 
+/* ---------- the editor ----------
+   Enough of CodeMirror's box model to render a rule aimed at it: the scroller
+   is the scroll container and the content is what has to fit inside it. */
+.markdown-source-view { display: flex; flex-direction: column; min-height: 0; }
+.cm-editor { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.cm-scroller { display: flex; align-items: flex-start; overflow: auto; flex: 1; min-height: 0; padding: var(--file-margins); }
+.cm-sizer { flex: 1; min-width: 0; max-width: var(--file-line-width); margin: 0 auto; }
+.cm-contentContainer { min-width: 0; }
+.cm-content { font-family: var(--font-text); font-size: var(--font-text-size); line-height: var(--line-height-normal); min-width: 0; }
+.cm-line { padding: 0; }
+
 /* ---------- transclusions ----------
    The harness had no embed at all, which is why an embedded note section
    inside a callout shipped looking like the source note pasted in and clipped.

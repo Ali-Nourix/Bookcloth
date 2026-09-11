@@ -261,6 +261,22 @@ const result = await pg.evaluate(() => {
     }
   }
 
+  /* 5e. no scroll container is wider than itself. A theme has no business
+         adding horizontal overflow to a column of prose, and CodeMirror is
+         where it happens: it measures lines to decide what to keep in the
+         viewport, so a rule that moves the break points after that measurement
+         leaves the editor with a width it did not compute — a horizontal
+         scrollbar, and a view that jumps as it is scrolled past. */
+  for (const sel of ['.cm-scroller', '.cm-content', '.markdown-preview-view', '.markdown-preview-sizer', '.view-content']) {
+    for (const el of all(sel)) {
+      const over = el.scrollWidth - el.clientWidth;
+      if (over > 1) {
+        fails.push(`${sel} scrolls horizontally by ${R(over)}px`);
+        break;
+      }
+    }
+  }
+
   /* 6. the in-progress box follows the accent. */
   const half = all('input[type=checkbox]').find(
     (e) => (e.getAttribute('data-task') ?? e.closest('[data-task]')?.getAttribute('data-task')) === '/'

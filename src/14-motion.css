@@ -68,6 +68,9 @@ body {
     rgb(0 0 0 / 0) 100%
   );
 
+  --bc-edge-fade-height: 120px;
+  --bc-edge-fade-blur: 7px;
+
   --bc-lift: translateY(-1px);
   --bc-press: scale(0.96);
   --bc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -612,6 +615,122 @@ body.bc-motion-expressive .markdown-source-view .cm-content {
     opacity: 1;
     transform: none;
   }
+}
+
+/* --- The bottom of the page ----------------------------------------------
+   A progressive blur: the closer a line is to the foot of the pane the more it
+   is dissolved, so the column reads as continuing past the edge rather than
+   being cut off at it. Two bands rather than one — a blur cannot be a gradient,
+   so a gradient of blur has to be built out of layers, each masked to the
+   stretch where its strength is right.
+
+   It is masked backdrop-filter, which means the compositor does the work on
+   what is already painted. It is also the most expensive thing in this theme,
+   which is why it is a setting of its own rather than part of a motion level. */
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content {
+  position: relative;
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* the long, weak band */
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before {
+  height: var(--bc-edge-fade-height);
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.4));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.4));
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.55) 45%,
+    rgb(0 0 0 / 0.18) 72%,
+    rgb(0 0 0 / 0) 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.55) 45%,
+    rgb(0 0 0 / 0.18) 72%,
+    rgb(0 0 0 / 0) 100%
+  );
+}
+
+/* the short, strong one, plus the colour that takes the last of it away */
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  height: calc(var(--bc-edge-fade-height) * 0.46);
+  backdrop-filter: blur(var(--bc-edge-fade-blur));
+  -webkit-backdrop-filter: blur(var(--bc-edge-fade-blur));
+  background-image: linear-gradient(
+    to top,
+    var(--background-primary) 0%,
+    rgb(0 0 0 / 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 100%);
+  mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 100%);
+}
+
+/* --- The editor -----------------------------------------------------------
+   What is not possible, so it is not pretended: a per-character pop as you
+   type. CSS has no way to know a character was just entered — there is no
+   selector for "this text node is newer than that one", CodeMirror does not
+   mark new characters, and nothing in a stylesheet can watch a keystroke. That
+   one needs a plugin, not a theme.
+
+   A line, though, is an element, and a new one is inserted as you write.
+   @starting-style gives it a state to come from, which is the same effect at
+   the granularity CSS actually has. It runs on lines CodeMirror creates as it
+   scrolls too, which is the "lines write themselves in" part. */
+
+@supports (transition-behavior: allow-discrete) {
+  body.bc-motion-expressive .cm-content > .cm-line {
+    transition:
+      opacity 140ms var(--bc-ease-out),
+      transform 140ms var(--bc-ease-out);
+  }
+
+  @starting-style {
+    body.bc-motion-expressive .cm-content > .cm-line {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+  }
+}
+
+/* The caret. A hard blink is a terminal; a caret that breathes is an editor. */
+body.bc-motion-expressive .cm-editor .cm-cursor,
+body.bc-motion-expressive .cm-editor .cm-dropCursor {
+  animation: bc-caret 1.1s var(--bc-ease) infinite;
+}
+
+@keyframes bc-caret {
+  0%,
+  42% {
+    opacity: 1;
+  }
+  58%,
+  92% {
+    opacity: 0.15;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* A task marker pops in when it is ticked and settles back out when it is
+   cleared. A transition rather than an animation, so it plays both ways. */
+body.bc-motion-expressive input[type="checkbox"] {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    border-color var(--bc-speed) var(--bc-ease),
+    transform calc(var(--bc-speed) * 2.2) var(--bc-ease-spring);
 }
 
 /* --- Levels ---------------------------------------------------------------
