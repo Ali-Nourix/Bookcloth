@@ -23,6 +23,7 @@ const files = [
   "09-views.css",
   "12-icons.css",
   "13-panes.css",
+  "14-motion.css",
   "10-mobile.css",
   "11-rtl.css",
   "plugins/dataview.css",

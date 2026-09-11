@@ -1,4 +1,4 @@
-/* Bookcloth 2.8.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.9.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -452,6 +452,32 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-pane-glow
+        title: Accent glow on panels
+        description: A soft wash of the accent across the top of each panel, fading out down the page. The panel you are working in glows a little harder, which is a "you are here" that costs no border and nothing that moves.
+        type: class-toggle
+        default: true
+    -
+        id: bc-glow-strength
+        title: Glow strength
+        description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
+        type: variable-number-slider
+        default: 14
+        min: 0
+        max: 45
+        step: 1
+        format: '%'
+    -
+        id: bc-glow-height
+        title: Glow height
+        description: How far down the panel the wash reaches before it is gone.
+        type: variable-number-slider
+        default: 160
+        min: 40
+        max: 400
+        step: 10
+        format: px
+    -
         id: bc-pane-gap
         title: Gap between panels
         description: The space every panel keeps from its neighbours and from the window edge.
@@ -519,6 +545,23 @@ settings:
         description: Off by default — Notion draws none.
         type: class-toggle
         default: false
+    -
+        id: bc-motion
+        title: Motion
+        description: Full adds the press, the pop on a ticked box, the accent bar sliding into a row and the rise on menus and modals. Subtle keeps the colour fades and drops everything that moves. None stops all of it, including animation a plugin adds. The system's reduce-motion setting overrides whichever is picked here.
+        type: class-select
+        allowEmpty: false
+        default: bc-motion-full
+        options:
+            -
+                label: Full
+                value: bc-motion-full
+            -
+                label: Subtle
+                value: bc-motion-subtle
+            -
+                label: None
+                value: bc-motion-none
     -
         id: bc-speed
         title: Animation speed
@@ -735,7 +778,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.8.0";
+  --bc-version: "2.9.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -4510,6 +4553,335 @@ body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
 body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
 body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
   box-shadow: 0 0 0 1px var(--background-modifier-border);
+}
+
+/* ==========================================================================
+   GLOW AND MOTION
+   The layer that makes the theme feel alive rather than merely correct.
+
+   Two rules govern everything here. Only `transform` and `opacity` are
+   animated, because those are the two the compositor can run without laying
+   the page out again — a hover that animates `height` or `margin` on a list of
+   three hundred notes is a stutter, not a flourish. And every effect is
+   reachable from the settings pane and gone entirely at the lowest level,
+   because motion is a preference and some people get sick from it.
+
+   `--bc-speed` is the one duration. Set it to zero and the transitions here
+   collapse without a single rule needing to know.
+   ========================================================================== */
+
+body {
+  /* The fade across the top of a panel, tinted with the accent. Strength is a
+     percentage so the setting reads as one, and the alphas below are fractions
+     of it on a quadratic falloff — a straight two-stop gradient in sRGB dips
+     muddy through its middle, and on a large soft wash that shows as a band. */
+  --bc-glow-strength: 10%;
+  --bc-glow-height: 160px;
+  /* The edge reads far stronger than the wash at the same alpha — a hairline
+     is one pixel of pure colour where the wash is a hundred and sixty of
+     almost none — so it is a multiple of the one setting rather than a second
+     number to keep in step. */
+  --bc-glow-stroke: calc(var(--bc-glow-strength) * 3.4);
+  --bc-glow-stroke-w: 1px;
+  --bc-glow-stroke-peak-w: 2.5px;
+  /* Used as the alpha channel directly, because an alpha channel takes a
+     percentage. Dividing by 100 first looks like it turns 14% into 0.14 and
+     does not: a percentage over a number is still a percentage, so the alpha
+     came out at 0.14% and every stop in the gradient computed to fully
+     transparent. It rendered as nothing at all, which is exactly what a
+     screenshot of it looked like. */
+  --bc-glow-a: var(--bc-glow-strength);
+
+  --bc-glow-falloff: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.56) 25%,
+    rgb(0 0 0 / 0.25) 50%,
+    rgb(0 0 0 / 0.06) 75%,
+    rgb(0 0 0 / 0) 100%
+  );
+  /* More stops than the curve strictly needs. The heavy ring has to disappear
+     into the hairline rather than end on it, and with three stops the handover
+     showed as a faint step across the side of the panel. */
+  --bc-glow-falloff-peak: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.72) 18%,
+    rgb(0 0 0 / 0.44) 38%,
+    rgb(0 0 0 / 0.2) 60%,
+    rgb(0 0 0 / 0.06) 80%,
+    rgb(0 0 0 / 0) 100%
+  );
+
+  --bc-lift: translateY(-1px);
+  --bc-press: scale(0.96);
+  --bc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --bc-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* --- The panel glow -------------------------------------------------------
+   Drawn as a pseudo-element on the pane card rather than as a background on
+   the card itself, because the card's own background is a flat surface colour
+   a reader can set, and a gradient painted into it could not then be turned
+   off without taking the surface with it.
+
+   ::before comes first in the element's paint order, so everything the pane
+   holds sits over it without needing a z-index war. pointer-events: none so it
+   never eats a click meant for the tab strip under it. */
+
+body.bc-pane-glow .workspace-tabs {
+  position: relative;
+}
+
+/* The wash and the edge fade together, so the fade lives in a mask rather than
+   in the gradient: a flat fill and a flat ring, both taken down by one falloff.
+   Put the fade in the background and the ring would need a second copy of the
+   same curve to stay in step with it, and the two would drift the moment
+   either changed. The curve is quadratic — a straight two-stop fade dips muddy
+   through its middle, and across a hundred and sixty pixels that shows as a
+   band. */
+body.bc-pane-glow .workspace-tabs::before,
+body.bc-pane-glow .workspace-tabs::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  pointer-events: none;
+  /* top corners only: the bottom of the box is fully masked out, so its
+     corners are never drawn and rounding them would do nothing */
+  border-radius: var(--bc-pane-radius) var(--bc-pane-radius) 0 0;
+  transition: opacity calc(var(--bc-speed) * 3) var(--bc-ease-out);
+}
+
+body.bc-pane-glow .workspace-tabs::before {
+  height: var(--bc-glow-height);
+  opacity: 0.62;
+  background-color: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / var(--bc-glow-a));
+  box-shadow: inset 0 0 0 var(--bc-glow-stroke-w)
+    hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / var(--bc-glow-stroke));
+  -webkit-mask-image: var(--bc-glow-falloff);
+  mask-image: var(--bc-glow-falloff);
+}
+
+/* The thicker start of the same edge. It is a second ring rather than a
+   thicker first one because a border cannot taper: one stroke can fade in
+   colour or hold its width, not both. Two rings over each other — a heavy one
+   that is gone in the first third, a hairline that runs the whole way — read
+   as one stroke that starts thick and thins out. */
+body.bc-pane-glow .workspace-tabs::after {
+  height: calc(var(--bc-glow-height) * 0.4);
+  opacity: 0.62;
+  box-shadow: inset 0 0 0 var(--bc-glow-stroke-peak-w)
+    hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / calc(var(--bc-glow-stroke) * 1.1));
+  -webkit-mask-image: var(--bc-glow-falloff-peak);
+  mask-image: var(--bc-glow-falloff-peak);
+}
+
+/* The pane you are working in glows a little harder. It is the cheapest
+   possible "you are here": no border, no shadow, nothing that moves. */
+body.bc-pane-glow .workspace-tabs:has(.workspace-leaf.mod-active)::before,
+body.bc-pane-glow .workspace-tabs:has(.workspace-leaf.mod-active)::after,
+body.bc-pane-glow .workspace-tabs:focus-within::before,
+body.bc-pane-glow .workspace-tabs:focus-within::after {
+  opacity: 1;
+}
+
+/* A dark page takes more tint to show the same amount of colour, and the
+   accent sits on a dark ground rather than under a white one. */
+body.theme-dark.bc-pane-glow .workspace-tabs::before {
+  --bc-glow-a: calc(var(--bc-glow-strength) * 1.35);
+}
+
+/* --- Rows -----------------------------------------------------------------
+   A nav row gets an accent bar that grows from the inline start rather than
+   appearing. scaleY on a 2px bar is one composited property and reads as the
+   row acknowledging the pointer. */
+
+.tree-item-self,
+.nav-file-title,
+.nav-folder-title {
+  position: relative;
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+body.bc-motion-full .tree-item-self::after,
+body.bc-motion-full .nav-file-title::after,
+body.bc-motion-full .nav-folder-title::after {
+  content: "";
+  position: absolute;
+  inset-block: 2px;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 2px;
+  background-color: var(--bc-ac-fill);
+  transform: scaleY(0);
+  transform-origin: center;
+  opacity: 0;
+  transition:
+    transform calc(var(--bc-speed) * 2) var(--bc-ease-spring),
+    opacity calc(var(--bc-speed) * 2) var(--bc-ease);
+}
+
+body.bc-motion-full .tree-item-self:hover::after,
+body.bc-motion-full .tree-item-self.is-active::after,
+body.bc-motion-full .tree-item-self.has-focus::after,
+body.bc-motion-full .nav-file-title:hover::after,
+body.bc-motion-full .nav-file-title.is-active::after,
+body.bc-motion-full .nav-folder-title:hover::after {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+/* --- Icon buttons ---------------------------------------------------------
+   Press is the one place a transform earns its keep: a button that gives under
+   the pointer is the difference between a picture of a button and a button. */
+
+body.bc-motion-full .clickable-icon,
+body.bc-motion-full .view-action,
+body.bc-motion-full .side-dock-ribbon-action,
+body.bc-motion-full .workspace-tab-header-new-tab,
+body.bc-motion-full .sidebar-toggle-button {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease),
+    transform calc(var(--bc-speed) * 1.2) var(--bc-ease-spring);
+}
+
+body.bc-motion-full .clickable-icon:active,
+body.bc-motion-full .view-action:active,
+body.bc-motion-full .side-dock-ribbon-action:active,
+body.bc-motion-full .workspace-tab-header-new-tab:active,
+body.bc-motion-full .sidebar-toggle-button:active {
+  transform: var(--bc-press);
+}
+
+/* --- Checkboxes -----------------------------------------------------------
+   Ticking something off is the one interaction in a notes app that is supposed
+   to feel good. The box pops once, slightly past its own size and back. */
+
+@keyframes bc-check-pop {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+body.bc-motion-full input[type="checkbox"]:checked {
+  animation: bc-check-pop calc(var(--bc-speed) * 3) var(--bc-ease-spring);
+}
+
+/* --- Floating layers ------------------------------------------------------
+   Menus, modals and the quick switcher arrive from slightly below and slightly
+   small. Eight pixels and four percent: enough to read as arriving, not enough
+   to be a journey. */
+
+@keyframes bc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bc-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body.bc-motion-full .menu,
+body.bc-motion-full .modal,
+body.bc-motion-full .prompt,
+body.bc-motion-full .suggestion-container,
+body.bc-motion-full .popover.hover-popover {
+  animation: bc-rise calc(var(--bc-speed) * 1.8) var(--bc-ease-out);
+}
+
+body.bc-motion-full .modal-bg,
+body.bc-motion-full .tooltip {
+  animation: bc-fade calc(var(--bc-speed) * 1.6) var(--bc-ease);
+}
+
+/* A toast comes in from the edge it lives on. */
+@keyframes bc-notice-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.bc-motion-full .notice {
+  animation: bc-notice-in calc(var(--bc-speed) * 2) var(--bc-ease-out);
+}
+
+/* --- Tabs and headings ---------------------------------------------------- */
+
+.workspace-tab-header {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+body.bc-motion-full .markdown-rendered a.internal-link,
+body.bc-motion-full .markdown-rendered a.external-link {
+  transition:
+    color var(--bc-speed) var(--bc-ease),
+    text-decoration-color calc(var(--bc-speed) * 2) var(--bc-ease);
+  text-decoration-color: transparent;
+}
+
+body.bc-motion-full .markdown-rendered a.internal-link:hover,
+body.bc-motion-full .markdown-rendered a.external-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* --- Levels ---------------------------------------------------------------
+   Subtle keeps the transitions and drops everything that moves. None stops the
+   lot, including anything a plugin animates, which is the point: a reader who
+   turns motion off has said so about the whole app, not about this theme. */
+
+body.bc-motion-subtle *,
+body.bc-motion-subtle *::before,
+body.bc-motion-subtle *::after {
+  animation: none !important;
+  transform: none !important;
+}
+
+body.bc-motion-none *,
+body.bc-motion-none *::before,
+body.bc-motion-none *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* The system preference outranks all three, and is not a setting the theme
+   gets to argue with. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ==========================================================================

@@ -448,6 +448,32 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-pane-glow
+        title: Accent glow on panels
+        description: A soft wash of the accent across the top of each panel, fading out down the page. The panel you are working in glows a little harder, which is a "you are here" that costs no border and nothing that moves.
+        type: class-toggle
+        default: true
+    -
+        id: bc-glow-strength
+        title: Glow strength
+        description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
+        type: variable-number-slider
+        default: 14
+        min: 0
+        max: 45
+        step: 1
+        format: '%'
+    -
+        id: bc-glow-height
+        title: Glow height
+        description: How far down the panel the wash reaches before it is gone.
+        type: variable-number-slider
+        default: 160
+        min: 40
+        max: 400
+        step: 10
+        format: px
+    -
         id: bc-pane-gap
         title: Gap between panels
         description: The space every panel keeps from its neighbours and from the window edge.
@@ -515,6 +541,23 @@ settings:
         description: Off by default — Notion draws none.
         type: class-toggle
         default: false
+    -
+        id: bc-motion
+        title: Motion
+        description: Full adds the press, the pop on a ticked box, the accent bar sliding into a row and the rise on menus and modals. Subtle keeps the colour fades and drops everything that moves. None stops all of it, including animation a plugin adds. The system's reduce-motion setting overrides whichever is picked here.
+        type: class-select
+        allowEmpty: false
+        default: bc-motion-full
+        options:
+            -
+                label: Full
+                value: bc-motion-full
+            -
+                label: Subtle
+                value: bc-motion-subtle
+            -
+                label: None
+                value: bc-motion-none
     -
         id: bc-speed
         title: Animation speed

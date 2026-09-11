@@ -159,9 +159,9 @@ font-size slider keeps working:
 | Semantic colours | All eight hues — red through pink — separately per theme |
 | Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
 | Shape and density | Corner radius, top bar height, icon button size, space between icon buttons, editor tab height, status bar height, sidebar row height and inset, switch size, density, note width, visible borders |
-| Floating panels | Float the panels, gap, backdrop colour, corner clipping |
+| Floating panels | Float the panels, accent glow and its strength and height, gap, backdrop colour, corner clipping |
 | Icons | Icon size, stroke weight |
-| Interface | Tab style, indentation guides, animation speed, hide status bar, hide ribbon |
+| Interface | Tab style, indentation guides, motion level, animation speed, hide status bar, hide ribbon |
 | Editor | Callout style and colour strength, embed padding and style, space above headings, paragraph spacing, list indent and item spacing, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
 | Plugin support | Opt out of any of the bundled plugin styles |
 
@@ -180,6 +180,36 @@ cannot be reached that way, so a control that says 12px produces 12px.
 Semantic colours are authored as RGB triples, so one picker drives both the
 solid colour and every wash derived from it — change Blue and the note callout,
 the blue tag, the syntax token and the graph node all follow.
+
+## Glow and motion
+
+A soft wash of the accent across the top of each panel, fading out down the
+page, and the panel you are working in glows a little harder than the rest.
+That last part is the reason the whole thing earns its place: it is a "you are
+here" that costs no border, no shadow and nothing that moves.
+
+It is drawn as a pseudo-element on the pane card rather than as a background on
+the card itself. The card's background is a surface colour a reader can set,
+and a gradient painted into it could not be turned off without taking the
+surface with it. Dark mode takes a third more tint on its own, because the same
+amount of colour shows less against a dark ground.
+
+Two rules govern the motion layer. **Only `transform` and `opacity` are
+animated** — those are the two the compositor can run without laying the page
+out again, and a hover that animates `height` on a list of three hundred notes
+is a stutter, not a flourish. And **every effect is reachable from the settings
+pane**: Full adds the press on a button, the pop on a ticked box, the accent
+bar sliding into a row and the rise on menus and modals; Subtle keeps the
+colour fades and drops everything that moves; None stops all of it, including
+animation a plugin adds. `prefers-reduced-motion` overrides whichever is
+picked, because motion is not a preference the theme gets to argue with.
+
+One thing worth recording, because it shipped invisible for a whole render:
+the glow's alpha was written `calc(var(--bc-glow-strength) / 100)` to turn 14%
+into 0.14. **A percentage divided by a number is still a percentage** — the
+alpha came out at 0.14%, every stop in the gradient computed to fully
+transparent, and the screenshot of it looked exactly like a screenshot of
+nothing. An alpha channel takes a percentage directly, so it is the percentage.
 
 ## The window frame
 
