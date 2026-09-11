@@ -525,7 +525,7 @@ settings:
         title: Fade the foot of the page
         description: A progressive blur at the bottom of the editor — the nearer a line is to the edge the more it dissolves, so the column reads as continuing past the pane rather than being cut off at it. It is masked backdrop blur, which is the most expensive thing in this theme; turn it off if scrolling a long note ever feels heavy.
         type: class-toggle
-        default: false
+        default: true
     -
         id: bc-edge-fade-height
         title: Fade height

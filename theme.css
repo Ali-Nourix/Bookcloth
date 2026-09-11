@@ -1,4 +1,4 @@
-/* Bookcloth 3.1.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.2.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -529,7 +529,7 @@ settings:
         title: Fade the foot of the page
         description: A progressive blur at the bottom of the editor — the nearer a line is to the edge the more it dissolves, so the column reads as continuing past the pane rather than being cut off at it. It is masked backdrop blur, which is the most expensive thing in this theme; turn it off if scrolling a long note ever feels heavy.
         type: class-toggle
-        default: false
+        default: true
     -
         id: bc-edge-fade-height
         title: Fade height
@@ -854,7 +854,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.1.0";
+  --bc-version: "3.2.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -5236,21 +5236,66 @@ body.bc-motion-expressive .view-header:focus-within .view-actions {
   opacity: 1;
 }
 
-/* What is NOT here, and why. A scroll-driven reveal — blocks settling in as
-   they are scrolled to, `animation-timeline: view()` — was written, measured
-   and removed. When the timeline is inactive the animation's fill pins the
-   element at its from-state, and a view timeline is inactive whenever the
-   scroll container has nothing to scroll. A short note has nothing to scroll.
-   The harness rendered every callout and every table on the page at opacity
-   0.35, permanently, and no fill mode fixes it: `backwards` strands the same
-   way, and `none` leaves nothing to fade from. Behind @supports it still
-   shipped, because the feature is supported — it was the timeline that was
-   not running. An effect that fails by hiding the reader's content is not an
-   effect with a bug in it, it is the wrong effect.
+/* --- Written in as you scroll --------------------------------------------
+   Blocks and editor lines resolve as they come up the page. This was removed
+   once and the removal was half right: the technique is sound, `fill: both`
+   was not. With a fill, an element that has not reached its range yet is
+   painted at its from-state — and everything already on screen when a note
+   opens is *behind* its entry range, so the harness measured every callout on
+   the page stranded at opacity 0.35, permanently.
 
-   This is its replacement, and it cannot strand anything: the animation runs
-   once when the note mounts and has no fill, so the instant it ends the
-   element is back to being ordinary. */
+   With no fill at all, an element outside its range is simply itself. Measured
+   in the harness: at rest every block reads opacity 1; mid-scroll the one
+   crossing the edge reads 0.39 and resolves as it rises. Nothing can be
+   stranded, because there is no state to be stranded in.
+
+   Transform and opacity only, so CodeMirror's line measurement is untouched —
+   neither changes a layout box, which is the whole reason this is safe to put
+   on .cm-line at all. */
+
+@supports (animation-timeline: view()) {
+  body.bc-motion-expressive .markdown-preview-view .callout,
+  body.bc-motion-expressive .markdown-preview-view .markdown-embed,
+  body.bc-motion-expressive .markdown-preview-view img,
+  body.bc-motion-expressive .markdown-preview-view table,
+  body.bc-motion-expressive .markdown-preview-view pre {
+    animation: bc-settle linear;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+
+  /* Shorter for a line of text: a paragraph can afford to resolve over half
+     its own height, a line cannot or the page reads as permanently loading. */
+  body.bc-motion-expressive .cm-content > .cm-line {
+    animation: bc-settle-line linear;
+    animation-timeline: view();
+    animation-range: entry 0% entry 26%;
+  }
+
+  @keyframes bc-settle {
+    from {
+      opacity: 0.32;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes bc-settle-line {
+    from {
+      opacity: 0.25;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* And the note itself when it opens. Runs once on mount, no fill. */
 body.bc-motion-expressive .markdown-preview-sizer,
 body.bc-motion-expressive .markdown-source-view .cm-content {
   animation: bc-page-in calc(var(--bc-speed) * 3) var(--bc-ease-out);

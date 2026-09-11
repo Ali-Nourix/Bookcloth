@@ -21,7 +21,9 @@ await pg.evaluate(([m, c]) => {
   document.body.className =
     document.body.className.replace(/theme-\w+/, 'theme-' + m) + (c ? ' ' + c : '');
 }, [mode, classes]);
-await pg.waitForTimeout(300);
+/* long enough for a mount animation to finish: the check measures at rest,
+   and a 300ms entrance still running is not a defect. */
+await pg.waitForTimeout(900);
 
 const result = await pg.evaluate(() => {
   const fails = [];
@@ -273,6 +275,35 @@ const result = await pg.evaluate(() => {
       if (over > 1) {
         fails.push(`${sel} scrolls horizontally by ${R(over)}px`);
         break;
+      }
+    }
+  }
+
+  /* 5f. nothing is left faded or displaced at rest. A scroll-driven animation
+         with a fill paints an element at its from-state whenever it is outside
+         its range, and everything on screen when a note opens is behind its
+         entry range — which is how a release shipped with every callout on the
+         page at opacity 0.35, permanently. This is the check that would have
+         caught it, and it is why the effect could come back. */
+  for (const sel of ['.markdown-preview-view .callout', '.markdown-preview-view table',
+    '.markdown-preview-view pre', '.cm-content > .cm-line', '.markdown-preview-sizer']) {
+    for (const el of all(sel)) {
+      const st = getComputedStyle(el);
+      if (parseFloat(st.opacity) < 0.99) {
+        fails.push(`${sel} sits at opacity ${st.opacity} with nothing scrolling`);
+        break;
+      }
+      /* sub-pixel residue from a finishing animation is not displacement */
+      const m = st.transform.match(/matrix\(([-\d.e, ]+)\)/);
+      if (m) {
+        const [a, b2, c, d, tx, ty] = m[1].split(',').map(Number);
+        const moved = Math.abs(tx) > 0.5 || Math.abs(ty) > 0.5;
+        const scaled = Math.abs(a - 1) > 0.005 || Math.abs(d - 1) > 0.005 ||
+          Math.abs(b2) > 0.005 || Math.abs(c) > 0.005;
+        if (moved || scaled) {
+          fails.push(`${sel} is displaced at rest: ${st.transform}`);
+          break;
+        }
       }
     }
   }

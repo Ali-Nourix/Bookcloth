@@ -233,17 +233,28 @@ for the first six, because past that the delay outlasts the time it takes to
 look at the menu. The tick draws itself into a checkbox by animating the mask
 it is already made of. The spring overshoots by four percent, once.
 
-One effect was written, measured and removed, which is worth more than the ones
-that stayed. Blocks settling in as they are scrolled to —
-`animation-timeline: view()` — strands content: when a view timeline is
-inactive the fill pins the element at its from-state, and the timeline is
-inactive whenever the scroll container has nothing to scroll. A short note has
-nothing to scroll. The harness rendered every callout and every table at
-opacity 0.35, permanently. No fill mode fixes it, and `@supports` does not
-catch it because the feature *is* supported — it was the timeline that was not
-running. An effect that fails by hiding the reader's content is not an effect
-with a bug in it; it is the wrong effect. What replaced it runs once when the
-note mounts and has no fill, so the instant it ends the page is ordinary again.
+**Blocks and editor lines resolve as they come up the page**, and the story of
+that effect is the most useful thing in this file. It was written, measured,
+removed, and brought back.
+
+It was written with `animation-fill-mode: both`, and the harness measured every
+callout and table on the page stranded at opacity 0.35, permanently. The
+diagnosis at the time — "an inactive view timeline pins the element at its
+from-state" — was half right and led to the wrong conclusion, that the
+technique was unusable. The real rule is simpler: **anything already on screen
+when a note opens is *behind* its entry range**, and a backwards fill paints
+the before-phase. The fill was the bug, not the timeline.
+
+With no fill at all, an element outside its range is simply itself. Measured
+again: at rest every block reads opacity 1; mid-scroll the one crossing the
+edge reads 0.39 and resolves as it rises. Nothing can be stranded because there
+is no state to be stranded in. It is safe on `.cm-line` for the same reason the
+rest of this layer is — `transform` and `opacity` change no layout box, so
+CodeMirror's line measurement never sees it.
+
+`invariants.mjs` now fails on any block sitting below full opacity or displaced
+at rest, with a sub-pixel tolerance so a finishing entrance is not mistaken for
+a stranded one. That check is why the effect could come back.
 
 Two rules govern the motion layer. **Only `transform` and `opacity` are
 animated** — those are the two the compositor can run without laying the page
