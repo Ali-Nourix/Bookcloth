@@ -692,29 +692,6 @@ Focus rings are visible on every interactive element, and
   buttons flat. If `:has()` were ever unavailable the rule drops out entirely
   and every button goes flat — degraded, not broken.
 
-## Releasing
-
-Obsidian looks a theme's version up by its release tag, so the tag *is* the
-version and carries no `v`:
-
-```sh
-# bump manifest.json and --bc-version in src/01-tokens.css together, then
-node build.mjs && git commit -am "2.7.1"
-git tag -a 2.7.1 -m "Bookcloth 2.7.1"
-git push origin main 2.7.1
-```
-
-Pushing the tag runs `.github/workflows/release.yml`, which refuses to build
-if the tag and `manifest.json` disagree or if `theme.css` at that tag is not
-what `src/` produces, then attaches `theme.css` and `manifest.json` to a
-**draft** release.
-
-`.github/workflows/ci.yml` runs on every push. One job rebuilds `theme.css`
-and fails if it differs from the committed one, and checks the `--bc-version`
-stamp against the manifest; a second installs a browser and runs
-`preview/check.mjs`, which asks the engine whether it accepts every
-declaration in the built stylesheet.
-
 ## License
 
 MIT.
