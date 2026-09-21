@@ -164,6 +164,53 @@ const result = await pg.evaluate(() => {
     notes.push(`empty checkbox edge ${ratio.toFixed(2)}:1`);
   }
 
+  /* 4c. a callout is a block, and looks like one. The fill alone carries it
+         only while the tint is strong; at Notion's 12% on a dark ground the
+         block reads as a paragraph with an icon beside it, which is how it was
+         reported. So every callout owes a visible edge against its own fill —
+         except the ones that deliberately have none: a quote is a rule, and
+         two of the three callout styles drop the frame on purpose. */
+  const plain = document.body.classList.contains('bc-callout-plain')
+             || document.body.classList.contains('bc-callout-rule');
+  if (!plain) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 1;
+    const g2 = cv.getContext('2d', { willReadFrequently: true });
+    const paint = (layers) => {
+      g2.clearRect(0, 0, 1, 1);
+      for (const c of layers) { g2.fillStyle = c; g2.fillRect(0, 0, 1, 1); }
+      return [...g2.getImageData(0, 0, 1, 1).data].slice(0, 3);
+    };
+    const lum = ([r, gr, bl]) => {
+      const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; };
+      return 0.2126 * f(r) + 0.7152 * f(gr) + 0.0722 * f(bl);
+    };
+    const seen = new Set();
+    let worst = null;
+    for (const el of all('.callout[data-callout]')) {
+      const t = el.getAttribute('data-callout');
+      if (seen.has(t)) continue;
+      seen.add(t);
+      const cs = getComputedStyle(el);
+      const framed = cs.outlineStyle !== 'none';
+      const edgeColor = framed ? cs.outlineColor : cs.borderInlineStartColor;
+      const width = parseFloat(framed ? cs.outlineWidth : cs.borderInlineStartWidth);
+      if (!width) { fails.push(`callout "${t}" has no edge at all`); continue; }
+      const stack = [];
+      for (let h = el.parentElement; h; h = h.parentElement) {
+        const bg = getComputedStyle(h).backgroundColor;
+        if (bg && bg !== 'rgba(0, 0, 0, 0)') stack.unshift(bg);
+      }
+      const fill = paint([...stack, cs.backgroundColor]);
+      const edge = paint([...stack, cs.backgroundColor, edgeColor]);
+      const [hi, lo] = [lum(edge), lum(fill)].sort((x, y) => y - x);
+      const ratio = (hi + 0.05) / (lo + 0.05);
+      if (ratio < 1.5) fails.push(`callout "${t}" edge is ${ratio.toFixed(2)}:1 against its own fill`);
+      if (!worst || ratio < worst[1]) worst = [t, ratio];
+    }
+    if (worst) notes.push(`callout edges: ${seen.size} kinds, weakest ${worst[0]} at ${worst[1].toFixed(2)}:1`);
+  }
+
   /* 5. an embed is a block on this page, not a page of its own. The inner
         .markdown-preview-view arrives with --file-margins, which ends in 20vh,
         so an unreset embed opened with a fifth of the window under its last

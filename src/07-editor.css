@@ -186,6 +186,26 @@ body.bc-code-ink {
   );
   mix-blend-mode: var(--callout-blend-mode);
   border-radius: var(--callout-radius);
+  /* for the signature bar, which is a pseudo-element rather than a border so
+     that it can be striped and so that turning it on never moves the text. */
+  position: relative;
+  /* An outline rather than a border or an inset box-shadow. A border would add
+     a pixel to the box and shift every callout's contents; a box-shadow cannot
+     be dashed or dotted, and two of the signatures below are. An outline drawn
+     at a negative offset sits inside the border box, changes no geometry, and
+     follows border-radius. */
+  outline: calc(var(--bc-callout-edge) * var(--bc-callout-edge-heavy))
+    var(--bc-callout-edge-style, solid)
+    rgba(
+      var(--callout-color),
+      calc(
+        var(--bc-callout-edge-a) * var(--bc-callout-edge-strength) *
+          var(--bc-callout-edge-boost)
+      )
+    );
+  outline-offset: calc(
+    var(--bc-callout-edge) * var(--bc-callout-edge-heavy) * -1
+  );
 }
 
 .theme-dark .callout {
@@ -219,12 +239,162 @@ body.bc-code-ink {
   margin-bottom: 0;
 }
 
+/* --- One frame per kind of callout ----------------------------------------
+   Hue alone does not separate them. Obsidian gives note, info and todo the same
+   blue; tip, hint, important and abstract the same cyan; question and warning
+   the same orange; and failure, danger and bug the same red. So a reader
+   glancing at a note sees four blocks in three colours and has to read the
+   titles to tell an instruction from a hazard.
+
+   The frame carries the rest. Each family gets one treatment, and the treatment
+   is chosen to mean something rather than to be different:
+
+     statement   note, info, todo, abstract    a plain hairline — the baseline
+     advice      tip, hint, important          a solid bar down the leading edge
+     finished    success, check, done          a rule across the top, like a stamp
+     open        question, help, faq           a dashed frame: not closed yet
+     hazard      warning, caution, attention   a striped bar, which is what a
+                                               striped bar has meant since before
+                                               there were screens
+     failure     failure, danger, error, bug   the heavy frame, and no bar
+     example     example                       a dotted frame: an illustration
+     quotation   quote, cite                   no box at all — a quotation is a
+                                               rule, not a container
+
+   All of it survives greyscale, which hue does not. */
+
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before,
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before,
+.callout[data-callout="success"]::before,
+.callout[data-callout="check"]::before,
+.callout[data-callout="done"]::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Advice: down the leading edge, so it flips with the writing direction. */
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before,
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before {
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--bc-callout-bar);
+}
+
+/* Orange sits closer in luminance to its own fill than the other hues do, so
+   the same alpha reads a step lighter there. A small boost puts warning's frame
+   on the same footing as everything else. */
+.callout[data-callout="warning"],
+.callout[data-callout="caution"],
+.callout[data-callout="attention"] {
+  --bc-callout-edge-boost: 1.2;
+}
+
+/* Hazard: the same bar, striped. The stripes are drawn between the full colour
+   and a transparent version of itself rather than between two colours, so they
+   read on the callout's own fill in either theme without a second token. */
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgb(var(--callout-color)) 0 3px,
+    rgba(var(--callout-color), 0.35) 3px 6px
+  );
+}
+
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before {
+  background-color: rgb(var(--callout-color));
+}
+
+/* Finished: across the top instead of down the side. Deliberately the one
+   signature that does not move in a right-to-left note — a stamp is a stamp
+   whichever way the text runs, and it keeps success distinct from advice at a
+   glance in both directions. */
+.callout[data-callout="success"]::before,
+.callout[data-callout="check"]::before,
+.callout[data-callout="done"]::before {
+  inset-inline: 0;
+  inset-block-start: 0;
+  height: var(--bc-callout-bar);
+  background-color: rgb(var(--callout-color));
+}
+
+/* Open question: the frame is not closed. */
+.callout[data-callout="question"],
+.callout[data-callout="help"],
+.callout[data-callout="faq"] {
+  --bc-callout-edge-style: dashed;
+  --bc-callout-edge-boost: 1.3;
+}
+
+/* An illustration rather than an instruction. */
+.callout[data-callout="example"] {
+  --bc-callout-edge-style: dotted;
+  --bc-callout-edge-boost: 1.45;
+}
+
+/* The heavy frame. No bar with it: a red block with a red bar is shouting
+   twice, and the weight alone already reads as the strongest thing on the
+   page. */
+.callout[data-callout="failure"],
+.callout[data-callout="fail"],
+.callout[data-callout="missing"],
+.callout[data-callout="danger"],
+.callout[data-callout="error"],
+.callout[data-callout="bug"] {
+  --bc-callout-edge-heavy: 2;
+  --bc-callout-edge-boost: 1.2;
+}
+
+/* A quotation is a rule, not a container. No fill, no frame, and the leading
+   rule is the whole of it — which is what a blockquote looks like everywhere
+   else in this theme, and a quote callout is a blockquote with a title. */
+.callout[data-callout="quote"],
+.callout[data-callout="cite"] {
+  background-color: transparent;
+  outline: none;
+  border-radius: 0;
+  padding-inline: var(--bc-gap-4);
+  border-inline-start: var(--bc-callout-bar) solid
+    rgba(var(--callout-color), 0.72);
+}
+
+/* --- The other two callout styles ----------------------------------------
+   Neither takes the signatures. "Fill only" exists for a reader who wants the
+   block back the way it was before the frames, and drawing half the system
+   would be worse than drawing none of it; the left rule is already one
+   signature and cannot carry a second. */
+
+body.bc-callout-plain .callout {
+  outline: none;
+}
+
+body.bc-callout-plain .callout::before {
+  content: none;
+}
+
 /* Left-rule variant: no fill, one coloured hairline. */
 body.bc-callout-rule .callout {
   background-color: transparent;
   border-radius: 0;
+  outline: none;
   border-inline-start: 3px solid rgb(var(--callout-color));
   padding-inline: var(--bc-gap-4);
+}
+
+body.bc-callout-rule .callout::before {
+  content: none;
 }
 
 /* --- Checkboxes and tasks ------------------------------------------------ */

@@ -1,4 +1,4 @@
-/* Bookcloth 3.5.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.6.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -667,16 +667,39 @@ settings:
     -
         id: bc-callout-style
         title: Callout style
+        description: "Framed is the tinted fill plus an edge in the callout's own colour, and a signature per kind: a solid bar down the side for tip and important, a rule across the top for success, a striped bar for warning, a dashed frame for question, a dotted one for example, a heavy frame for danger and failure, and no box at all for quote. Fill only is the tint on its own. Left rule drops the fill and keeps one coloured hairline."
         type: class-select
         allowEmpty: false
         default: bc-callout-soft
         options:
             -
-                label: Soft fill
+                label: Framed
                 value: bc-callout-soft
+            -
+                label: Fill only
+                value: bc-callout-plain
             -
                 label: Left rule
                 value: bc-callout-rule
+    -
+        id: bc-callout-edge-strength
+        title: Callout frame strength
+        description: Multiplies the frame around a callout. Zero removes it and leaves the fill, which is what Fill only does. It is a multiplier rather than a colour because light and dark start from different numbers — the dark fill is mixed stronger and so begins closer to the frame — and one number here keeps both in step.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2
+        step: 0.05
+    -
+        id: bc-callout-edge
+        title: Callout frame width
+        description: The hairline. Danger, error, failure and bug draw theirs at twice this, which is their signature.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 4
+        step: 1
+        format: px
     -
         id: bc-embed-padding
         title: Embed padding
@@ -863,7 +886,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.5.1";
+  --bc-version: "3.6.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -1011,6 +1034,30 @@ body {
   --checkbox-radius: var(--bc-check-radius);
   --code-radius: var(--radius-m);
   --callout-radius: var(--radius-m);
+  /* The callout frame. A tinted fill alone tells you a block is a callout only
+     while the tint is strong enough to see, and at Notion's 12% on a dark
+     ground it is not — the block reads as a paragraph with an icon. The frame
+     is what makes it a block, the same way the hairline is what makes an embed
+     a card. Alpha of the callout's own colour, so it stays in the family. */
+  --bc-callout-edge: 1px;
+  /* Light's number, overridden in the dark file. The two grounds are not
+     symmetric: the dark fill is mixed at 1.8x the wash, so it starts closer to
+     the frame's own colour and needs less alpha to separate from it, not more.
+     Measured against the fill: 0.5 here reads 1.9:1, 0.4 there reads 1.8:1. */
+  --bc-callout-edge-a: 0.5;
+  /* Per-type multipliers rather than per-type alphas, so the slider stays one
+     number: a dotted frame lays down a third of the ink a solid one does and
+     has to be stronger to read as the same weight. */
+  --bc-callout-edge-boost: 1;
+  --bc-callout-edge-heavy: 1;
+  /* What the slider writes. A multiplier rather than the alpha itself, so a
+     reader turning the frames up does not flatten the difference between the
+     two grounds — setting the alpha directly would hand dark light's number. */
+  --bc-callout-edge-strength: 1;
+  /* The signature bar: down the leading edge for advice, across the top for a
+     finished thing. 3px is the width at which a bar is a bar rather than a
+     thick border. */
+  --bc-callout-bar: 3px;
   --tag-radius: var(--radius-s);
   --tab-radius: var(--radius-l);
   --tab-radius-active: var(--radius-l);
@@ -1149,7 +1196,8 @@ body.bc-density-comfortable {
   --background-modifier-border-focus: var(--bc-ac-a40);
   --background-modifier-form-field: rgba(242, 241, 238, 0.6);
   --bc-control-border: rgba(15, 15, 15, calc(var(--bc-border-strength) * 0.1));
-  /* 0.442 is exactly 3:1 on this page; 0.45 clears it. */
+  /* 0.442 is exactly 3:1 on this page and 0.449 on the tinted fill of a callout,
+     which is the hardest ground a checkbox sits on in a note; 0.45 clears both. */
   --bc-check-border: rgba(15, 15, 15, calc(var(--bc-check-border-strength) * 0.45));
   --background-modifier-message: rgba(15, 15, 15, 0.88);
 
@@ -1256,9 +1304,14 @@ body.bc-density-comfortable {
   --background-modifier-border-focus: var(--bc-ac-a40);
   --background-modifier-form-field: rgba(255, 255, 255, 0.055);
   --bc-control-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.13));
-  /* 0.329 is exactly 3:1 on this page; 0.34 clears it. Less than light needs,
-     because white on a near-black ground climbs faster than black on white. */
-  --bc-check-border: rgba(255, 255, 255, calc(var(--bc-check-border-strength) * 0.34));
+  /* 0.329 is exactly 3:1 on the page and 0.367 on the tinted fill of a callout,
+     which is the hardest ground a checkbox sits on in a note — a lighter, warmer
+     surface gives a white edge less to separate from. 0.38 clears both. Still
+     less than light needs, because white on a near-black ground climbs faster
+     than black on white. */
+  --bc-check-border: rgba(255, 255, 255, calc(var(--bc-check-border-strength) * 0.38));
+  /* Less than light needs — see the note in the token file. */
+  --bc-callout-edge-a: 0.4;
   --background-modifier-message: rgba(47, 47, 47, 0.95);
 
   --background-modifier-error-rgb: var(--color-red-rgb);
@@ -2665,6 +2718,26 @@ body.bc-code-ink {
   );
   mix-blend-mode: var(--callout-blend-mode);
   border-radius: var(--callout-radius);
+  /* for the signature bar, which is a pseudo-element rather than a border so
+     that it can be striped and so that turning it on never moves the text. */
+  position: relative;
+  /* An outline rather than a border or an inset box-shadow. A border would add
+     a pixel to the box and shift every callout's contents; a box-shadow cannot
+     be dashed or dotted, and two of the signatures below are. An outline drawn
+     at a negative offset sits inside the border box, changes no geometry, and
+     follows border-radius. */
+  outline: calc(var(--bc-callout-edge) * var(--bc-callout-edge-heavy))
+    var(--bc-callout-edge-style, solid)
+    rgba(
+      var(--callout-color),
+      calc(
+        var(--bc-callout-edge-a) * var(--bc-callout-edge-strength) *
+          var(--bc-callout-edge-boost)
+      )
+    );
+  outline-offset: calc(
+    var(--bc-callout-edge) * var(--bc-callout-edge-heavy) * -1
+  );
 }
 
 .theme-dark .callout {
@@ -2698,12 +2771,162 @@ body.bc-code-ink {
   margin-bottom: 0;
 }
 
+/* --- One frame per kind of callout ----------------------------------------
+   Hue alone does not separate them. Obsidian gives note, info and todo the same
+   blue; tip, hint, important and abstract the same cyan; question and warning
+   the same orange; and failure, danger and bug the same red. So a reader
+   glancing at a note sees four blocks in three colours and has to read the
+   titles to tell an instruction from a hazard.
+
+   The frame carries the rest. Each family gets one treatment, and the treatment
+   is chosen to mean something rather than to be different:
+
+     statement   note, info, todo, abstract    a plain hairline — the baseline
+     advice      tip, hint, important          a solid bar down the leading edge
+     finished    success, check, done          a rule across the top, like a stamp
+     open        question, help, faq           a dashed frame: not closed yet
+     hazard      warning, caution, attention   a striped bar, which is what a
+                                               striped bar has meant since before
+                                               there were screens
+     failure     failure, danger, error, bug   the heavy frame, and no bar
+     example     example                       a dotted frame: an illustration
+     quotation   quote, cite                   no box at all — a quotation is a
+                                               rule, not a container
+
+   All of it survives greyscale, which hue does not. */
+
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before,
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before,
+.callout[data-callout="success"]::before,
+.callout[data-callout="check"]::before,
+.callout[data-callout="done"]::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Advice: down the leading edge, so it flips with the writing direction. */
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before,
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before {
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--bc-callout-bar);
+}
+
+/* Orange sits closer in luminance to its own fill than the other hues do, so
+   the same alpha reads a step lighter there. A small boost puts warning's frame
+   on the same footing as everything else. */
+.callout[data-callout="warning"],
+.callout[data-callout="caution"],
+.callout[data-callout="attention"] {
+  --bc-callout-edge-boost: 1.2;
+}
+
+/* Hazard: the same bar, striped. The stripes are drawn between the full colour
+   and a transparent version of itself rather than between two colours, so they
+   read on the callout's own fill in either theme without a second token. */
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgb(var(--callout-color)) 0 3px,
+    rgba(var(--callout-color), 0.35) 3px 6px
+  );
+}
+
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before {
+  background-color: rgb(var(--callout-color));
+}
+
+/* Finished: across the top instead of down the side. Deliberately the one
+   signature that does not move in a right-to-left note — a stamp is a stamp
+   whichever way the text runs, and it keeps success distinct from advice at a
+   glance in both directions. */
+.callout[data-callout="success"]::before,
+.callout[data-callout="check"]::before,
+.callout[data-callout="done"]::before {
+  inset-inline: 0;
+  inset-block-start: 0;
+  height: var(--bc-callout-bar);
+  background-color: rgb(var(--callout-color));
+}
+
+/* Open question: the frame is not closed. */
+.callout[data-callout="question"],
+.callout[data-callout="help"],
+.callout[data-callout="faq"] {
+  --bc-callout-edge-style: dashed;
+  --bc-callout-edge-boost: 1.3;
+}
+
+/* An illustration rather than an instruction. */
+.callout[data-callout="example"] {
+  --bc-callout-edge-style: dotted;
+  --bc-callout-edge-boost: 1.45;
+}
+
+/* The heavy frame. No bar with it: a red block with a red bar is shouting
+   twice, and the weight alone already reads as the strongest thing on the
+   page. */
+.callout[data-callout="failure"],
+.callout[data-callout="fail"],
+.callout[data-callout="missing"],
+.callout[data-callout="danger"],
+.callout[data-callout="error"],
+.callout[data-callout="bug"] {
+  --bc-callout-edge-heavy: 2;
+  --bc-callout-edge-boost: 1.2;
+}
+
+/* A quotation is a rule, not a container. No fill, no frame, and the leading
+   rule is the whole of it — which is what a blockquote looks like everywhere
+   else in this theme, and a quote callout is a blockquote with a title. */
+.callout[data-callout="quote"],
+.callout[data-callout="cite"] {
+  background-color: transparent;
+  outline: none;
+  border-radius: 0;
+  padding-inline: var(--bc-gap-4);
+  border-inline-start: var(--bc-callout-bar) solid
+    rgba(var(--callout-color), 0.72);
+}
+
+/* --- The other two callout styles ----------------------------------------
+   Neither takes the signatures. "Fill only" exists for a reader who wants the
+   block back the way it was before the frames, and drawing half the system
+   would be worse than drawing none of it; the left rule is already one
+   signature and cannot carry a second. */
+
+body.bc-callout-plain .callout {
+  outline: none;
+}
+
+body.bc-callout-plain .callout::before {
+  content: none;
+}
+
 /* Left-rule variant: no fill, one coloured hairline. */
 body.bc-callout-rule .callout {
   background-color: transparent;
   border-radius: 0;
+  outline: none;
   border-inline-start: 3px solid rgb(var(--callout-color));
   padding-inline: var(--bc-gap-4);
+}
+
+body.bc-callout-rule .callout::before {
+  content: none;
 }
 
 /* --- Checkboxes and tasks ------------------------------------------------ */

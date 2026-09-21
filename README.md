@@ -524,6 +524,74 @@ set on the element for both options rather than leaving the square as "the
 state with no rule", so a box set to square cannot be quietly rounded again by
 anything else that touches the radius.
 
+## Callouts
+
+A callout used to be a tinted fill and nothing else. That works on a light page
+and fails on a dark one: at Notion's 12% wash the block is a few levels off the
+background, and what a reader sees is a paragraph with an icon beside it rather
+than a block. It was reported exactly that way — *callouts don't get a frame the
+way embeds do*.
+
+They do now. Every callout carries an edge in its own colour, drawn as an
+**outline at a negative offset** rather than a border or an inset shadow: a
+border would add a pixel to the box and shift the contents of every callout in
+the vault, a box-shadow cannot be dashed or dotted, and two of the signatures
+below are. An outline changes no geometry and still follows `border-radius`.
+
+### One frame per kind
+
+Hue alone does not separate them, because Obsidian does not give them separate
+hues. Note, info and todo are all blue; tip, hint, important and abstract are
+all cyan; question and warning are both orange; failure, danger, error and bug
+are all red. A reader glancing at a page sees four blocks in three colours and
+has to read the titles to tell an instruction from a hazard.
+
+So the frame carries the rest of it. Each family gets one treatment, and the
+treatment is chosen to mean something rather than merely to differ:
+
+| | | |
+| --- | --- | --- |
+| **Statement** | note, info, todo, abstract | a plain hairline — the baseline |
+| **Advice** | tip, hint, important | a solid bar down the leading edge |
+| **Finished** | success, check, done | a rule across the top, like a stamp |
+| **Open** | question, help, faq | a dashed frame: not closed yet |
+| **Hazard** | warning, caution, attention | a striped bar, which is what a striped bar has meant since before there were screens |
+| **Failure** | failure, fail, missing, danger, error, bug | the heavy frame, at twice the width, and no bar |
+| **Illustration** | example | a dotted frame |
+| **Quotation** | quote, cite | no box at all — a quotation is a rule, not a container |
+
+All eight survive greyscale, which hue does not.
+
+Success takes the one signature that does **not** flip in a right-to-left note.
+Advice and hazard run down the leading edge and turn with the writing
+direction; a stamp is a stamp whichever way the text runs, and keeping it on
+top is also what keeps success distinct from advice in both directions.
+
+The hazard stripes are drawn between the callout's colour and a transparent
+version of *itself* rather than between two colours, so they read on the
+callout's own fill in either theme without a second token to keep in step.
+
+### The numbers
+
+The fill already separates the block from the page; the frame is what says
+which block it is, so it has to be findable against the fill it sits on.
+`preview/cframe.mjs` measures every type in both themes, compositing on a
+canvas because a callout background is a `color-mix()` and comes back as
+`oklab()` — which a parser that expects `rgba()` reads as three numbers under
+one. The weakest edge is 1.82:1 in light and 1.84:1 in dark; `invariants.mjs`
+fails the build under 1.5:1.
+
+Light and dark start from **different** alphas — 0.5 and 0.4 — and the reason
+is not symmetry. The dark fill is mixed at 1.8× the wash, so it begins closer
+to the frame's own colour and needs less alpha to separate from it, not more.
+The slider is therefore a multiplier rather than a colour: turning the frames
+up should not hand dark light's number.
+
+**Fill only** puts the block back the way it was, and **Left rule** drops the
+fill for a single coloured hairline. Neither takes the signatures — drawing
+half the system would be worse than drawing none of it, and the left rule is
+already one signature and cannot carry a second.
+
 ## Transclusions
 
 An embed is the one construct in Obsidian that nests a whole

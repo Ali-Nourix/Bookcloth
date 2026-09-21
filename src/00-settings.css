@@ -663,16 +663,39 @@ settings:
     -
         id: bc-callout-style
         title: Callout style
+        description: "Framed is the tinted fill plus an edge in the callout's own colour, and a signature per kind: a solid bar down the side for tip and important, a rule across the top for success, a striped bar for warning, a dashed frame for question, a dotted one for example, a heavy frame for danger and failure, and no box at all for quote. Fill only is the tint on its own. Left rule drops the fill and keeps one coloured hairline."
         type: class-select
         allowEmpty: false
         default: bc-callout-soft
         options:
             -
-                label: Soft fill
+                label: Framed
                 value: bc-callout-soft
+            -
+                label: Fill only
+                value: bc-callout-plain
             -
                 label: Left rule
                 value: bc-callout-rule
+    -
+        id: bc-callout-edge-strength
+        title: Callout frame strength
+        description: Multiplies the frame around a callout. Zero removes it and leaves the fill, which is what Fill only does. It is a multiplier rather than a colour because light and dark start from different numbers — the dark fill is mixed stronger and so begins closer to the frame — and one number here keeps both in step.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2
+        step: 0.05
+    -
+        id: bc-callout-edge
+        title: Callout frame width
+        description: The hairline. Danger, error, failure and bug draw theirs at twice this, which is their signature.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 4
+        step: 1
+        format: px
     -
         id: bc-embed-padding
         title: Embed padding

@@ -17,6 +17,8 @@ delete the folder without affecting the theme.
 | `rtl.html` | Persian typography and right-to-left layout |
 | `plugin-pane.html` | A dense plugin pane header, the case that breaks icon buttons |
 | `controls.html` | Every control in the markup Obsidian and its plugins actually emit: icons wrapped one, two and three elements deep; a note's properties as real `<input>`s; a `<select>` that has to keep room for its own chevron |
+| `checkboxes.html` | Every task state, in all four markups Obsidian emits for them |
+| `callouts.html` | Every callout type Obsidian ships, plus one nested, one in Live Preview and two right-to-left |
 
 Open any of them in a browser. Switch themes from the console:
 
@@ -59,6 +61,7 @@ node contrast.mjs        # the ratios the main README publishes
 node invariants.mjs      # the assertions that hold on every page, in both modes
 node check-settings.mjs  # the Style Settings block, against the plugin's own shapes
 node fade-lab.mjs dark   # is the bottom fade a blur, or a cross-fade?
+node cframe.mjs          # every callout frame, measured against its own fill
 ```
 
 `fade-lab.mjs` is the one worth explaining. Contrast alone cannot tell a blur
@@ -86,6 +89,12 @@ reach for one. They exist so the harness reproduces the condition that beat
 this theme twice rather than the easy version of it: drop the `!important`
 from the switch or from icon sizing and those rules take over, visibly, on
 the next render.
+
+One trap worth knowing before writing another of these: **change the theme
+class, then wait.** Reading a computed `color-mix()` in the same tick as the
+class change returns the previous theme's answer, and the numbers look
+plausible — a first version of `cframe.mjs` reported dark-mode callout frames
+at 1.25:1 that are actually 1.84:1, and the fix was a 300ms settle.
 
 `check.mjs` exits non-zero if anything was dropped, so it works as a
 pre-commit hook. `measure.mjs` is how the "one centre line" claim in the main
