@@ -116,6 +116,54 @@ const result = await pg.evaluate(() => {
     notes.push(`task checkbox ${w}px`);
   }
 
+  /* 4b. and it can be seen. An unchecked checkbox is nothing but its edge, so
+         that edge is a user interface component and owes 3:1 against what it
+         sits on — not the 1.24:1 it shipped with while it shared a token with
+         the decorative hairlines.
+
+         Only the genuinely empty state counts. `- [/]` and `- [!]` are filled,
+         and their border is transparent on purpose: the fill is the control
+         and an edge around it would be a second one.
+
+         Composited on a canvas rather than parsed, because a background here
+         can arrive as rgba(), as color(srgb 0-1 floats) or as oklab() out of a
+         color-mix, and a regex that knows about the first reads the second as
+         three numbers under one. Stacking the ancestors' backgrounds in the
+         canvas also gets a checkbox inside a translucent callout right. */
+  const stateless = (el) => {
+    if (el.checked) return false;
+    if (/is-in-progress|is-not-done|is-cancelled/.test(el.className)) return false;
+    const task = el.getAttribute('data-task')
+      || (el.closest('[data-task]') || {}).getAttribute?.call(el.closest('[data-task]'), 'data-task');
+    return task === null || task === undefined || task.trim() === '';
+  };
+  const empty = all('input[type=checkbox]').find(stateless);
+  if (empty) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 1;
+    const g = cv.getContext('2d', { willReadFrequently: true });
+    const paint = (layers) => {
+      g.clearRect(0, 0, 1, 1);
+      for (const col of layers) { g.fillStyle = col; g.fillRect(0, 0, 1, 1); }
+      return [...g.getImageData(0, 0, 1, 1).data].slice(0, 3);
+    };
+    const stack = [];
+    for (let h = empty.parentElement; h; h = h.parentElement) {
+      const bg = getComputedStyle(h).backgroundColor;
+      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') stack.unshift(bg);
+    }
+    const lum = ([r, gr, b]) => {
+      const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; };
+      return 0.2126 * f(r) + 0.7152 * f(gr) + 0.0722 * f(b);
+    };
+    const ground = paint(stack);
+    const edge = paint([...stack, getComputedStyle(empty).borderTopColor]);
+    const [hi, lo] = [lum(edge), lum(ground)].sort((x, y) => y - x);
+    const ratio = (hi + 0.05) / (lo + 0.05);
+    if (ratio < 3) fails.push(`empty checkbox edge is ${ratio.toFixed(2)}:1 against its background, under 3:1`);
+    notes.push(`empty checkbox edge ${ratio.toFixed(2)}:1`);
+  }
+
   /* 5. an embed is a block on this page, not a page of its own. The inner
         .markdown-preview-view arrives with --file-margins, which ends in 20vh,
         so an unreset embed opened with a fifth of the window under its last

@@ -760,6 +760,15 @@ settings:
         step: 0.05
         format: em
     -
+        id: bc-check-border-strength
+        title: Empty checkbox edge
+        description: An unchecked box is nothing but its edge, so this is its own control rather than part of Border strength — turning every hairline off should not also turn off the checkboxes. The default is where the edge measures 3:1 against the page, the contrast threshold for an interface control. Below about 0.6 it starts to disappear.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2
+        step: 0.05
+    -
         id: bc-task-progress
         title: In-progress task colour
         description: The half-filled box on a `- [/]` task. Left alone it follows the accent, so changing the accent changes it too; set a colour here to pin it to one, and clear the override to hand it back to the accent.

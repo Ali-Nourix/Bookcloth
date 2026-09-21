@@ -898,6 +898,7 @@ actually resolves:
 | Links | 5.0:1 | 6.8:1 |
 | Button label on accent | 5.0:1 | 5.1:1 |
 | Error / warning / success text | 4.9 / 4.9 / 4.5:1 | 6.6 / 13.1 / 6.4:1 |
+| Empty checkbox edge | 3.1:1 | 3.1:1 |
 
 Two values are knowingly below 4.5:1, both of them Notion's own:
 
@@ -912,6 +913,17 @@ and 4.5:1 on the page; Notion's yellow (2.8:1) and orange (3.3:1) do not, which
 is why the three *message* colours — error, warning, success — are darkened
 separately rather than read from the hues. The hues themselves drive callout
 fills, tags, the graph and syntax, where they are a wash or an icon.
+
+An empty checkbox is measured as a **user interface component**, not as text,
+so its bar is 3:1 rather than 4.5:1 — and it is measured at all because it
+failed. It had been sharing a token with the decorative hairlines and came out
+at 1.24:1 light and 1.47:1 dark, which is a box you can only find because you
+know where it is. It now has its own token, set where the edge measures 3:1 on
+the page, with its own slider; **Border strength** no longer reaches it,
+because switching every hairline off should not also switch off the only thing
+an unchecked checkbox is made of. `preview/invariants.mjs` asserts the ratio on
+every page, composited over whatever the box actually sits on — a callout, an
+embed, the page — so it cannot drift back.
 
 Focus rings are visible on every interactive element, and
 `prefers-reduced-motion` is respected.

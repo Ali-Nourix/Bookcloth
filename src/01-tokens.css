@@ -12,7 +12,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.5.0";
+  --bc-version: "3.5.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -74,6 +74,14 @@ body {
   --bc-tint: 0%;
   /* Multiplier on every border alpha. 0 removes lines entirely. */
   --bc-border-strength: 1;
+  /* The empty checkbox has its own, and deliberately does not follow the one
+     above. A hairline between two regions is decoration and a reader is
+     entitled to switch it off; the edge of an empty checkbox is the entire
+     control — there is nothing else drawn — so putting it on the same slider
+     means "no borders" also means "no checkboxes". The defaults below are set
+     where the edge measures 3:1 against the page, the threshold for a user
+     interface component rather than for text. */
+  --bc-check-border-strength: 1;
   /* How much colour a callout or wash carries. */
   --bc-wash: 12%;
 

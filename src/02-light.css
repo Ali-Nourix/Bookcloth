@@ -62,6 +62,8 @@
   --background-modifier-border-focus: var(--bc-ac-a40);
   --background-modifier-form-field: rgba(242, 241, 238, 0.6);
   --bc-control-border: rgba(15, 15, 15, calc(var(--bc-border-strength) * 0.1));
+  /* 0.442 is exactly 3:1 on this page; 0.45 clears it. */
+  --bc-check-border: rgba(15, 15, 15, calc(var(--bc-check-border-strength) * 0.45));
   --background-modifier-message: rgba(15, 15, 15, 0.88);
 
   --background-modifier-error-rgb: var(--color-red-rgb);

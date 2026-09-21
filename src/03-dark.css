@@ -56,6 +56,9 @@
   --background-modifier-border-focus: var(--bc-ac-a40);
   --background-modifier-form-field: rgba(255, 255, 255, 0.055);
   --bc-control-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.13));
+  /* 0.329 is exactly 3:1 on this page; 0.34 clears it. Less than light needs,
+     because white on a near-black ground climbs faster than black on white. */
+  --bc-check-border: rgba(255, 255, 255, calc(var(--bc-check-border-strength) * 0.34));
   --background-modifier-message: rgba(47, 47, 47, 0.95);
 
   --background-modifier-error-rgb: var(--color-red-rgb);

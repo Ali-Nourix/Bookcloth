@@ -1,4 +1,4 @@
-/* Bookcloth 3.5.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.5.1 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -764,6 +764,15 @@ settings:
         step: 0.05
         format: em
     -
+        id: bc-check-border-strength
+        title: Empty checkbox edge
+        description: An unchecked box is nothing but its edge, so this is its own control rather than part of Border strength — turning every hairline off should not also turn off the checkboxes. The default is where the edge measures 3:1 against the page, the contrast threshold for an interface control. Below about 0.6 it starts to disappear.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2
+        step: 0.05
+    -
         id: bc-task-progress
         title: In-progress task colour
         description: The half-filled box on a `- [/]` task. Left alone it follows the accent, so changing the accent changes it too; set a colour here to pin it to one, and clear the override to hand it back to the accent.
@@ -854,7 +863,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.5.0";
+  --bc-version: "3.5.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -916,6 +925,14 @@ body {
   --bc-tint: 0%;
   /* Multiplier on every border alpha. 0 removes lines entirely. */
   --bc-border-strength: 1;
+  /* The empty checkbox has its own, and deliberately does not follow the one
+     above. A hairline between two regions is decoration and a reader is
+     entitled to switch it off; the edge of an empty checkbox is the entire
+     control — there is nothing else drawn — so putting it on the same slider
+     means "no borders" also means "no checkboxes". The defaults below are set
+     where the edge measures 3:1 against the page, the threshold for a user
+     interface component rather than for text. */
+  --bc-check-border-strength: 1;
   /* How much colour a callout or wash carries. */
   --bc-wash: 12%;
 
@@ -1132,6 +1149,8 @@ body.bc-density-comfortable {
   --background-modifier-border-focus: var(--bc-ac-a40);
   --background-modifier-form-field: rgba(242, 241, 238, 0.6);
   --bc-control-border: rgba(15, 15, 15, calc(var(--bc-border-strength) * 0.1));
+  /* 0.442 is exactly 3:1 on this page; 0.45 clears it. */
+  --bc-check-border: rgba(15, 15, 15, calc(var(--bc-check-border-strength) * 0.45));
   --background-modifier-message: rgba(15, 15, 15, 0.88);
 
   --background-modifier-error-rgb: var(--color-red-rgb);
@@ -1237,6 +1256,9 @@ body.bc-density-comfortable {
   --background-modifier-border-focus: var(--bc-ac-a40);
   --background-modifier-form-field: rgba(255, 255, 255, 0.055);
   --bc-control-border: rgba(255, 255, 255, calc(var(--bc-border-strength) * 0.13));
+  /* 0.329 is exactly 3:1 on this page; 0.34 clears it. Less than light needs,
+     because white on a near-black ground climbs faster than black on white. */
+  --bc-check-border: rgba(255, 255, 255, calc(var(--bc-check-border-strength) * 0.34));
   --background-modifier-message: rgba(47, 47, 47, 0.95);
 
   --background-modifier-error-rgb: var(--color-red-rgb);
@@ -1406,7 +1428,7 @@ body {
   /* Set with the rest of the checkbox in 12-icons. */
   --checkbox-color: var(--interactive-accent);
   --checkbox-color-hover: var(--interactive-accent-hover);
-  --checkbox-border-color: var(--bc-control-border);
+  --checkbox-border-color: var(--bc-check-border);
   --checkbox-border-color-hover: var(--interactive-accent);
   --checkbox-marker-color: var(--text-on-accent);
   --checklist-done-color: var(--text-faint);
