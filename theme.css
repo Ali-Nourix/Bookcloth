@@ -1,4 +1,4 @@
-/* Bookcloth 2.6.6 — a warm, quiet theme for Obsidian.
+/* Bookcloth 2.7.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -600,6 +600,11 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-off-habbiter
+        title: Opt out of Habbiter styling
+        type: class-toggle
+        default: false
+    -
         id: bc-off-misc
         title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
         type: class-toggle
@@ -620,7 +625,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.6.6";
+  --bc-version: "2.7.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -4830,6 +4835,49 @@ body:not(.bc-off-calendar) #calendar-container .day.today {
 
 body:not(.bc-off-calendar) #calendar-container .week-num {
   border-radius: var(--radius-s);
+}
+
+/* --------------------------------------------------------------------------
+   Habbiter
+   Habit and tracker grids inside a note. The plugin reads its colours, its
+   radius and its hit size from the variable layer already, so it arrives
+   looking like Bookcloth without anything here. What this file adds is the
+   two things a plugin cannot work out from the outside.
+
+   The first is the Style Settings switches: a vault that asked for circular
+   checkboxes meant the tracker's cells too.
+
+   The second is the colour behind a row label. A tracker wider than the note
+   scrolls sideways under a label column that stays put, and the label has to
+   be opaque or the cells slide through it. CSS cannot read the colour
+   actually painted behind an element, so the plugin leaves --hb-page as a
+   knob and defaults it to the page. These rules turn it to whatever the
+   tracker is really standing on.
+   -------------------------------------------------------------------------- */
+
+body.bc-check-circle:not(.bc-off-habbiter) .hb-root {
+  --hb-radius: 50%;
+}
+
+/* Obsidian washes a callout with its own colour at 10% over the page. */
+body:not(.bc-off-habbiter) .callout .hb-root {
+  --hb-page: color-mix(in srgb, rgb(var(--callout-color)) 10%, var(--background-primary));
+}
+
+body:not(.bc-off-habbiter) .markdown-embed .hb-root,
+body:not(.bc-off-habbiter) .cm-embed-block .markdown-embed .hb-root {
+  --hb-page: var(--bc-surface-sunken);
+}
+
+/* A tracker in the sidebar — a plugin pane, a hover popover — is on the
+   chrome tone rather than the page. */
+body:not(.bc-off-habbiter) .workspace-split.mod-left-split .hb-root,
+body:not(.bc-off-habbiter) .workspace-split.mod-right-split .hb-root {
+  --hb-page: var(--background-secondary);
+}
+
+body:not(.bc-off-habbiter) .popover.hover-popover .hb-root {
+  --hb-page: var(--bc-surface-raised);
 }
 
 /* --------------------------------------------------------------------------
