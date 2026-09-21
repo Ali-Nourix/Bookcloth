@@ -538,6 +538,57 @@ border would add a pixel to the box and shift the contents of every callout in
 the vault, a box-shadow cannot be dashed or dotted, and two of the signatures
 below are. An outline changes no geometry and still follows `border-radius`.
 
+### The contract that broke all of it
+
+Worth its own heading, because it is the reason the frames were reported
+missing and the fill had been missing long before that.
+
+Obsidian used to hand a callout its colour as a bare triple —
+`--callout-color: 68, 138, 255` — and every theme wrote `rgb(var(...))` around
+it. It now hands over a colour. Its own stylesheet reads
+
+```css
+background-color: color-mix(in oklch, var(--callout-color) 10%, transparent);
+```
+
+which cannot be written against a triple. Under the new contract every
+`rgb(var(--callout-color))` in a theme is invalid at computed-value time — and
+an invalid colour does not fall back to anything, the declaration is simply
+dropped. That took the fill, the frame, every signature bar, the left rule and
+the embed hairline, all silently, and a callout came out as a paragraph with an
+icon beside it.
+
+So the colour is resolved once, into a property registered as a `<color>`:
+
+```css
+@property --bc-callout-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #8a8a8a;
+}
+.callout { --bc-callout-c: var(--callout-color); }
+```
+
+Registration is the whole trick. An **unregistered** custom property accepts
+any text, so `rgb(#027aff)` would be stored happily and blow up only at the
+point of use, one declaration at a time, with nothing to catch it.
+**Registered**, the bad value is rejected at computed-value time and the
+property falls back to its initial value instead — so on a build old enough to
+still send a triple, a callout is framed in grey rather than not framed at all.
+`preview/callouts.html` carries one of each to keep both paths rendered.
+
+Two things now watch it. `invariants.mjs` fails if a callout's tint does not
+paint, and fails if every kind resolves to the same colour — which is exactly
+what the grey fallback looks like from outside, and what nothing else would
+notice, since the fill and the frame both still draw. `check.mjs` confirms the
+engine actually registered the `@property`: a malformed one is dropped whole,
+and then the token it was meant to type-check silently stops being
+type-checked.
+
+The harness had been hiding it. `app-shim.css` was still handing over a triple,
+so every callout rule looked correct there while being dropped in the app. A
+stand-in for an application is only worth what its accuracy is worth.
+
 ### One frame per kind
 
 Hue alone does not separate them, because Obsidian does not give them separate

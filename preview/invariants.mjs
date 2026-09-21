@@ -186,6 +186,7 @@ const result = await pg.evaluate(() => {
       return 0.2126 * f(r) + 0.7152 * f(gr) + 0.0722 * f(bl);
     };
     const seen = new Set();
+    const hues = new Map();
     let worst = null;
     for (const el of all('.callout[data-callout]')) {
       const t = el.getAttribute('data-callout');
@@ -203,10 +204,31 @@ const result = await pg.evaluate(() => {
       }
       const fill = paint([...stack, cs.backgroundColor]);
       const edge = paint([...stack, cs.backgroundColor, edgeColor]);
+      /* The tint has to actually paint. When Obsidian changed --callout-color
+         from an "r, g, b" triple to a colour, every rgb(var(--callout-color))
+         in this theme became invalid at computed-value time and was dropped —
+         fill, frame, bars and all — and a callout came out as a paragraph with
+         an icon beside it. An invalid colour falls back to nothing, so nothing
+         in the rendered page says it happened except this. */
+      if (!document.body.classList.contains('bc-callout-rule')) {
+        const ground = paint(stack);
+        if (fill === ground) fails.push(`callout "${t}" has no fill: its tint did not paint`);
+      }
       const [hi, lo] = [lum(edge), lum(fill)].sort((x, y) => y - x);
       const ratio = (hi + 0.05) / (lo + 0.05);
       if (ratio < 1.5) fails.push(`callout "${t}" edge is ${ratio.toFixed(2)}:1 against its own fill`);
       if (!worst || ratio < worst[1]) worst = [t, ratio];
+      /* joined: paint returns an array here, and a Set of arrays is a set of
+         distinct objects however equal their contents are. */
+      hues.set(t, paint([cs.getPropertyValue('--bc-callout-c').trim() || 'transparent']).join(','));
+    }
+    /* Every kind resolving to the same colour means the hue never arrived and
+       the registered property is sitting on its grey initial value — which is
+       what a change to Obsidian's --callout-color contract does, quietly. The
+       fill and the frame both still draw in that state, so nothing above
+       notices; only the sameness does. */
+    if (hues.size > 2 && new Set(hues.values()).size === 1) {
+      fails.push(`all ${hues.size} callout kinds resolve to one colour (${[...hues.values()][0]}) — the hue is not arriving`);
     }
     if (worst) notes.push(`callout edges: ${seen.size} kinds, weakest ${worst[0]} at ${worst[1].toFixed(2)}:1`);
   }

@@ -45,6 +45,7 @@
     '--bc-callout-edge-boost',
     '--bc-callout-edge-heavy',
     '--bc-callout-bar',
+    '--bc-callout-c',
     '--background-primary',
   ];
 
@@ -126,6 +127,27 @@
     say();
     say('body-level values:');
     for (const v of VARS) say(`  ${v.padEnd(28)} ${V(v)}`);
+
+    /* Which contract this build uses for --callout-color. Obsidian used to hand
+       over a bare "r, g, b" triple and now hands over a colour; a theme written
+       against one is silently dropped on the other, because an invalid colour
+       does not fall back to anything. Decide it by asking the canvas whether
+       the raw value paints. */
+    const first = document.querySelector('.callout');
+    if (first) {
+      const raw = cs(first).getPropertyValue('--callout-color').trim();
+      /* CSS.supports rather than the canvas: assigning an invalid fillStyle is
+         a no-op, so the canvas keeps the previous colour and every value looks
+         like it painted. */
+      const asColour = CSS.supports('color', raw);
+      const asTriple = CSS.supports('color', `rgb(${raw})`);
+      say();
+      say(`--callout-color  "${raw}"`);
+      say(`  valid as a colour   ${asColour}`);
+      say(`  valid as rgb(...)   ${asTriple}`);
+      say(`  contract       ${asColour ? 'COLOUR (current Obsidian)' : asTriple ? 'TRIPLE (older Obsidian)' : 'neither — nothing will paint'}`);
+      say(`  --bc-callout-c ${cs(first).getPropertyValue('--bc-callout-c').trim() || '(theme too old to resolve it)'}`);
+    }
 
     const callouts = [...document.querySelectorAll('.callout')];
     rule(`CALLOUTS RENDERED: ${callouts.length}`);

@@ -54,6 +54,7 @@ node shot.mjs dark  shot-dark.png overlays.html          # …a different page
 node shot.mjs light float.png index.html "bc-float-panes bc-tabs-pill"
 node shot-bottom.mjs dark                                # the foot of the pane, fade off and on
 node crop.mjs full-dark.png out.png 400 740 700 160      # a region of a shot, to look at closely
+node shot1x.mjs dark out.png callouts.html 1100 2100      # a whole page at 1:1, to look at rather than measure
 
 node check.mjs           # every rule keeps a declaration, every declaration parses
 node measure.mjs         # geometry of the controls that are meant to line up
@@ -89,6 +90,13 @@ reach for one. They exist so the harness reproduces the condition that beat
 this theme twice rather than the easy version of it: drop the `!important`
 from the switch or from icon sizing and those rules take over, visibly, on
 the next render.
+
+`app-shim.css` is only worth what its accuracy is worth, and it was wrong about
+callouts for a release: it handed `--callout-color` over as an `r, g, b` triple
+long after Obsidian had started handing over a colour, so every callout rule in
+the theme measured correctly here while being dropped as invalid in the app.
+When something works in the harness and not in the vault, suspect the shim
+before the theme.
 
 One trap worth knowing before writing another of these: **change the theme
 class, then wait.** Reading a computed `color-mix()` in the same tick as the

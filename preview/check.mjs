@@ -13,9 +13,15 @@ const css = fs.readFileSync(file, 'utf8');
    checkbox tick is an inline SVG data URI, and a semicolon inside it would
    otherwise chop one declaration into two unparseable halves. */
 const source = css.replace(/\/\*[\s\S]*?\*\//g, '');
+/* @property blocks are skipped here and checked separately below: `syntax`,
+   `inherits` and `initial-value` are descriptors of that rule, not properties,
+   and CSS.supports rejects every one of them. */
+const properties = [...source.matchAll(/@property\s+(--[\w-]+)\s*\{([^}]*)\}/g)]
+  .map((m) => ({ name: m[1], body: m[2] }));
+const plain = source.replace(/@property\s+--[\w-]+\s*\{[^}]*\}/g, '');
 let depth = 0, buf = '', quote = null;
 const decls = [];
-for (const ch of source) {
+for (const ch of plain) {
   if (quote) { buf += ch; if (ch === quote) quote = null; continue; }
   if (ch === '"' || ch === "'") { quote = ch; buf += ch; continue; }
   if (ch === '{') { depth++; buf = ''; continue; }
@@ -26,7 +32,7 @@ for (const ch of source) {
 
 const browser = await chromium.launch();
 const pg = await browser.newPage();
-const report = await pg.evaluate(([css, decls]) => {
+const report = await pg.evaluate(([css, decls, properties]) => {
   const el = document.createElement('style');
   el.textContent = css;
   document.head.appendChild(el);
@@ -56,8 +62,25 @@ const report = await pg.evaluate(([css, decls]) => {
     try { return !CSS.supports(prop, val); } catch { return true; }
   });
 
-  return { rules, declarations, empties, unsupported };
-}, [css, decls]);
+  /* A malformed @property is dropped whole, and then the token it was meant to
+     type-check silently stops being type-checked — which is the entire reason
+     the callout colour goes through one. So confirm the engine registered each
+     one, with the syntax it was given. */
+  const registered = new Map();
+  const collect = (list) => {
+    for (const rule of list) {
+      if (rule.constructor.name === 'CSSPropertyRule') registered.set(rule.name, rule.syntax);
+      if (rule.cssRules && rule.cssRules.length) collect(rule.cssRules);
+    }
+  };
+  collect(el.sheet.cssRules);
+  const unregistered = properties
+    .filter((p) => !registered.has(p.name))
+    .map((p) => p.name);
+
+  return { rules, declarations, empties, unsupported, unregistered,
+           registered: [...registered].map(([n, sx]) => `${n} ${sx}`) };
+}, [css, decls, properties]);
 await browser.close();
 
 console.log(`${file}: ${report.rules} style rules, ${report.declarations} declarations`);
@@ -65,4 +88,12 @@ console.log(`rules that lost every declaration: ${report.empties.length}`);
 report.empties.forEach((s) => console.log('  !', s));
 console.log(`declarations the engine rejected: ${report.unsupported.length}`);
 report.unsupported.forEach((d) => console.log('  !', d.replace(/\s+/g, ' ').slice(0, 120)));
-process.exit(report.empties.length || report.unsupported.length ? 1 : 0);
+console.log(`registered properties: ${report.registered.length}`);
+report.registered.forEach((r) => console.log('  ·', r));
+if (report.unregistered.length) {
+  console.log(`@property rules the engine dropped: ${report.unregistered.length}`);
+  report.unregistered.forEach((n) => console.log('  !', n));
+}
+process.exit(
+  report.empties.length || report.unsupported.length || report.unregistered.length ? 1 : 0
+);

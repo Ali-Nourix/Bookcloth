@@ -40,6 +40,17 @@
         <div class="callout" data-callout="warning"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="callout-title-inner">A callout holding things</div></div><div class="callout-content"><p>A frame around a frame has to stay legible.</p><ul class="contains-task-list"><li class="task-list-item" data-task=" "><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">an empty box on a tinted ground</span></li></ul><div class="callout" data-callout="success"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="callout-title-inner">Nested success</div></div><div class="callout-content"><p>Its own signature, inside another frame.</p></div></div></div></div>
         <h2>Live Preview</h2>
         <div class="cm-embed-block cm-callout"><div class="markdown-rendered"><div class="callout" data-callout="tip"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg></div><div class="callout-title-inner">Live Preview</div></div><div class="callout-content"><p>In the editor a callout is wrapped in a .cm-embed-block, which clips it.</p></div></div></div></div>
+        <h2>The old contract</h2>
+        <!-- Obsidian used to hand a callout its colour as a bare triple. Under
+             the new contract that is not a colour, so a theme written either
+             way is broken on the other unless it resolves the value into a
+             registered <color> property. Here the triple is forced back on, to
+             prove what a build old enough to still send one now gets: a grey
+             frame rather than no frame. -->
+        <div>
+          <div class="callout" data-callout="note" style="--callout-color: 68, 138, 255"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></div><div class="callout-title-inner">A triple, not a colour</div></div><div class="callout-content"><p>Still a block, still framed — in grey, because the hue could not be read.</p></div></div>
+        </div>
+
         <h2>Right to left</h2>
         <div class="markdown-preview-view markdown-rendered" dir="rtl" style="padding:0"><div class="markdown-preview-sizer"><div class="callout" data-callout="success"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="callout-title-inner">موفق</div></div><div class="callout-content"><p>نوار بالایی راست‌چین نمی‌شود، ولی نوار کناری باید بچرخد.</p></div></div><div class="callout" data-callout="warning"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="callout-title-inner">هشدار</div></div><div class="callout-content"><p>نوار راه‌راه باید از سمت راست بیفتد.</p></div></div></div></div>
       </div>

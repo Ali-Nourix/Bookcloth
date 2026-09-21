@@ -225,7 +225,7 @@ body.bc-rtl .markdown-rendered h4 {
 
 body.bc-callout-rule [dir="rtl"] .callout {
   border-left: none;
-  border-inline-start: 2px solid rgb(var(--callout-color));
+  border-inline-start: 2px solid var(--bc-callout-c);
 }
 
 [dir="rtl"] .footnotes {

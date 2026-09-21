@@ -1,4 +1,4 @@
-/* Bookcloth 3.6.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.6.1 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -886,7 +886,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.6.0";
+  --bc-version: "3.6.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -2708,12 +2708,42 @@ body.bc-code-ink {
    oklab rather than composited as an alpha, because a 12% alpha of a dark
    blue over white turns grey while the same amount of blue mixed perceptually
    stays blue — which is what makes a set of callouts read as a family instead
-   of as smudges. */
+   of as smudges.
+
+   --------------------------------------------------------------------------
+   THE CONTRACT. Obsidian used to hand a callout its colour as a bare triple —
+   `--callout-color: 68, 138, 255` — and every theme wrote `rgb(var(...))`
+   around it. It now hands over a colour: its own stylesheet reads
+   `color-mix(in oklch, var(--callout-color) 10%, transparent)`, which cannot
+   be written against a triple. Under the new contract every `rgb(var(...))`
+   in a theme becomes invalid at computed-value time, and an invalid colour
+   does not fall back to anything — the declaration is simply dropped.
+
+   That is not a small breakage. It took the fill, the frame, every signature
+   bar, the left rule and the embed hairline with it, all silently, and a
+   callout came out as a paragraph with an icon beside it. It was reported as
+   "callouts don't get a frame", and the frame was the one part that had never
+   worked.
+
+   So the colour is resolved once, here, into a property registered as a
+   <color>. Registration is the whole trick: an unregistered custom property
+   accepts any text, so `rgb(#027aff)` would be stored happily and only blow up
+   at the point of use. Registered, the bad value is rejected at computed-value
+   time and the property falls back to its initial value instead, which is a
+   neutral grey. On a build old enough to still pass a triple a callout is
+   therefore framed in grey rather than not framed at all. */
+
+@property --bc-callout-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #8a8a8a;
+}
 
 .callout {
+  --bc-callout-c: var(--callout-color);
   background-color: color-mix(
     in oklab,
-    rgb(var(--callout-color)) var(--bc-wash),
+    var(--bc-callout-c) var(--bc-wash),
     var(--background-primary)
   );
   mix-blend-mode: var(--callout-blend-mode);
@@ -2728,12 +2758,14 @@ body.bc-code-ink {
      follows border-radius. */
   outline: calc(var(--bc-callout-edge) * var(--bc-callout-edge-heavy))
     var(--bc-callout-edge-style, solid)
-    rgba(
-      var(--callout-color),
-      calc(
-        var(--bc-callout-edge-a) * var(--bc-callout-edge-strength) *
-          var(--bc-callout-edge-boost)
-      )
+    color-mix(
+      in srgb,
+      var(--bc-callout-c)
+        calc(
+          var(--bc-callout-edge-a) * var(--bc-callout-edge-strength) *
+            var(--bc-callout-edge-boost) * 100%
+        ),
+      transparent
     );
   outline-offset: calc(
     var(--bc-callout-edge) * var(--bc-callout-edge-heavy) * -1
@@ -2743,7 +2775,7 @@ body.bc-code-ink {
 .theme-dark .callout {
   background-color: color-mix(
     in oklab,
-    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.8),
+    var(--bc-callout-c) calc(var(--bc-wash) * 1.8),
     var(--background-primary)
   );
 }
@@ -2755,7 +2787,7 @@ body.bc-code-ink {
 }
 
 .callout-icon {
-  color: rgb(var(--callout-color));
+  color: var(--bc-callout-c);
 }
 
 .callout-content {
@@ -2838,15 +2870,15 @@ body.bc-code-ink {
 .callout[data-callout="attention"]::before {
   background-image: repeating-linear-gradient(
     -45deg,
-    rgb(var(--callout-color)) 0 3px,
-    rgba(var(--callout-color), 0.35) 3px 6px
+    var(--bc-callout-c) 0 3px,
+    color-mix(in srgb, var(--bc-callout-c) 35%, transparent) 3px 6px
   );
 }
 
 .callout[data-callout="tip"]::before,
 .callout[data-callout="hint"]::before,
 .callout[data-callout="important"]::before {
-  background-color: rgb(var(--callout-color));
+  background-color: var(--bc-callout-c);
 }
 
 /* Finished: across the top instead of down the side. Deliberately the one
@@ -2859,7 +2891,7 @@ body.bc-code-ink {
   inset-inline: 0;
   inset-block-start: 0;
   height: var(--bc-callout-bar);
-  background-color: rgb(var(--callout-color));
+  background-color: var(--bc-callout-c);
 }
 
 /* Open question: the frame is not closed. */
@@ -2899,7 +2931,7 @@ body.bc-code-ink {
   border-radius: 0;
   padding-inline: var(--bc-gap-4);
   border-inline-start: var(--bc-callout-bar) solid
-    rgba(var(--callout-color), 0.72);
+    color-mix(in srgb, var(--bc-callout-c) 72%, transparent);
 }
 
 /* --- The other two callout styles ----------------------------------------
@@ -2921,7 +2953,7 @@ body.bc-callout-rule .callout {
   background-color: transparent;
   border-radius: 0;
   outline: none;
-  border-inline-start: 3px solid rgb(var(--callout-color));
+  border-inline-start: 3px solid var(--bc-callout-c);
   padding-inline: var(--bc-gap-4);
 }
 
@@ -3196,7 +3228,8 @@ body.bc-no-fade-done {
      the base rule's flag would win over this one on the axis it sets */
   padding: calc(var(--bc-embed-padding) * 0.67) !important;
   background-color: transparent;
-  box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--bc-callout-c) 28%, transparent);
 }
 
 /* Unless the callout has no fill of its own. "The callout is already the
@@ -5933,7 +5966,7 @@ body.bc-rtl .markdown-rendered h4 {
 
 body.bc-callout-rule [dir="rtl"] .callout {
   border-left: none;
-  border-inline-start: 2px solid rgb(var(--callout-color));
+  border-inline-start: 2px solid var(--bc-callout-c);
 }
 
 [dir="rtl"] .footnotes {

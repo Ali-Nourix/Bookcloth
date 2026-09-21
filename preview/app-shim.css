@@ -50,37 +50,43 @@ body {
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* callout hues, exactly as Obsidian assigns them — the whole list, because a
-   theme that styles the five types a harness happens to show ships looking
-   unfinished on `failure`, `bug` and `todo`. */
-.callout { --callout-color: 158, 158, 158; }
-.callout[data-callout="note"] { --callout-color: var(--color-blue-rgb); }
-.callout[data-callout="info"] { --callout-color: var(--color-blue-rgb); }
-.callout[data-callout="todo"] { --callout-color: var(--color-blue-rgb); }
+/* Callout hues, as Obsidian assigns them — and as a COLOUR, which is the part
+   that matters. Obsidian used to hand a callout `--callout-color: 68, 138, 255`
+   and now hands it a colour; its own stylesheet reads
+   `color-mix(in oklch, var(--callout-color) 10%, transparent)`, which a triple
+   cannot satisfy. This shim used to pass a triple, so the harness was
+   reproducing an Obsidian that no longer exists and every callout rule in the
+   theme looked fine here while being dropped as invalid in the app. The whole
+   type list is here too: a theme that styles the handful of types a harness
+   happens to show ships looking unfinished on failure, bug and todo. */
+.callout { --callout-color: #9e9e9e; }
+.callout[data-callout="note"] { --callout-color: rgb(var(--color-blue-rgb)); }
+.callout[data-callout="info"] { --callout-color: rgb(var(--color-blue-rgb)); }
+.callout[data-callout="todo"] { --callout-color: rgb(var(--color-blue-rgb)); }
 .callout[data-callout="abstract"],
 .callout[data-callout="summary"],
-.callout[data-callout="tldr"] { --callout-color: var(--color-cyan-rgb); }
+.callout[data-callout="tldr"] { --callout-color: rgb(var(--color-cyan-rgb)); }
 .callout[data-callout="tip"],
 .callout[data-callout="hint"],
-.callout[data-callout="important"] { --callout-color: var(--color-cyan-rgb); }
+.callout[data-callout="important"] { --callout-color: rgb(var(--color-cyan-rgb)); }
 .callout[data-callout="success"],
 .callout[data-callout="check"],
-.callout[data-callout="done"] { --callout-color: var(--color-green-rgb); }
+.callout[data-callout="done"] { --callout-color: rgb(var(--color-green-rgb)); }
 .callout[data-callout="question"],
 .callout[data-callout="help"],
-.callout[data-callout="faq"] { --callout-color: var(--color-orange-rgb); }
+.callout[data-callout="faq"] { --callout-color: rgb(var(--color-orange-rgb)); }
 .callout[data-callout="warning"],
 .callout[data-callout="caution"],
-.callout[data-callout="attention"] { --callout-color: var(--color-orange-rgb); }
+.callout[data-callout="attention"] { --callout-color: rgb(var(--color-orange-rgb)); }
 .callout[data-callout="failure"],
 .callout[data-callout="fail"],
-.callout[data-callout="missing"] { --callout-color: var(--color-red-rgb); }
+.callout[data-callout="missing"] { --callout-color: rgb(var(--color-red-rgb)); }
 .callout[data-callout="danger"],
-.callout[data-callout="error"] { --callout-color: var(--color-red-rgb); }
-.callout[data-callout="bug"] { --callout-color: var(--color-red-rgb); }
-.callout[data-callout="example"] { --callout-color: var(--color-purple-rgb); }
+.callout[data-callout="error"] { --callout-color: rgb(var(--color-red-rgb)); }
+.callout[data-callout="bug"] { --callout-color: rgb(var(--color-red-rgb)); }
+.callout[data-callout="example"] { --callout-color: rgb(var(--color-purple-rgb)); }
 .callout[data-callout="quote"],
-.callout[data-callout="cite"] { --callout-color: var(--color-base-60-rgb, 138,138,138); }
+.callout[data-callout="cite"] { --callout-color: rgb(var(--color-base-60-rgb, 138, 138, 138)); }
 
 /* ---------- workspace shell ---------- */
 /* position: relative — this, not the ribbon, is what the absolutely positioned
