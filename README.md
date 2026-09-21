@@ -953,6 +953,24 @@ into "this plugin ships a 13px glyph".
 size and names what owns each one, which is how a plugin shipping a hardcoded
 13px glyph gets found without hunting for it.
 
+### Probing a callout
+
+`tools/callout-probe.js` is the one to reach for when a callout looks wrong in
+a real vault. Paste it into Obsidian's console with the callout on screen, run
+`bcCallouts()` and then `await bcSave()`, and send the file. It reports the
+theme version actually loaded, the body classes, which of the two renderers is
+on screen, every rendered callout's composited fill and edge — composited on a
+canvas, because a `color-mix()` comes back as `oklab()` — and **every rule in
+every loaded stylesheet whose selector mentions a callout, in cascade order,
+grouped by the file it came from**. That last part is the one that settles an
+argument: a snippet or a plugin loading after the theme can turn any of this
+off, and no amount of reading the theme's source will show it.
+
+It also names the state where there is nothing to measure. While the cursor is
+inside a callout in Live Preview, Obsidian throws the rendered callout away and
+shows raw `.HyperMD-quote` lines instead — there is no `.callout` element at
+all, and no theme can style one that does not exist.
+
 ## Accessibility
 
 Measured against the default palette, in the harness, at the ratios the browser
