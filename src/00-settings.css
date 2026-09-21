@@ -596,6 +596,11 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-off-habbiter
+        title: Opt out of Habbiter styling
+        type: class-toggle
+        default: false
+    -
         id: bc-off-misc
         title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
         type: class-toggle
