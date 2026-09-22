@@ -1,0 +1,10 @@
+{
+  "id": "bookcloth-scroll",
+  "name": "Bookcloth Scroll",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Smooth, eased mouse-wheel scrolling, switched on and tuned from the Bookcloth theme's own settings.",
+  "author": "Nourix",
+  "authorUrl": "https://github.com/Ali-Nourix/Obsidian-Theme",
+  "isDesktopOnly": true
+}
