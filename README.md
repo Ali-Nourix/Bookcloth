@@ -343,52 +343,6 @@ frozen into it, so a menu re-declaring the strength further down still got the
 body's number. The multiplier is applied at the point of use, which is the only
 place both halves are in scope.
 
-## Smooth scrolling
-
-A theme is a stylesheet and cannot run code, and smoothing a mouse wheel is
-code: catch each wheel event, cancel the browser's own scroll, and drive the
-position frame by frame. CSS has `scroll-behavior: smooth`, and it is the wrong
-tool — it does not touch the wheel at all, only scrolls a script asks for, and
-Obsidian asks for one every time it restores your place in a note. Set on the
-editor it animates every note open from the top, and animates CodeMirror
-chasing the cursor as you type. Nothing in this theme sets it.
-
-So the switch and the tuning are in the theme's settings, where everything
-else is, and the engine is a small companion plugin in `companion/` that reads
-them off the page: a body class for on and off, three custom properties for
-glide, distance and acceleration. Without the plugin the settings do nothing;
-without the theme the plugin does nothing.
-
-It takes over a **notched mouse wheel** and nothing else. A trackpad or a
-free-spinning wheel already carries its own momentum, and smoothing a motion
-that is already smooth is how scroll smoothing usually goes wrong — every flick
-arrives late and lands soft. The two are told apart by the legacy `wheelDelta`,
-which moves in steps of 120 for a notched wheel on every platform Chromium runs
-on and in whatever was measured for anything else.
-
-The ease is an exponential approach: each frame covers the same fraction of
-the distance still to go, so a long scroll moves fast and slows as it lands and
-a short one is gentle from the start — the distance eases with the amount
-scrolled, which is what was asked for. The fraction comes from real elapsed
-time, so the curve is the same at 30, 60 and 144 frames a second; the lab
-holds every frame to within 1.2px of the exact curve at each rate, which is the
-rounding of `scrollTop` to whole pixels and nothing else. At the default 140ms
-a notch is half way in 71ms, nine-tenths in 288ms, and fully settled in 721ms.
-
-That last number was a bug before it was a number. The first frame of a glide
-has no previous frame to measure against, and it had assumed 60Hz — starting a
-frame early on a 30Hz display and late on a 144Hz one. The plugin now learns
-the display's frame interval from its own glides.
-
-`preview/scroll-lab.mjs` loads the real `main.js` into the harness and holds it
-to 28 checks: a notch lands exactly, never overshoots and never runs backwards;
-accumulation and acceleration add up to the right distance; it declines ctrl,
-shift, trackpads, canvases, reduced motion, motion level None and another
-theme; it hands on at the top and bottom and at the end of an inner box, and
-honours `overscroll-behavior: contain`; a jump mid-glide is carried along, a
-reversal turns at once, a click stops it; a `scroll-behavior: smooth` set by
-anything else does not double the ease; and once it settles, nothing runs.
-
 ## The window frame
 
 On Windows and Linux, Obsidian draws the minimise, maximise and close buttons

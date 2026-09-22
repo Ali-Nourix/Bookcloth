@@ -1,4 +1,4 @@
-/* Bookcloth 3.7.0 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.6.1 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -659,47 +659,6 @@ settings:
         type: class-toggle
         default: false
     -
-        id: bc-scroll-head
-        title: Scrolling
-        description: A theme is a stylesheet and cannot run code, so the scrolling itself is done by the companion plugin Bookcloth Scroll, which ships beside the theme. Install it and these settings drive it; without it they do nothing. Only a notched mouse wheel is smoothed — a trackpad or a free-spinning wheel already carries its own momentum and is left alone.
-        type: heading
-        level: 3
-        collapsed: false
-    -
-        id: bc-smooth-scroll
-        title: Smooth scrolling
-        description: Each notch of the wheel eases into place instead of jumping, and a longer scroll coasts further. Turns itself off when the motion level is None or the system asks for reduced motion.
-        type: class-toggle
-        default: true
-    -
-        id: bc-scroll-glide
-        title: Glide
-        description: How long a scroll coasts. Higher is softer and longer; lower is closer to the wheel. This is the time constant of the ease, so a scroll is about nine-tenths of the way there after twice this.
-        type: variable-number-slider
-        default: 140
-        min: 40
-        max: 600
-        step: 10
-        format: ms
-    -
-        id: bc-scroll-step
-        title: Distance per notch
-        description: A multiplier on how far one click of the wheel travels. One keeps your system's own scroll distance.
-        type: variable-number-slider
-        default: 1
-        min: 0.5
-        max: 3
-        step: 0.1
-    -
-        id: bc-scroll-accel
-        title: Acceleration
-        description: How much a fast spin is amplified. Notches that arrive close together count as one flick and each one travels further, up to twice as far at the default and not at all at zero — so a quick spin crosses a long note while a slow one reads line by line.
-        type: variable-number-slider
-        default: 1
-        min: 0
-        max: 3
-        step: 0.25
-    -
         id: bc-editor-head
         title: Editor
         type: heading
@@ -927,7 +886,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.7.0";
+  --bc-version: "3.6.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -1155,12 +1114,6 @@ body {
      step up is what turns a set of effects that technically run into a set
      that registers. */
   --bc-speed: 170ms;
-  /* Read by the Bookcloth Scroll companion plugin, not by any rule here. They
-     live on body with the theme's other defaults so the plugin finds a value
-     whether or not Style Settings has ever written one. */
-  --bc-scroll-glide: 140ms;
-  --bc-scroll-step: 1;
-  --bc-scroll-accel: 1;
 }
 
 /* Accent intensity ------------------------------------------------------- */

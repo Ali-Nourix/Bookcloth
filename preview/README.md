@@ -63,7 +63,6 @@ node invariants.mjs      # the assertions that hold on every page, in both modes
 node check-settings.mjs  # the Style Settings block, against the plugin's own shapes
 node fade-lab.mjs dark   # is the bottom fade a blur, or a cross-fade?
 node cframe.mjs          # every callout frame, measured against its own fill
-node scroll-lab.mjs      # the smooth-scroll plugin, driven for real: 28 checks
 ```
 
 `fade-lab.mjs` is the one worth explaining. Contrast alone cannot tell a blur

@@ -12,7 +12,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.7.0";
+  --bc-version: "3.6.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -240,12 +240,6 @@ body {
      step up is what turns a set of effects that technically run into a set
      that registers. */
   --bc-speed: 170ms;
-  /* Read by the Bookcloth Scroll companion plugin, not by any rule here. They
-     live on body with the theme's other defaults so the plugin finds a value
-     whether or not Style Settings has ever written one. */
-  --bc-scroll-glide: 140ms;
-  --bc-scroll-step: 1;
-  --bc-scroll-accel: 1;
 }
 
 /* Accent intensity ------------------------------------------------------- */
