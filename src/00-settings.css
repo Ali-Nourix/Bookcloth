@@ -866,4 +866,20 @@ settings:
         title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
         type: class-toggle
         default: false
+    -
+        id: bc-off-taskpro
+        title: Opt out of TaskPro styling
+        description: The floating task board then gets Obsidian's plain dim instead of the blur.
+        type: class-toggle
+        default: false
+    -
+        id: bc-taskpro-blur
+        title: Blur behind the floating task board
+        description: How strongly the rest of Obsidian is blurred while TaskPro's floating board is open. Zero keeps it sharp and only dims it.
+        type: variable-number-slider
+        default: 14
+        min: 0
+        max: 40
+        step: 1
+        format: px
 */

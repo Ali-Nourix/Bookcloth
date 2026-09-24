@@ -163,7 +163,7 @@ font-size slider keeps working:
 | Icons | Icon size, stroke weight |
 | Interface | Tab style, indentation guides, motion level, animation speed, hide status bar, hide ribbon |
 | Editor | Callout style and colour strength, embed padding and style, space above headings, paragraph spacing, list indent and item spacing, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
-| Plugin support | Opt out of any of the bundled plugin styles |
+| Plugin support | Opt out of any of the bundled plugin styles; the blur behind TaskPro's floating board |
 
 Every plugin style is **on by default** and the toggles turn them off, so
 nothing depends on having Style Settings installed. Turning every control off
@@ -796,8 +796,41 @@ plugin renders outside its own bounds, and forcing a background onto every
 registered pane breaks canvases, boards and embedded editors that paint their
 own surface.
 
+### TaskPro's floating board
+
+[TaskPro](https://github.com/Ali-Nourix/Task-Pro)'s **Toggle Floating Task
+Board** (`Ctrl/Cmd+Shift+B`) opens its task board as a large window over the
+whole app. The plugin only sizes it and dims what is behind; the theme blurs
+the rest of Obsidian and puts the board on the page colour, one radius step up
+from a dialog, with a deeper shadow.
+
+![TaskPro's floating board over a blurred Obsidian, light](docs/taskpro-float-light.png)
+
+![The same in dark mode](docs/taskpro-float-dark.png)
+
+<sub>Screenshots of Obsidian 1.13.7 with this theme, not harness renders.</sub>
+
+The blur is `filter` on `body > .app-container` and `.titlebar`, not
+`backdrop-filter` on the modal background, and that choice is the whole
+feature. A backdrop filter is recomputed whenever anything over it repaints,
+so every hover in the board re-blurred the window; a filtered layer whose own
+content has not changed is composited from cache. With the board repainting a
+row every frame, `preview/float-lab.mjs` measures:
+
+| | Harness | Obsidian 1.13.7 |
+| --- | --- | --- |
+| No blur | 16.6 ms a frame | 16.6 ms |
+| `filter` (this theme) | 16.6 ms | 16.6 ms |
+| `backdrop-filter` | 30.6–32.7 ms | 38.6 ms |
+
+The blur is not animated either — a transition on it cost frames of up to
+85 ms — so it is simply on while the board is, and the modal's usual rise is
+what reads as the arrival. The strength is a slider under **Plugin support**;
+zero keeps the app sharp and only dims it.
+
 Bundled styles: Dataview, Tasks, Kanban, Calendar and Periodic Notes,
-Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr, Style Settings.
+Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr, Style Settings,
+TaskPro.
 Anything not on the list inherits the correct surface, ink and radius from the
 variable layer.
 

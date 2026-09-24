@@ -1,4 +1,4 @@
-/* Bookcloth 3.6.1 — a warm, quiet theme for Obsidian.
+/* Bookcloth 3.8.0 — a warm, quiet theme for Obsidian.
    Built from src/. Edit the partials, not this file: run `node build.mjs`.
    Pick your accent in Settings → Appearance; everything here derives from it. */
 
@@ -870,6 +870,22 @@ settings:
         title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
         type: class-toggle
         default: false
+    -
+        id: bc-off-taskpro
+        title: Opt out of TaskPro styling
+        description: The floating task board then gets Obsidian's plain dim instead of the blur.
+        type: class-toggle
+        default: false
+    -
+        id: bc-taskpro-blur
+        title: Blur behind the floating task board
+        description: How strongly the rest of Obsidian is blurred while TaskPro's floating board is open. Zero keeps it sharp and only dims it.
+        type: variable-number-slider
+        default: 14
+        min: 0
+        max: 40
+        step: 1
+        format: px
 */
 
 /* ==========================================================================
@@ -886,7 +902,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "3.6.1";
+  --bc-version: "3.8.0";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -6319,3 +6335,77 @@ body:not(.bc-off-misc) .highlightr-container mark {
    background onto every pane a plugin might register is how themes break
    canvases, boards and embedded editors that paint their own surface.
    Unknown panes inherit the correct colours from :root already. */
+
+/* --------------------------------------------------------------------------
+   TaskPro
+   "Toggle Floating Task Board" shows the plugin's task board over the whole
+   app. The plugin sizes that window and adds two hooks while it is open —
+   body.taskpro-board-is-floating and .modal-container.taskpro-board-float —
+   and leaves the look to the theme. This is the look: the rest of Obsidian
+   blurred behind it, a lighter dim, and the board on the page colour it has
+   in a tab.
+
+   The blur is `filter` on the app behind the modal, not `backdrop-filter` on
+   the modal's background. Obsidian keeps .app-container and .titlebar as
+   siblings of .modal-container, so filtering them blurs exactly the app and
+   nothing that floats over it — menus, notices and tooltips are siblings
+   too. Measured while the board repaints one row every frame, in
+   preview/float-lab.mjs over the workspace harness and again in Obsidian
+   1.13.7 over a real vault:
+
+                      harness            Obsidian
+     no blur          16.6 ms a frame    16.6 ms
+     filter           16.6 ms            16.6 ms   (60 fps either way)
+     backdrop-filter  30.6–32.7 ms       38.6 ms   (a frame in ten over 42)
+
+   A backdrop filter is recomputed whenever anything over it repaints, so
+   every hover in the board re-blurred the window — the same cost that made
+   the old full-screen blurs sluggish. A filtered layer whose own content has
+   not changed is composited from cache. With something behind changing every
+   frame (a ticking status-bar timer) filter still holds 60 fps; backdrop
+   averaged 40 ms with spikes to 184.
+
+   The blur is not animated, for the same reason: transitioning it cost
+   frames of up to 85 ms. It is on while the board is, and the modal's own
+   rise (14-motion) is what reads as the arrival.
+   -------------------------------------------------------------------------- */
+
+body {
+  --bc-taskpro-blur: 14px;
+}
+
+body.taskpro-board-is-floating:not(.bc-off-taskpro) > .app-container,
+body.taskpro-board-is-floating:not(.bc-off-taskpro) > .titlebar {
+  filter: blur(var(--bc-taskpro-blur));
+}
+
+/* With the app blurred, the dim only has to separate, not hide: Bookcloth's
+   usual modal dim over a blur reads as a dark sheet rather than depth. */
+body:not(.bc-off-taskpro) .modal-container.taskpro-board-float .modal-bg {
+  background-color: rgba(15, 15, 15, 0.22);
+}
+
+.theme-dark:not(.bc-off-taskpro) .modal-container.taskpro-board-float .modal-bg {
+  background-color: rgba(0, 0, 0, 0.38);
+}
+
+/* The board keeps the page colour it has in a tab rather than the raised
+   surface of a dialog: it is a page that floats, not a form. The radius is
+   the modal's, one step up, because a window this size with a dialog's
+   corner looks like a sheet of paper with its corners clipped. */
+body:not(.bc-off-taskpro) .modal-container.taskpro-board-float .modal.taskpro-board-modal {
+  --modal-background: var(--background-primary);
+  background-color: var(--background-primary);
+  border-radius: calc(var(--bc-modal-radius) * 1.5);
+  box-shadow: var(--shadow-l), 0 24px 72px rgba(0, 0, 0, 0.28);
+}
+
+.theme-dark:not(.bc-off-taskpro) .modal-container.taskpro-board-float .modal.taskpro-board-modal {
+  box-shadow: var(--shadow-l), 0 24px 72px rgba(0, 0, 0, 0.55);
+}
+
+/* A phone has no room to float in: the board is the screen. */
+.is-phone:not(.bc-off-taskpro) .modal-container.taskpro-board-float .modal.taskpro-board-modal {
+  border-radius: 0;
+  box-shadow: none;
+}
