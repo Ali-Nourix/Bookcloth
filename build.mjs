@@ -31,6 +31,7 @@ const files = [
   "plugins/kanban.css",
   "plugins/calendar.css",
   "plugins/misc.css",
+  "plugins/taskpro.css",
 ];
 
 const banner = `/* ${manifest.name} ${manifest.version} — a warm, quiet theme for Obsidian.
