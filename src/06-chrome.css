@@ -141,13 +141,18 @@ body.bc-indent-guides {
   padding-block-start: var(--bc-topbar-height);
 }
 
-/* The margin carries .mod-left / .mod-right, so zeroing it from a one-class
+/* Obsidian 1.14 renamed the ribbon's side classes to .mod-primary /
+   .mod-secondary, so the sidebars can flip in RTL. Both names are carried:
+   matching only the old one let the 45px margin back in under 1.14, which is
+   the gap that opened above the ribbon card.
+
+   The margin carries .mod-left / .mod-right, so zeroing it from a one-class
    selector loses on class count — and !important because which ancestor
    classes Obsidian hangs it off varies by platform and frame mode, and this
    is a measured value rather than a preference: the space it was holding is
    now padding a few lines above. */
-.workspace-ribbon.mod-left,
-.workspace-ribbon.mod-right {
+.workspace-ribbon:is(.mod-left, .mod-primary),
+.workspace-ribbon:is(.mod-right, .mod-secondary) {
   margin-block-start: 0 !important;
 }
 
@@ -231,8 +236,8 @@ body.bc-indent-guides {
   gap: var(--bc-icon-gap);
 }
 
-.workspace-ribbon.mod-left::before,
-.workspace-ribbon.mod-right::before {
+.workspace-ribbon:is(.mod-left, .mod-primary)::before,
+.workspace-ribbon:is(.mod-right, .mod-secondary)::before {
   display: none;
 }
 
@@ -276,13 +281,13 @@ body.bc-indent-guides {
   color: var(--text-normal);
 }
 
-body.bc-hide-ribbon .workspace-ribbon.mod-left {
+body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary) {
   opacity: 0;
   transition: opacity 200ms var(--bc-ease);
 }
 
-body.bc-hide-ribbon .workspace-ribbon.mod-left:hover,
-body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
+body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):hover,
+body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
   opacity: 1;
 }
 

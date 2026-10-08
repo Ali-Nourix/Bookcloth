@@ -154,6 +154,10 @@ body.bc-pane-glow .popover.hover-popover::after,
 body.bc-pane-glow .notice::before,
 body.bc-pane-glow .notice::after {
   content: "";
+  /* The ribbon's ::before is also Obsidian's title-bar patch, which the chrome
+     section switches off. The glow reuses that pseudo, so it switches it back
+     on — otherwise the ribbon is the one card with no wash. */
+  display: block;
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;

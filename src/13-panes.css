@@ -280,15 +280,15 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-resize-handle {
    the sidebar beside it is open and its card covers the join — collapse the
    sidebar and the ribbon is suddenly a square-cornered strip standing on its
    own next to rounded panels. */
-body.bc-float-panes .workspace-ribbon.mod-left,
-body.bc-float-panes .workspace-ribbon.mod-right {
+body.bc-float-panes .workspace-ribbon:is(.mod-left, .mod-primary),
+body.bc-float-panes .workspace-ribbon:is(.mod-right, .mod-secondary) {
   background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
   margin-block: var(--bc-pane-gap);
   margin-inline-start: var(--bc-pane-gap);
 }
 
-body.bc-float-panes .workspace-ribbon.mod-right {
+body.bc-float-panes .workspace-ribbon:is(.mod-right, .mod-secondary) {
   margin-inline: 0 var(--bc-pane-gap);
 }
 

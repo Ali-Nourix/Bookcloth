@@ -21,7 +21,7 @@ body.is-mobile {
 
 /* Nothing on a touch screen may hide behind :hover. */
 body.is-mobile.bc-hide-statusbar .status-bar,
-body.is-mobile.bc-hide-ribbon .workspace-ribbon.mod-left {
+body.is-mobile.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary) {
   opacity: 1;
 }
 
