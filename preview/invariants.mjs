@@ -21,7 +21,9 @@ await pg.evaluate(([m, c]) => {
   document.body.className =
     document.body.className.replace(/theme-\w+/, 'theme-' + m) + (c ? ' ' + c : '');
 }, [mode, classes]);
-await pg.waitForTimeout(300);
+/* long enough for a mount animation to finish: the check measures at rest,
+   and a 300ms entrance still running is not a defect. */
+await pg.waitForTimeout(900);
 
 const result = await pg.evaluate(() => {
   const fails = [];
@@ -112,6 +114,123 @@ const result = await pg.evaluate(() => {
     const w = R(rect(box).width);
     if (w < 18) fails.push(`task checkbox is ${w}px, smaller than Obsidian's 18px`);
     notes.push(`task checkbox ${w}px`);
+  }
+
+  /* 4b. and it can be seen. An unchecked checkbox is nothing but its edge, so
+         that edge is a user interface component and owes 3:1 against what it
+         sits on — not the 1.24:1 it shipped with while it shared a token with
+         the decorative hairlines.
+
+         Only the genuinely empty state counts. `- [/]` and `- [!]` are filled,
+         and their border is transparent on purpose: the fill is the control
+         and an edge around it would be a second one.
+
+         Composited on a canvas rather than parsed, because a background here
+         can arrive as rgba(), as color(srgb 0-1 floats) or as oklab() out of a
+         color-mix, and a regex that knows about the first reads the second as
+         three numbers under one. Stacking the ancestors' backgrounds in the
+         canvas also gets a checkbox inside a translucent callout right. */
+  const stateless = (el) => {
+    if (el.checked) return false;
+    if (/is-in-progress|is-not-done|is-cancelled/.test(el.className)) return false;
+    const task = el.getAttribute('data-task')
+      || (el.closest('[data-task]') || {}).getAttribute?.call(el.closest('[data-task]'), 'data-task');
+    return task === null || task === undefined || task.trim() === '';
+  };
+  const empty = all('input[type=checkbox]').find(stateless);
+  if (empty) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 1;
+    const g = cv.getContext('2d', { willReadFrequently: true });
+    const paint = (layers) => {
+      g.clearRect(0, 0, 1, 1);
+      for (const col of layers) { g.fillStyle = col; g.fillRect(0, 0, 1, 1); }
+      return [...g.getImageData(0, 0, 1, 1).data].slice(0, 3);
+    };
+    const stack = [];
+    for (let h = empty.parentElement; h; h = h.parentElement) {
+      const bg = getComputedStyle(h).backgroundColor;
+      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') stack.unshift(bg);
+    }
+    const lum = ([r, gr, b]) => {
+      const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; };
+      return 0.2126 * f(r) + 0.7152 * f(gr) + 0.0722 * f(b);
+    };
+    const ground = paint(stack);
+    const edge = paint([...stack, getComputedStyle(empty).borderTopColor]);
+    const [hi, lo] = [lum(edge), lum(ground)].sort((x, y) => y - x);
+    const ratio = (hi + 0.05) / (lo + 0.05);
+    if (ratio < 3) fails.push(`empty checkbox edge is ${ratio.toFixed(2)}:1 against its background, under 3:1`);
+    notes.push(`empty checkbox edge ${ratio.toFixed(2)}:1`);
+  }
+
+  /* 4c. a callout is a block, and looks like one. The fill alone carries it
+         only while the tint is strong; at Notion's 12% on a dark ground the
+         block reads as a paragraph with an icon beside it, which is how it was
+         reported. So every callout owes a visible edge against its own fill —
+         except the ones that deliberately have none: a quote is a rule, and
+         two of the three callout styles drop the frame on purpose. */
+  const plain = document.body.classList.contains('bc-callout-plain')
+             || document.body.classList.contains('bc-callout-rule');
+  if (!plain) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 1;
+    const g2 = cv.getContext('2d', { willReadFrequently: true });
+    const paint = (layers) => {
+      g2.clearRect(0, 0, 1, 1);
+      for (const c of layers) { g2.fillStyle = c; g2.fillRect(0, 0, 1, 1); }
+      return [...g2.getImageData(0, 0, 1, 1).data].slice(0, 3);
+    };
+    const lum = ([r, gr, bl]) => {
+      const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; };
+      return 0.2126 * f(r) + 0.7152 * f(gr) + 0.0722 * f(bl);
+    };
+    const seen = new Set();
+    const hues = new Map();
+    let worst = null;
+    for (const el of all('.callout[data-callout]')) {
+      const t = el.getAttribute('data-callout');
+      if (seen.has(t)) continue;
+      seen.add(t);
+      const cs = getComputedStyle(el);
+      const framed = cs.outlineStyle !== 'none';
+      const edgeColor = framed ? cs.outlineColor : cs.borderInlineStartColor;
+      const width = parseFloat(framed ? cs.outlineWidth : cs.borderInlineStartWidth);
+      if (!width) { fails.push(`callout "${t}" has no edge at all`); continue; }
+      const stack = [];
+      for (let h = el.parentElement; h; h = h.parentElement) {
+        const bg = getComputedStyle(h).backgroundColor;
+        if (bg && bg !== 'rgba(0, 0, 0, 0)') stack.unshift(bg);
+      }
+      const fill = paint([...stack, cs.backgroundColor]);
+      const edge = paint([...stack, cs.backgroundColor, edgeColor]);
+      /* The tint has to actually paint. When Obsidian changed --callout-color
+         from an "r, g, b" triple to a colour, every rgb(var(--callout-color))
+         in this theme became invalid at computed-value time and was dropped —
+         fill, frame, bars and all — and a callout came out as a paragraph with
+         an icon beside it. An invalid colour falls back to nothing, so nothing
+         in the rendered page says it happened except this. */
+      if (!document.body.classList.contains('bc-callout-rule')) {
+        const ground = paint(stack);
+        if (fill === ground) fails.push(`callout "${t}" has no fill: its tint did not paint`);
+      }
+      const [hi, lo] = [lum(edge), lum(fill)].sort((x, y) => y - x);
+      const ratio = (hi + 0.05) / (lo + 0.05);
+      if (ratio < 1.5) fails.push(`callout "${t}" edge is ${ratio.toFixed(2)}:1 against its own fill`);
+      if (!worst || ratio < worst[1]) worst = [t, ratio];
+      /* joined: paint returns an array here, and a Set of arrays is a set of
+         distinct objects however equal their contents are. */
+      hues.set(t, paint([cs.getPropertyValue('--bc-callout-c').trim() || 'transparent']).join(','));
+    }
+    /* Every kind resolving to the same colour means the hue never arrived and
+       the registered property is sitting on its grey initial value — which is
+       what a change to Obsidian's --callout-color contract does, quietly. The
+       fill and the frame both still draw in that state, so nothing above
+       notices; only the sameness does. */
+    if (hues.size > 2 && new Set(hues.values()).size === 1) {
+      fails.push(`all ${hues.size} callout kinds resolve to one colour (${[...hues.values()][0]}) — the hue is not arriving`);
+    }
+    if (worst) notes.push(`callout edges: ${seen.size} kinds, weakest ${worst[0]} at ${worst[1].toFixed(2)}:1`);
   }
 
   /* 5. an embed is a block on this page, not a page of its own. The inner
@@ -225,7 +344,10 @@ const result = await pg.evaluate(() => {
       const co = em.closest('.callout');
       if (co) edged = opaque(getComputedStyle(co).backgroundColor);
     }
-    if (!edged) fails.push('embed has no edge and sits in nothing that has one');
+    /* unless the reader asked for exactly that */
+    if (!edged && !document.body.classList.contains('bc-embed-bare')) {
+      fails.push('embed has no edge and sits in nothing that has one');
+    }
   }
 
   /* 5d. an embed's padding is the same on the top as on the sides. Measured
@@ -255,6 +377,51 @@ const result = await pg.evaluate(() => {
     const gapSide = R(side);
     if (Math.abs(gapTop - gapSide) > 1) {
       fails.push(`embed padding is ragged: ${gapTop}px above the first line, ${gapSide}px beside it`);
+    }
+  }
+
+  /* 5e. no scroll container is wider than itself. A theme has no business
+         adding horizontal overflow to a column of prose, and CodeMirror is
+         where it happens: it measures lines to decide what to keep in the
+         viewport, so a rule that moves the break points after that measurement
+         leaves the editor with a width it did not compute — a horizontal
+         scrollbar, and a view that jumps as it is scrolled past. */
+  for (const sel of ['.cm-scroller', '.cm-content', '.markdown-preview-view', '.markdown-preview-sizer', '.view-content']) {
+    for (const el of all(sel)) {
+      const over = el.scrollWidth - el.clientWidth;
+      if (over > 1) {
+        fails.push(`${sel} scrolls horizontally by ${R(over)}px`);
+        break;
+      }
+    }
+  }
+
+  /* 5f. nothing is left faded or displaced at rest. A scroll-driven animation
+         with a fill paints an element at its from-state whenever it is outside
+         its range, and everything on screen when a note opens is behind its
+         entry range — which is how a release shipped with every callout on the
+         page at opacity 0.35, permanently. This is the check that would have
+         caught it, and it is why the effect could come back. */
+  for (const sel of ['.markdown-preview-view .callout', '.markdown-preview-view table',
+    '.markdown-preview-view pre', '.cm-content > .cm-line', '.markdown-preview-sizer']) {
+    for (const el of all(sel)) {
+      const st = getComputedStyle(el);
+      if (parseFloat(st.opacity) < 0.99) {
+        fails.push(`${sel} sits at opacity ${st.opacity} with nothing scrolling`);
+        break;
+      }
+      /* sub-pixel residue from a finishing animation is not displacement */
+      const m = st.transform.match(/matrix\(([-\d.e, ]+)\)/);
+      if (m) {
+        const [a, b2, c, d, tx, ty] = m[1].split(',').map(Number);
+        const moved = Math.abs(tx) > 0.5 || Math.abs(ty) > 0.5;
+        const scaled = Math.abs(a - 1) > 0.005 || Math.abs(d - 1) > 0.005 ||
+          Math.abs(b2) > 0.005 || Math.abs(c) > 0.005;
+        if (moved || scaled) {
+          fails.push(`${sel} is displaced at rest: ${st.transform}`);
+          break;
+        }
+      }
     }
   }
 

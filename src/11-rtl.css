@@ -41,6 +41,152 @@ body.bc-rtl .HyperMD-header-2 {
   letter-spacing: 0;
 }
 
+/* --- Setting the page -----------------------------------------------------
+   What InDesign does and a browser cannot: it justifies Arabic script by
+   stretching the letters themselves — kashida, the None / Short / Medium /
+   Long / Stylistic control. No browser implements it. `text-justify: kashida`
+   was Internet Explorer's and is gone; Chrome offers `inter-word` or nothing,
+   so justified Persian in any Electron app stretches the spaces and opens the
+   rivers that kashida exists to avoid. That is a text-shaping feature living
+   inside InDesign's own engine, and a stylesheet cannot add one. Anybody
+   telling you a theme can is selling you a toggle that does nothing.
+
+   What a stylesheet can do is make the justification the engine does have
+   behave like something a typesetter would accept:
+
+   `text-wrap: pretty` puts Chrome's slower, better line-breaker on the
+   paragraph — it looks ahead instead of greedily filling each line, which is
+   what closes up the worst of the gaps and stops a line ending on one word.
+
+   Hyphenation is off, because Arabic script does not hyphenate and a browser
+   asked to try will break a word at a joining letter.
+
+   And the paragraph takes its direction from its own first strong character
+   rather than from the note, which is the whole of "Persian paragraphs stay
+   right-aligned" in a note that also has English in it. */
+
+body.bc-rtl-justify .markdown-rendered p,
+body.bc-rtl-justify .markdown-rendered li,
+body.bc-rtl-justify .markdown-rendered blockquote p,
+body.bc-rtl-justify .cm-line {
+  text-align: justify;
+  /* no text-justify: Blink has never implemented the property at all, so every
+     value of it is dropped. `justify` on its own is inter-word there, which is
+     the only mode the engine has. */
+  hyphens: none;
+  -webkit-hyphens: none;
+}
+
+/* Reading view only, and deliberately. CodeMirror measures every line itself
+   to decide what to keep in the viewport, and `text-wrap: pretty` moves the
+   break points after that measurement has been taken: the editor ends up with
+   a content width it did not compute, which is a horizontal scrollbar and a
+   view that jumps as you scroll past it. That shipped, and it shipped because
+   the harness had no .cm-line in it to render the rule against. It has one
+   now, and an invariant that fails on exactly that overflow. */
+body.bc-rtl .markdown-rendered p,
+body.bc-rtl .markdown-rendered li,
+body.bc-rtl .inline-title,
+body.bc-rtl .markdown-rendered h1,
+body.bc-rtl .markdown-rendered h2,
+body.bc-rtl .markdown-rendered h3 {
+  text-wrap: pretty;
+}
+
+/* A heading is short enough that the line-breaker can balance it outright,
+   which is the difference between a two-line title that reads as a shape and
+   one with a single orphaned word under it. */
+body.bc-rtl .markdown-rendered h1,
+body.bc-rtl .markdown-rendered h2,
+body.bc-rtl .inline-title,
+body.bc-rtl .callout-title-inner {
+  text-wrap: balance;
+}
+
+/* Each paragraph decides its own direction from its first strong character.
+   Without it a note that opens in English puts every Persian paragraph after
+   it on the left, and a note that opens in Persian does the reverse to its
+   English ones. */
+body.bc-rtl-autodir .markdown-rendered p,
+body.bc-rtl-autodir .markdown-rendered li,
+body.bc-rtl-autodir .markdown-rendered h1,
+body.bc-rtl-autodir .markdown-rendered h2,
+body.bc-rtl-autodir .markdown-rendered h3,
+body.bc-rtl-autodir .markdown-rendered h4,
+body.bc-rtl-autodir .markdown-rendered blockquote {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* Not on .cm-line either. CodeMirror resolves bidi for itself, down to where
+   it puts the caret in a mixed-direction line; handing the browser a second
+   opinion with unicode-bidi gives the editor two answers that disagree.
+   Obsidian's own RTL support is what does this job in the editor. */
+
+/* justify wins over the start alignment above when both are on */
+body.bc-rtl-autodir.bc-rtl-justify .markdown-rendered p,
+body.bc-rtl-autodir.bc-rtl-justify .markdown-rendered li,
+body.bc-rtl-autodir.bc-rtl-justify .cm-line {
+  text-align: justify;
+}
+
+/* --- Shaping --------------------------------------------------------------
+   Arabic script is cursive: every letter changes shape by position and several
+   pairs must fuse. Chrome does the required ones on its own, but kerning and
+   contextual alternates are the two a font can offer and a renderer can skip,
+   and mark positioning is what puts a Persian diacritic over the right part of
+   the letter rather than over the middle of it.
+
+   The stylistic sets are left to the reader as text, because which set does
+   what is a decision each font makes for itself — Vazirmatn's ss01 is not
+   Estedad's — and guessing on the reader's behalf produces letterforms they
+   did not ask for. */
+
+body.bc-rtl {
+  --bc-rtl-features: "kern" 1, "calt" 1, "liga" 1, "rlig" 1, "mark" 1,
+    "mkmk" 1;
+}
+
+body.bc-rtl .markdown-rendered,
+body.bc-rtl .cm-content,
+body.bc-rtl .inline-title,
+body.bc-rtl .tree-item-inner,
+body.bc-rtl .menu-item-title,
+body.bc-rtl .suggestion-title {
+  font-feature-settings: var(--bc-rtl-features);
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
+}
+
+/* Tracking and word spacing, as numbers rather than as a flat zero.
+
+   Zero is the right default and the reason is not taste: tracking a cursive
+   script pulls the joins apart, and the theme used to hard-code that. But
+   "hard-coded" and "correct" are different claims, and a typesetter setting a
+   book has reasons to move both — a display line that needs opening up, a
+   column that needs its spaces reined in. The defaults stay at zero; the
+   numbers are the reader's.
+
+   Word spacing is the one with real leverage on a justified column: negative
+   values pull the words back together and take the worst of the rivers out,
+   which is the nearest thing to kashida that CSS has. It is not kashida. It
+   narrows the gaps rather than filling them. */
+body.bc-rtl {
+  --bc-rtl-tracking: 0em;
+  --bc-rtl-word-spacing: 0em;
+}
+
+body.bc-rtl .markdown-rendered,
+body.bc-rtl .cm-content,
+body.bc-rtl .inline-title,
+body.bc-rtl .markdown-rendered h1,
+body.bc-rtl .markdown-rendered h2,
+body.bc-rtl .markdown-rendered h3,
+body.bc-rtl .markdown-rendered h4 {
+  letter-spacing: var(--bc-rtl-tracking);
+  word-spacing: var(--bc-rtl-word-spacing);
+}
+
 /* --- Direction-aware layout ----------------------------------------------
    Obsidian puts dir="rtl" on the element that holds the content, which is the
    same element that carries .markdown-rendered — not an ancestor of it. So
@@ -79,7 +225,7 @@ body.bc-rtl .HyperMD-header-2 {
 
 body.bc-callout-rule [dir="rtl"] .callout {
   border-left: none;
-  border-inline-start: 2px solid rgb(var(--callout-color));
+  border-inline-start: 2px solid var(--bc-callout-c);
 }
 
 [dir="rtl"] .footnotes {

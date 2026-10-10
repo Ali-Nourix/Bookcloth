@@ -19,7 +19,17 @@ body {
      embed is a card: the eye reads the gap above the first line against the
      gap beside it, and two different numbers read as a mistake in the one
      construct whose whole job is to look deliberate. */
-  --embed-padding: var(--bc-gap-4);
+  /* The theme's own name for it. --embed-padding is Obsidian's variable and
+     anything loading after the theme can set it; a doctor run in the vault
+     this was reported from came back with the embed computing
+     `padding: 0px 24px 0px 0px`, which is exactly what
+     `padding: var(--embed-padding)` produces when that variable has been
+     handed those four numbers by someone else. Reading a private token instead
+     means the value cannot be reached that way, and the flag on the
+     declaration means the declaration cannot be outvoted either. Both, because
+     from a computed style the two are indistinguishable. */
+  --bc-embed-padding: var(--bc-gap-4);
+  --embed-padding: var(--bc-embed-padding);
   --embed-font-style: inherit;
   --embed-block-shadow-hover: none;
 
@@ -166,22 +176,77 @@ body.bc-code-ink {
    oklab rather than composited as an alpha, because a 12% alpha of a dark
    blue over white turns grey while the same amount of blue mixed perceptually
    stays blue — which is what makes a set of callouts read as a family instead
-   of as smudges. */
+   of as smudges.
+
+   --------------------------------------------------------------------------
+   THE CONTRACT. Obsidian used to hand a callout its colour as a bare triple —
+   `--callout-color: 68, 138, 255` — and every theme wrote `rgb(var(...))`
+   around it. It now hands over a colour: its own stylesheet reads
+   `color-mix(in oklch, var(--callout-color) 10%, transparent)`, which cannot
+   be written against a triple. Under the new contract every `rgb(var(...))`
+   in a theme becomes invalid at computed-value time, and an invalid colour
+   does not fall back to anything — the declaration is simply dropped.
+
+   That is not a small breakage. It took the fill, the frame, every signature
+   bar, the left rule and the embed hairline with it, all silently, and a
+   callout came out as a paragraph with an icon beside it. It was reported as
+   "callouts don't get a frame", and the frame was the one part that had never
+   worked.
+
+   So the colour is resolved once, here, into a property registered as a
+   <color>. Registration is the whole trick: an unregistered custom property
+   accepts any text, so `rgb(#027aff)` would be stored happily and only blow up
+   at the point of use. Registered, the bad value is rejected at computed-value
+   time and the property falls back to its initial value instead, which is a
+   neutral grey. On a build old enough to still pass a triple a callout is
+   therefore framed in grey rather than not framed at all. */
+
+@property --bc-callout-c {
+  syntax: "<color>";
+  /* Embed hairlines and callout signatures must use their container's colour.
+     Every nested callout resolves its own value, so inheritance cannot leak
+     an outer callout's kind into a nested one. */
+  inherits: true;
+  initial-value: #8a8a8a;
+}
 
 .callout {
+  --bc-callout-c: var(--callout-color);
   background-color: color-mix(
     in oklab,
-    rgb(var(--callout-color)) var(--bc-wash),
+    var(--bc-callout-c) var(--bc-wash),
     var(--background-primary)
   );
   mix-blend-mode: var(--callout-blend-mode);
   border-radius: var(--callout-radius);
+  /* for the signature bar, which is a pseudo-element rather than a border so
+     that it can be striped and so that turning it on never moves the text. */
+  position: relative;
+  /* An outline rather than a border or an inset box-shadow. A border would add
+     a pixel to the box and shift every callout's contents; a box-shadow cannot
+     be dashed or dotted, and two of the signatures below are. An outline drawn
+     at a negative offset sits inside the border box, changes no geometry, and
+     follows border-radius. */
+  outline: calc(var(--bc-callout-edge) * var(--bc-callout-edge-heavy))
+    var(--bc-callout-edge-style, solid)
+    color-mix(
+      in srgb,
+      var(--bc-callout-c)
+        calc(
+          var(--bc-callout-edge-a) * var(--bc-callout-edge-strength) *
+            var(--bc-callout-edge-boost) * 100%
+        ),
+      transparent
+    );
+  outline-offset: calc(
+    var(--bc-callout-edge) * var(--bc-callout-edge-heavy) * -1
+  );
 }
 
 .theme-dark .callout {
   background-color: color-mix(
     in oklab,
-    rgb(var(--callout-color)) calc(var(--bc-wash) * 1.8),
+    var(--bc-callout-c) calc(var(--bc-wash) * 1.8),
     var(--background-primary)
   );
 }
@@ -193,7 +258,7 @@ body.bc-code-ink {
 }
 
 .callout-icon {
-  color: rgb(var(--callout-color));
+  color: var(--bc-callout-c);
 }
 
 .callout-content {
@@ -209,12 +274,162 @@ body.bc-code-ink {
   margin-bottom: 0;
 }
 
+/* --- One frame per kind of callout ----------------------------------------
+   Hue alone does not separate them. Obsidian gives note, info and todo the same
+   blue; tip, hint, important and abstract the same cyan; question and warning
+   the same orange; and failure, danger and bug the same red. So a reader
+   glancing at a note sees four blocks in three colours and has to read the
+   titles to tell an instruction from a hazard.
+
+   The frame carries the rest. Each family gets one treatment, and the treatment
+   is chosen to mean something rather than to be different:
+
+     statement   note, info, todo, abstract    a plain hairline — the baseline
+     advice      tip, hint, important          a solid bar down the leading edge
+     finished    success, check, done          a rule across the top, like a stamp
+     open        question, help, faq           a dashed frame: not closed yet
+     hazard      warning, caution, attention   a striped bar, which is what a
+                                               striped bar has meant since before
+                                               there were screens
+     failure     failure, danger, error, bug   the heavy frame, and no bar
+     example     example                       a dotted frame: an illustration
+     quotation   quote, cite                   no box at all — a quotation is a
+                                               rule, not a container
+
+   All of it survives greyscale, which hue does not. */
+
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before,
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before,
+.callout[data-callout="success"]::before,
+.callout[data-callout="check"]::before,
+.callout[data-callout="done"]::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Advice: down the leading edge, so it flips with the writing direction. */
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before,
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before {
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--bc-callout-bar);
+}
+
+/* Orange sits closer in luminance to its own fill than the other hues do, so
+   the same alpha reads a step lighter there. A small boost puts warning's frame
+   on the same footing as everything else. */
+.callout[data-callout="warning"],
+.callout[data-callout="caution"],
+.callout[data-callout="attention"] {
+  --bc-callout-edge-boost: 1.2;
+}
+
+/* Hazard: the same bar, striped. The stripes are drawn between the full colour
+   and a transparent version of itself rather than between two colours, so they
+   read on the callout's own fill in either theme without a second token. */
+.callout[data-callout="warning"]::before,
+.callout[data-callout="caution"]::before,
+.callout[data-callout="attention"]::before {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--bc-callout-c) 0 3px,
+    color-mix(in srgb, var(--bc-callout-c) 35%, transparent) 3px 6px
+  );
+}
+
+.callout[data-callout="tip"]::before,
+.callout[data-callout="hint"]::before,
+.callout[data-callout="important"]::before {
+  background-color: var(--bc-callout-c);
+}
+
+/* Finished: across the top instead of down the side. Deliberately the one
+   signature that does not move in a right-to-left note — a stamp is a stamp
+   whichever way the text runs, and it keeps success distinct from advice at a
+   glance in both directions. */
+.callout[data-callout="success"]::before,
+.callout[data-callout="check"]::before,
+.callout[data-callout="done"]::before {
+  inset-inline: 0;
+  inset-block-start: 0;
+  height: var(--bc-callout-bar);
+  background-color: var(--bc-callout-c);
+}
+
+/* Open question: the frame is not closed. */
+.callout[data-callout="question"],
+.callout[data-callout="help"],
+.callout[data-callout="faq"] {
+  --bc-callout-edge-style: dashed;
+  --bc-callout-edge-boost: 1.3;
+}
+
+/* An illustration rather than an instruction. */
+.callout[data-callout="example"] {
+  --bc-callout-edge-style: dotted;
+  --bc-callout-edge-boost: 1.45;
+}
+
+/* The heavy frame. No bar with it: a red block with a red bar is shouting
+   twice, and the weight alone already reads as the strongest thing on the
+   page. */
+.callout[data-callout="failure"],
+.callout[data-callout="fail"],
+.callout[data-callout="missing"],
+.callout[data-callout="danger"],
+.callout[data-callout="error"],
+.callout[data-callout="bug"] {
+  --bc-callout-edge-heavy: 2;
+  --bc-callout-edge-boost: 1.2;
+}
+
+/* A quotation is a rule, not a container. No fill, no frame, and the leading
+   rule is the whole of it — which is what a blockquote looks like everywhere
+   else in this theme, and a quote callout is a blockquote with a title. */
+.callout[data-callout="quote"],
+.callout[data-callout="cite"] {
+  background-color: transparent;
+  outline: none;
+  border-radius: 0;
+  padding-inline: var(--bc-gap-4);
+  border-inline-start: var(--bc-callout-bar) solid
+    color-mix(in srgb, var(--bc-callout-c) 72%, transparent);
+}
+
+/* --- The other two callout styles ----------------------------------------
+   Neither takes the signatures. "Fill only" exists for a reader who wants the
+   block back the way it was before the frames, and drawing half the system
+   would be worse than drawing none of it; the left rule is already one
+   signature and cannot carry a second. */
+
+body.bc-callout-plain .callout {
+  outline: none;
+}
+
+body.bc-callout-plain .callout::before {
+  content: none;
+}
+
 /* Left-rule variant: no fill, one coloured hairline. */
 body.bc-callout-rule .callout {
   background-color: transparent;
   border-radius: 0;
-  border-inline-start: 3px solid rgb(var(--callout-color));
+  outline: none;
+  border-inline-start: 3px solid var(--bc-callout-c);
   padding-inline: var(--bc-gap-4);
+}
+
+body.bc-callout-rule .callout::before {
+  content: none;
 }
 
 /* --- Checkboxes and tasks ------------------------------------------------ */
@@ -374,7 +589,13 @@ body.bc-no-fade-done {
    nothing at all — the same failure as aiming at a class that does not exist,
    and just as invisible, because a rule that matches nothing and a rule that
    is outranked both look like "the theme did not style this". */
-.markdown-embed {
+/* The class is repeated on purpose. A flagged declaration still loses to
+   another flagged declaration that is more specific, and one class is the
+   floor — anything in any of the twenty-six sheets that load after the theme
+   ties with it and wins on order. Two classes is the smallest honest answer
+   that does not reach for `body` (which a snippet can target just as easily)
+   and does not pin the theme to somebody else's selector. */
+.markdown-embed.markdown-embed {
   /* A transclusion is a block, and it has to be told so. Obsidian's class for
      one in Live Preview is literally `inline-embed` and the element is a
      <span>: on an inline box, horizontal padding lays out and vertical padding
@@ -397,7 +618,13 @@ body.bc-no-fade-done {
      is never wider than what holds it. */
   margin-inline: 0;
   max-width: 100%;
-  padding: var(--embed-padding);
+  /* Forced, on the evidence. A doctor run in the vault this was reported from
+     came back with `display: block` and `padding: 0px 24px 0px 0px` on an
+     element whose background and ring — set in this same rule, two lines down
+     — were both drawing. A rule cannot half apply, so something else is
+     setting the padding and winning, and the same run showed that forcing 12px
+     put all four sides at 12. The theme owns the box of a block it draws. */
+  padding: var(--bc-embed-padding) !important;
   border-radius: var(--bc-pane-radius);
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
@@ -468,10 +695,12 @@ body.bc-no-fade-done {
      reader cannot see. Outside a callout the plain rule above still leaves a
      deliberate bleed alone. */
   margin: 0 !important;
-  padding: var(--bc-gap-3);
-  /* symmetric here too — the ring is closer in, but it is still a box */
+  /* same reason as the base rule, and it has to shout at least as loudly or
+     the base rule's flag would win over this one on the axis it sets */
+  padding: calc(var(--bc-embed-padding) * 0.67) !important;
   background-color: transparent;
-  box-shadow: inset 0 0 0 1px rgba(var(--callout-color), 0.28);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--bc-callout-c) 28%, transparent);
 }
 
 /* Unless the callout has no fill of its own. "The callout is already the
@@ -481,9 +710,23 @@ body.bc-no-fade-done {
    back to being the container. */
 body.bc-callout-rule .callout .markdown-embed,
 body.bc-callout-rule .callout-content .markdown-embed {
-  padding: var(--embed-padding);
+  padding: var(--bc-embed-padding) !important;
   background-color: var(--bc-surface-sunken);
   box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+/* Embed style, as a setting. Card is the default and is what the rules above
+   draw. These two come after everything else on purpose: they carry the same
+   three classes as the callout-variant rule, so order is what decides, and
+   order here means "the reader's choice last". */
+body.bc-embed-quiet .markdown-embed.markdown-embed {
+  background-color: transparent;
+}
+
+body.bc-embed-bare .markdown-embed.markdown-embed {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0 !important;
 }
 
 .markdown-embed-title {

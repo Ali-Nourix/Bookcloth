@@ -1,6 +1,8 @@
 node_modules/
 preview/fonts/
 preview/shot-*.png
+# shot-bottom.mjs output: diagnostics, regenerated on demand
+preview/fade-*.png
 package-lock.json
 
 # Plugin stylesheets copied in for the preview harness (see preview/plugins/README.md).

@@ -1,0 +1,61 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Bookcloth — callout frames</title>
+<link rel="stylesheet" href="app-shim.css"><link rel="stylesheet" href="../theme.css">
+<style>svg{display:block}
+.stage{min-height:100vh;background:var(--background-secondary);padding:24px;display:flex;gap:16px;align-items:flex-start}
+.pane{flex:1;min-width:0;background:var(--background-primary);border-radius:var(--radius-l);padding:20px 28px;overflow:auto}
+.pane h2{margin-top:1.4em}
+</style></head>
+<body class="theme-light is-focused">
+<div class="stage">
+
+  <div class="pane">
+    <div class="markdown-preview-view markdown-rendered">
+      <div class="markdown-preview-sizer">
+        <div class="inline-title">Every callout type</div>
+        <div class="callout" data-callout="note"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></div><div class="callout-title-inner">Note</div></div><div class="callout-content"><p>Plain hairline. The baseline every other signature is read against.</p></div></div>
+        <div class="callout" data-callout="info"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><div class="callout-title-inner">Info</div></div><div class="callout-content"><p>Same family as Note, same frame.</p></div></div>
+        <div class="callout" data-callout="todo"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div><div class="callout-title-inner">Todo</div></div><div class="callout-content"><p>Blue, and still a statement rather than advice.</p></div></div>
+        <div class="callout" data-callout="abstract"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1"/></svg></div><div class="callout-title-inner">Abstract</div></div><div class="callout-content"><p>Also summary and tldr.</p></div></div>
+        <div class="callout" data-callout="tip"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg></div><div class="callout-title-inner">Tip</div></div><div class="callout-content"><p>Advice: the frame plus a solid bar on the leading edge.</p></div></div>
+        <div class="callout" data-callout="important"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="callout-title-inner">Important</div></div><div class="callout-content"><p>Advice too, so the same bar.</p></div></div>
+        <div class="callout" data-callout="success"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="callout-title-inner">Success</div></div><div class="callout-content"><p>A rule across the top rather than down the side — the stamp on a finished thing.</p></div></div>
+        <div class="callout" data-callout="question"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div><div class="callout-title-inner">Question</div></div><div class="callout-content"><p>Dashed: the box is not closed because the question is not answered.</p></div></div>
+        <div class="callout" data-callout="warning"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="callout-title-inner">Warning</div></div><div class="callout-content"><p>A hazard bar on the leading edge, striped rather than solid.</p></div></div>
+        <div class="callout" data-callout="failure"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg></div><div class="callout-title-inner">Failure</div></div><div class="callout-content"><p>Also fail and missing. The heavy frame.</p></div></div>
+        <div class="callout" data-callout="danger"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></div><div class="callout-title-inner">Danger</div></div><div class="callout-content"><p>Also error. Heavy frame, no bar.</p></div></div>
+        <div class="callout" data-callout="bug"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m8 2 1.88 1.88M14.12 3.88 16 2"/><path d="M9 7.13V6a3 3 0 1 1 6 0v1.13"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6Z"/><path d="M6 13H2M20 13h-4"/></svg></div><div class="callout-title-inner">Bug</div></div><div class="callout-content"><p>Heavy frame, red.</p></div></div>
+        <div class="callout" data-callout="example"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div><div class="callout-title-inner">Example</div></div><div class="callout-content"><p>Dotted: an illustration rather than an instruction.</p></div></div>
+        <div class="callout" data-callout="quote"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3"/><path d="M14 21c3 0 7-1 7-8V5c0-1.25-.756-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3"/></svg></div><div class="callout-title-inner">Quote</div></div><div class="callout-content"><p>No box at all. A quotation is a rule, not a container.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane">
+    <div class="markdown-preview-view markdown-rendered">
+      <div class="markdown-preview-sizer">
+        <div class="inline-title">In context</div>
+        <h2>Nested</h2>
+        <div class="callout" data-callout="warning"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="callout-title-inner">A callout holding things</div></div><div class="callout-content"><p>A frame around a frame has to stay legible.</p><ul class="contains-task-list"><li class="task-list-item" data-task=" "><input class="task-list-item-checkbox" type="checkbox"><span class="task-list-item-text">an empty box on a tinted ground</span></li></ul><div class="callout" data-callout="success"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="callout-title-inner">Nested success</div></div><div class="callout-content"><p>Its own signature, inside another frame.</p></div></div></div></div>
+        <h2>Live Preview</h2>
+        <div class="cm-embed-block cm-callout"><div class="markdown-rendered"><div class="callout" data-callout="tip"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg></div><div class="callout-title-inner">Live Preview</div></div><div class="callout-content"><p>In the editor a callout is wrapped in a .cm-embed-block, which clips it.</p></div></div></div></div>
+        <h2>The old contract</h2>
+        <!-- Obsidian used to hand a callout its colour as a bare triple. Under
+             the new contract that is not a colour, so a theme written either
+             way is broken on the other unless it resolves the value into a
+             registered <color> property. Here the triple is forced back on, to
+             prove what a build old enough to still send one now gets: a grey
+             frame rather than no frame. -->
+        <div>
+          <div class="callout" data-callout="note" style="--callout-color: 68, 138, 255"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></div><div class="callout-title-inner">A triple, not a colour</div></div><div class="callout-content"><p>Still a block, still framed — in grey, because the hue could not be read.</p></div></div>
+        </div>
+
+        <h2>Right to left</h2>
+        <div class="markdown-preview-view markdown-rendered" dir="rtl" style="padding:0"><div class="markdown-preview-sizer"><div class="callout" data-callout="success"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="callout-title-inner">موفق</div></div><div class="callout-content"><p>نوار بالایی راست‌چین نمی‌شود، ولی نوار کناری باید بچرخد.</p></div></div><div class="callout" data-callout="warning"><div class="callout-title"><div class="callout-icon"><svg class="svg-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="callout-title-inner">هشدار</div></div><div class="callout-content"><p>نوار راه‌راه باید از سمت راست بیفتد.</p></div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body></html>

@@ -1,0 +1,669 @@
+/* ==========================================================================
+   GLOW AND MOTION
+   The layer that makes the theme feel alive rather than merely correct.
+
+   Two rules govern everything here. Only `transform` and `opacity` are
+   animated, because those are the two the compositor can run without laying
+   the page out again — a hover that animates `height` or `margin` on a list of
+   three hundred notes is a stutter, not a flourish. And every effect is
+   reachable from the settings pane and gone entirely at the lowest level,
+   because motion is a preference and some people get sick from it.
+
+   `--bc-speed` is the one duration. Set it to zero and the transitions here
+   collapse without a single rule needing to know.
+   ========================================================================== */
+
+body {
+  /* The fade across the top of a panel, tinted with the accent. Strength is a
+     percentage so the setting reads as one, and the alphas below are fractions
+     of it on a quadratic falloff — a straight two-stop gradient in sRGB dips
+     muddy through its middle, and on a large soft wash that shows as a band. */
+  --bc-glow-base: 10%;
+  --bc-glow-strength: var(--bc-glow-base);
+  --bc-glow-height: 160px;
+  /* The edge reads far stronger than the wash at the same alpha — a hairline
+     is one pixel of pure colour where the wash is a hundred and sixty of
+     almost none — so it is a multiple of the one setting rather than a second
+     number to keep in step. */
+  /* Unitless, deliberately. A percentage times a percentage is a square
+     percentage, which is not a thing: calc() gives up, the hsl() around it is
+     invalid, and the whole box-shadow computes to none. The stroke vanished
+     exactly that way once already, one release after the wash vanished for the
+     same family of reason. A multiplier is a number. */
+  --bc-glow-stroke-strength: 2.35;
+  --bc-glow-stroke: calc(var(--bc-glow-strength) * var(--bc-glow-stroke-strength));
+  --bc-glow-stroke-w: 1px;
+  --bc-glow-stroke-peak-w: 2px;
+  /* Used as the alpha channel directly, because an alpha channel takes a
+     percentage. Dividing by 100 first looks like it turns 14% into 0.14 and
+     does not: a percentage over a number is still a percentage, so the alpha
+     came out at 0.14% and every stop in the gradient computed to fully
+     transparent. It rendered as nothing at all, which is exactly what a
+     screenshot of it looked like. */
+  /* NOT a --bc-glow-a token. A custom property is substituted where it is
+     declared, so `--bc-glow-a: var(--bc-glow-strength)` on body freezes body's
+     strength into it — and a menu re-declaring the strength further down got
+     the body's number anyway. The multiplier is applied at the point of use,
+     which is the only place both halves are in scope. */
+  --bc-glow-mult: 1;
+
+  --bc-glow-falloff: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.56) 25%,
+    rgb(0 0 0 / 0.25) 50%,
+    rgb(0 0 0 / 0.06) 75%,
+    rgb(0 0 0 / 0) 100%
+  );
+  /* More stops than the curve strictly needs. The heavy ring has to disappear
+     into the hairline rather than end on it, and with three stops the handover
+     showed as a faint step across the side of the panel. */
+  --bc-glow-falloff-peak: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.72) 18%,
+    rgb(0 0 0 / 0.44) 38%,
+    rgb(0 0 0 / 0.2) 60%,
+    rgb(0 0 0 / 0.06) 80%,
+    rgb(0 0 0 / 0) 100%
+  );
+
+  /* Lower and shorter than it was. The effect belongs to the last few lines,
+     and a tall field is a haze over the middle of the page. */
+  --bc-edge-fade-height: 70px;
+  --bc-edge-fade-blur: 22px;
+  /* Zero, and the reason is worth keeping. These layers used to hang below the
+     pane on the theory that a backdrop-filter thins at its own bottom edge with
+     nothing left to sample. Measured, that is not what happens — pressed to the
+     floor the bottom sixteen pixels come back at 0.05 of their original edge
+     sharpness with no overhang at all. What the overhang did do was sample the
+     window behind the pane and blur it upwards, which over an empty page showed
+     as a band of the wrong colour: 41/255 darker in dark mode and 32 lighter in
+     light. That was the two-tone edge, and this is where it came from. */
+  --bc-edge-fade-overshoot: 0px;
+  --bc-edge-fade-band: linear-gradient(
+    to top,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 1) 62%,
+    rgb(0 0 0 / 0.72) 78%,
+    rgb(0 0 0 / 0.3) 90%,
+    rgb(0 0 0 / 0) 100%
+  );
+
+  --bc-lift: translateY(-1px);
+  --bc-press: scale(0.96);
+  --bc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --bc-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* --- The panel glow -------------------------------------------------------
+   Drawn as a pseudo-element on the pane card rather than as a background on
+   the card itself, because the card's own background is a flat surface colour
+   a reader can set, and a gradient painted into it could not then be turned
+   off without taking the surface with it.
+
+   ::before comes first in the element's paint order, so everything the pane
+   holds sits over it without needing a z-index war. pointer-events: none so it
+   never eats a click meant for the tab strip under it. */
+
+body.bc-pane-glow .workspace-tabs,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon {
+  position: relative;
+}
+
+/* Menus, modals and popovers get the same treatment at a smaller scale — they
+   are surfaces too, and a right-click that opens something wearing the theme's
+   own light reads as part of the app rather than as a system menu that wandered
+   in. No position here: every one of these is already positioned, and making a
+   menu `relative` would drop it where it stands. */
+body.bc-pane-glow .menu,
+body.bc-pane-glow .modal,
+body.bc-pane-glow .prompt,
+body.bc-pane-glow .suggestion-container,
+body.bc-pane-glow .popover.hover-popover,
+body.bc-pane-glow .notice {
+  --bc-glow-height: 72px;
+  --bc-glow-strength: calc(var(--bc-glow-base) * 1.5);
+}
+
+body.bc-pane-glow .modal {
+  --bc-glow-height: 132px;
+}
+
+/* The wash and the edge fade together, so the fade lives in a mask rather than
+   in the gradient: a flat fill and a flat ring, both taken down by one falloff.
+   Put the fade in the background and the ring would need a second copy of the
+   same curve to stay in step with it, and the two would drift the moment
+   either changed. The curve is quadratic — a straight two-stop fade dips muddy
+   through its middle, and across a hundred and sixty pixels that shows as a
+   band. */
+body.bc-pane-glow .workspace-tabs::before,
+body.bc-pane-glow .workspace-tabs::after,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::before,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::after,
+body.bc-pane-glow .menu::before,
+body.bc-pane-glow .menu::after,
+body.bc-pane-glow .modal::before,
+body.bc-pane-glow .modal::after,
+body.bc-pane-glow .prompt::before,
+body.bc-pane-glow .prompt::after,
+body.bc-pane-glow .suggestion-container::before,
+body.bc-pane-glow .suggestion-container::after,
+body.bc-pane-glow .popover.hover-popover::before,
+body.bc-pane-glow .popover.hover-popover::after,
+body.bc-pane-glow .notice::before,
+body.bc-pane-glow .notice::after {
+  content: "";
+  /* The ribbon's ::before is also Obsidian's title-bar patch, which the chrome
+     section switches off. The glow reuses that pseudo, so it switches it back
+     on — otherwise the ribbon is the one card with no wash. */
+  display: block;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  pointer-events: none;
+  /* inherit, so the same block works on a pane card, a ribbon, a menu and a
+     modal without any of them naming its own radius. The bottom corners round
+     inside the pseudo rather than at the card's foot, which is invisible: the
+     mask has taken that end to nothing before it gets there. And inheriting
+     the radius is why none of these need overflow: hidden to stop the wash
+     spilling out of a rounded corner — a clip on a menu would cut a submenu. */
+  border-radius: inherit;
+  transition: opacity calc(var(--bc-speed) * 3) var(--bc-ease-out);
+}
+
+body.bc-pane-glow .workspace-tabs::before,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::before,
+body.bc-pane-glow .menu::before,
+body.bc-pane-glow .modal::before,
+body.bc-pane-glow .prompt::before,
+body.bc-pane-glow .suggestion-container::before,
+body.bc-pane-glow .popover.hover-popover::before,
+body.bc-pane-glow .notice::before {
+  height: var(--bc-glow-height);
+  opacity: 0.62;
+  background-color: hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / calc(var(--bc-glow-strength) * var(--bc-glow-mult)));
+  box-shadow: inset 0 0 0 var(--bc-glow-stroke-w)
+    hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / var(--bc-glow-stroke));
+  -webkit-mask-image: var(--bc-glow-falloff);
+  mask-image: var(--bc-glow-falloff);
+}
+
+/* The thicker start of the same edge. It is a second ring rather than a
+   thicker first one because a border cannot taper: one stroke can fade in
+   colour or hold its width, not both. Two rings over each other — a heavy one
+   that is gone in the first third, a hairline that runs the whole way — read
+   as one stroke that starts thick and thins out. */
+body.bc-pane-glow .workspace-tabs::after,
+body.bc-float-panes.bc-pane-glow .workspace-ribbon::after,
+body.bc-pane-glow .menu::after,
+body.bc-pane-glow .modal::after,
+body.bc-pane-glow .prompt::after,
+body.bc-pane-glow .suggestion-container::after,
+body.bc-pane-glow .popover.hover-popover::after,
+body.bc-pane-glow .notice::after {
+  height: calc(var(--bc-glow-height) * 0.4);
+  opacity: 0.62;
+  box-shadow: inset 0 0 0 var(--bc-glow-stroke-peak-w)
+    hsl(var(--accent-h) var(--bc-ac-s) var(--bc-ac-l) / calc(var(--bc-glow-stroke) * 1.1));
+  -webkit-mask-image: var(--bc-glow-falloff-peak);
+  mask-image: var(--bc-glow-falloff-peak);
+}
+
+/* The pane you are working in glows a little harder. It is the cheapest
+   possible "you are here": no border, no shadow, nothing that moves. */
+body.bc-pane-glow .workspace-tabs:has(.workspace-leaf.mod-active)::before,
+body.bc-pane-glow .workspace-tabs:has(.workspace-leaf.mod-active)::after,
+body.bc-pane-glow .workspace-tabs:focus-within::before,
+body.bc-pane-glow .workspace-tabs:focus-within::after {
+  opacity: 1;
+}
+
+/* A dark page takes more tint to show the same amount of colour, and the
+   accent sits on a dark ground rather than under a white one. */
+body.theme-dark {
+  --bc-glow-mult: 1.35;
+}
+
+/* --- Rows -----------------------------------------------------------------
+   A nav row gets an accent bar that grows from the inline start rather than
+   appearing. scaleY on a 2px bar is one composited property and reads as the
+   row acknowledging the pointer. */
+
+.tree-item-self,
+.nav-file-title,
+.nav-folder-title {
+  position: relative;
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-file-title::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-folder-title::after {
+  content: "";
+  position: absolute;
+  inset-block: 2px;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 2px;
+  background-color: var(--bc-ac-fill);
+  transform: scaleY(0);
+  transform-origin: center;
+  opacity: 0;
+  transition:
+    transform calc(var(--bc-speed) * 2) var(--bc-ease-spring),
+    opacity calc(var(--bc-speed) * 2) var(--bc-ease);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self:hover::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self.is-active::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .tree-item-self.has-focus::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-file-title:hover::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-file-title.is-active::after,
+body:is(.bc-motion-full, .bc-motion-expressive) .nav-folder-title:hover::after {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+/* --- Icon buttons ---------------------------------------------------------
+   Press is the one place a transform earns its keep: a button that gives under
+   the pointer is the difference between a picture of a button and a button. */
+
+body:is(.bc-motion-full, .bc-motion-expressive) .clickable-icon,
+body:is(.bc-motion-full, .bc-motion-expressive) .view-action,
+body:is(.bc-motion-full, .bc-motion-expressive) .side-dock-ribbon-action,
+body:is(.bc-motion-full, .bc-motion-expressive) .workspace-tab-header-new-tab,
+body:is(.bc-motion-full, .bc-motion-expressive) .sidebar-toggle-button {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease),
+    transform calc(var(--bc-speed) * 1.2) var(--bc-ease-spring);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .clickable-icon:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .view-action:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .side-dock-ribbon-action:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .workspace-tab-header-new-tab:active,
+body:is(.bc-motion-full, .bc-motion-expressive) .sidebar-toggle-button:active {
+  transform: var(--bc-press);
+}
+
+/* --- Floating layers ------------------------------------------------------
+   Menus, modals and the quick switcher arrive from slightly below and slightly
+   small. Eight pixels and four percent: enough to read as arriving, not enough
+   to be a journey. */
+
+@keyframes bc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bc-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .menu,
+body:is(.bc-motion-full, .bc-motion-expressive) .modal,
+body:is(.bc-motion-full, .bc-motion-expressive) .prompt,
+body:is(.bc-motion-full, .bc-motion-expressive) .suggestion-container,
+body:is(.bc-motion-full, .bc-motion-expressive) .popover.hover-popover {
+  animation: bc-rise calc(var(--bc-speed) * 1.8) var(--bc-ease-out);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .modal-bg,
+body:is(.bc-motion-full, .bc-motion-expressive) .tooltip {
+  animation: bc-fade calc(var(--bc-speed) * 1.6) var(--bc-ease);
+}
+
+/* A toast comes in from the edge it lives on. */
+@keyframes bc-notice-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .notice {
+  animation: bc-notice-in calc(var(--bc-speed) * 2) var(--bc-ease-out);
+}
+
+/* --- Tabs and headings ---------------------------------------------------- */
+
+.workspace-tab-header {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.internal-link,
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.external-link {
+  transition:
+    color var(--bc-speed) var(--bc-ease),
+    text-decoration-color calc(var(--bc-speed) * 2) var(--bc-ease);
+  text-decoration-color: transparent;
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.internal-link:hover,
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.external-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* --- Menus, suggestions, settings -----------------------------------------
+   A right-click menu is where a theme is judged fastest: it is the one surface
+   a reader opens dozens of times an hour and never looks at for long. The row
+   fills, and its icon leans a pixel toward the words it belongs to. One pixel
+   is not a decoration — it is the row saying which way it reads, which in an
+   RTL note is the other way, hence the logical property. */
+
+.menu-item,
+.suggestion-item,
+.setting-item {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .menu-item-icon,
+body:is(.bc-motion-full, .bc-motion-expressive) .suggestion-flair {
+  transition: transform calc(var(--bc-speed) * 2) var(--bc-ease-spring);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .menu-item:hover .menu-item-icon,
+body:is(.bc-motion-full, .bc-motion-expressive) .suggestion-item.is-selected .suggestion-flair {
+  transform: translateX(1px);
+}
+
+body.bc-rtl:is(.bc-motion-full, .bc-motion-expressive) .menu-item:hover .menu-item-icon,
+body.bc-rtl:is(.bc-motion-full, .bc-motion-expressive) .suggestion-item.is-selected .suggestion-flair {
+  transform: translateX(-1px);
+}
+
+/* --- The switch -----------------------------------------------------------
+   The thumb overshoots slightly and settles. A switch is the one control whose
+   whole job is to show it changed, so it is worth the extra 60ms. */
+
+body:is(.bc-motion-full, .bc-motion-expressive) .checkbox-container::after {
+  transition: transform calc(var(--bc-speed) * 2.4) var(--bc-ease-spring) !important;
+}
+
+/* --- Inputs ---------------------------------------------------------------
+   The focus ring grows into place rather than appearing, which is the
+   difference between the field noticing you and the field flashing at you. */
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+textarea,
+select,
+.dropdown {
+  transition:
+    box-shadow calc(var(--bc-speed) * 1.6) var(--bc-ease-out),
+    background-color var(--bc-speed) var(--bc-ease),
+    border-color var(--bc-speed) var(--bc-ease);
+}
+
+/* --- Tags, table rows, small surfaces ------------------------------------- */
+
+.markdown-rendered .tag,
+.markdown-rendered tr,
+.markdown-rendered th,
+.markdown-rendered td,
+.callout {
+  transition: background-color var(--bc-speed) var(--bc-ease);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.tag {
+  transition:
+    background-color var(--bc-speed) var(--bc-ease),
+    color var(--bc-speed) var(--bc-ease),
+    transform calc(var(--bc-speed) * 1.6) var(--bc-ease-spring);
+}
+
+body:is(.bc-motion-full, .bc-motion-expressive) .markdown-rendered a.tag:hover {
+  transform: var(--bc-lift);
+}
+
+/* --- Folding --------------------------------------------------------------
+   The chevron turns rather than swapping. Obsidian sets the rotation itself;
+   all this adds is the time it takes. */
+
+.collapse-icon,
+.collapse-indicator,
+.tree-item-icon {
+  transition: transform calc(var(--bc-speed) * 1.6) var(--bc-ease-out);
+}
+
+/* --- Expressive -----------------------------------------------------------
+   The level that behaves like a designed interface rather than a styled one.
+   Three ideas, all of them Apple's rather than mine:
+
+   Motion comes from where you touched it. A menu opened by a right-click grows
+   out of the corner nearest the pointer instead of arriving from nowhere, which
+   is the difference between a surface appearing and a surface being opened.
+
+   Things arrive in the order they are read. A stagger of 14ms across the first
+   rows is under the threshold where it registers as waiting and over the one
+   where it registers as sequence.
+
+   And nothing bounces for its own sake. The spring overshoots by four percent,
+   once — enough to read as physical, not enough to read as a toy. */
+
+body.bc-motion-expressive .menu,
+body.bc-motion-expressive .suggestion-container,
+body.bc-motion-expressive .popover.hover-popover {
+  transform-origin: top left;
+  animation: bc-emerge calc(var(--bc-speed) * 2.2) var(--bc-ease-spring);
+}
+
+body.bc-rtl.bc-motion-expressive .menu,
+body.bc-rtl.bc-motion-expressive .suggestion-container {
+  transform-origin: top right;
+}
+
+@keyframes bc-emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.bc-motion-expressive .modal {
+  animation: bc-modal-in calc(var(--bc-speed) * 2.6) var(--bc-ease-spring);
+}
+
+@keyframes bc-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The stagger. Six rows is the whole of it — past that the delay outlasts the
+   time it takes to look at the menu, and a reader is waiting on decoration. */
+body.bc-motion-expressive .menu > .menu-item,
+body.bc-motion-expressive .prompt-results > .suggestion-item {
+  animation: bc-row-in calc(var(--bc-speed) * 2) var(--bc-ease-out) backwards;
+}
+
+@keyframes bc-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.bc-motion-expressive .menu > .menu-item:nth-child(1),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(2),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(2) {
+  animation-delay: 14ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(3),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(3) {
+  animation-delay: 28ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(4),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(4) {
+  animation-delay: 42ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(5),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(5) {
+  animation-delay: 56ms;
+}
+body.bc-motion-expressive .menu > .menu-item:nth-child(n + 6),
+body.bc-motion-expressive .prompt-results > .suggestion-item:nth-child(n + 6) {
+  animation-delay: 70ms;
+}
+
+/* A ribbon icon grows a little under the pointer. Four percent on an 18px
+   glyph is half a pixel — felt rather than seen, which is the point. */
+body.bc-motion-expressive .side-dock-ribbon-action:hover .svg-icon,
+body.bc-motion-expressive .clickable-icon:hover .svg-icon {
+  transform: scale(1.06);
+}
+
+body.bc-motion-expressive .side-dock-ribbon-action .svg-icon,
+body.bc-motion-expressive .clickable-icon .svg-icon {
+  transition: transform calc(var(--bc-speed) * 2) var(--bc-ease-spring);
+}
+body.bc-motion-expressive .view-header .view-actions {
+  opacity: 0.55;
+  transition: opacity calc(var(--bc-speed) * 2) var(--bc-ease);
+}
+
+body.bc-motion-expressive .workspace-leaf:hover .view-header .view-actions,
+body.bc-motion-expressive .view-header:focus-within .view-actions {
+  opacity: 1;
+}
+
+/* --- The bottom of the page ----------------------------------------------
+   Four layers, each fully opaque where it matters, each blurring what the one
+   beneath it already blurred.
+
+   The one-layer version was wrong, and wrong in a way worth writing down. A
+   mask over a backdrop-filter composites `alpha x blurred + (1 - alpha) x
+   sharp` — so at half alpha the page shows the blurred text *and* the original
+   text, through each other. That is not a partial blur, it is a double image,
+   and it was reported exactly that way: "I can see the blur and I can see the
+   text". A ramp of alpha cannot make a ramp of blur, because alpha does not
+   attenuate a blur, it cross-fades to the unblurred original.
+
+   What does work is a ladder. Each layer is solid across its own band and only
+   feathers in at its top edge, so almost nowhere is a sharp copy showing
+   through — and because a lower layer sits inside the backdrop of the one
+   above, the radii compound rather than compete. Four of them at doubling
+   radii give a smooth ramp with no ghosting anywhere.
+
+   It costs four backdrop-filters instead of one. The single layer was cheaper
+   and did not do the job; this is the price of the effect actually being the
+   effect. */
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content {
+  position: relative;
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::before,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::after,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before,
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  /* Kept as a knob, but zero: see the token. Anything above zero pulls the
+     window from below the pane up into it. */
+  inset-block-end: calc(var(--bc-edge-fade-overshoot) * -1);
+  pointer-events: none;
+  z-index: 2;
+  /* Solid across its band, feathered only at the top. Everything below 62% of
+     its own height is fully opaque, which is where the ghosting would be. */
+  -webkit-mask-image: var(--bc-edge-fade-band);
+  mask-image: var(--bc-edge-fade-band);
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::before {
+  height: calc(var(--bc-edge-fade-height) + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.125));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.125));
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf::after {
+  height: calc(var(--bc-edge-fade-height) * 0.72 + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.25));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.25));
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::before {
+  height: calc(var(--bc-edge-fade-height) * 0.46 + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--bc-edge-fade-blur) * 0.5));
+}
+
+body.bc-edge-fade .workspace-split.mod-root .workspace-leaf-content::after {
+  height: calc(var(--bc-edge-fade-height) * 0.24 + var(--bc-edge-fade-overshoot));
+  backdrop-filter: blur(var(--bc-edge-fade-blur));
+  -webkit-backdrop-filter: blur(var(--bc-edge-fade-blur));
+}
+
+/* --- Levels ---------------------------------------------------------------
+   Subtle keeps the transitions and drops everything that moves. None stops the
+   lot, including anything a plugin animates, which is the point: a reader who
+   turns motion off has said so about the whole app, not about this theme. */
+
+body.bc-motion-subtle *,
+body.bc-motion-subtle *::before,
+body.bc-motion-subtle *::after {
+  animation: none !important;
+  transform: none !important;
+}
+
+body.bc-motion-none *,
+body.bc-motion-none *::before,
+body.bc-motion-none *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* The system preference outranks all three, and is not a setting the theme
+   gets to argue with. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
