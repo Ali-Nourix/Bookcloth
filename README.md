@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Ali-Nourix/Obsidian-Theme/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://github.com/Ali-Nourix/Obsidian-Theme/blob/main/LICENSE"><img alt="GPL-3.0 License" src="https://img.shields.io/badge/license-GPL--3.0-46A171.svg"></a>
   <a href="https://obsidian.md"><img alt="Made for Obsidian" src="https://img.shields.io/badge/made%20for-Obsidian-7C3AED"></a>
   <img alt="Version 3.8.1" src="https://img.shields.io/badge/version-3.8.1-64748b">
 </p>
