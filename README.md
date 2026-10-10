@@ -117,4 +117,4 @@ Do not edit generated `theme.css` independently when the source/build workflow c
 
 ## License
 
-Bookcloth is distributed under the [MIT License](LICENSE).
+Bookcloth is distributed under the [GNU General Public License v3.0](LICENSE).
