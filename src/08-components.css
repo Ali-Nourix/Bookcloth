@@ -415,8 +415,8 @@ button.mod-cta:disabled {
    not a suggestion, so they are declared as facts. */
 
 body {
-  --bc-toggle-w: 26px;
-  --bc-toggle-h: 16px;
+  --bc-toggle-w: calc(26px * var(--bc-toggle-scale));
+  --bc-toggle-h: calc(16px * var(--bc-toggle-scale));
   --bc-toggle-pad: 2px;
   --bc-toggle-thumb: calc(var(--bc-toggle-h) - var(--bc-toggle-pad) * 2);
   --bc-toggle-travel: calc(var(--bc-toggle-w) - var(--bc-toggle-h));

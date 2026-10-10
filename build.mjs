@@ -23,6 +23,7 @@ const files = [
   "09-views.css",
   "12-icons.css",
   "13-panes.css",
+  "14-motion.css",
   "10-mobile.css",
   "11-rtl.css",
   "plugins/dataview.css",
@@ -31,6 +32,7 @@ const files = [
   "plugins/calendar.css",
   "plugins/habbiter.css",
   "plugins/misc.css",
+  "plugins/taskpro.css",
 ];
 
 const banner = `/* ${manifest.name} ${manifest.version} — a warm, quiet theme for Obsidian.

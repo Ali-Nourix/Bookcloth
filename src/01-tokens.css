@@ -12,7 +12,7 @@ body {
   /* Stamped so a console probe can say which build is actually running. A
      screenshot cannot tell a fix that did not work from a fix that was never
      installed, and this session has burned rounds on that distinction. */
-  --bc-version: "2.7.0";
+  --bc-version: "3.8.1";
 
   /* --- Accent source of truth ------------------------------------------
      Obsidian writes the user's chosen accent onto <body> as an inline style,
@@ -74,6 +74,14 @@ body {
   --bc-tint: 0%;
   /* Multiplier on every border alpha. 0 removes lines entirely. */
   --bc-border-strength: 1;
+  /* The empty checkbox has its own, and deliberately does not follow the one
+     above. A hairline between two regions is decoration and a reader is
+     entitled to switch it off; the edge of an empty checkbox is the entire
+     control — there is nothing else drawn — so putting it on the same slider
+     means "no borders" also means "no checkboxes". The defaults below are set
+     where the edge measures 3:1 against the page, the threshold for a user
+     interface component rather than for text. */
+  --bc-check-border-strength: 1;
   /* How much colour a callout or wash carries. */
   --bc-wash: 12%;
 
@@ -134,12 +142,48 @@ body {
      reads it, to keep the panels clear of it. */
   --bc-statusbar-height: 26px;
 
+  /* --- Numbers the settings pane reaches -------------------------------
+     Each of these is a private name that Obsidian's own variable is then set
+     from, rather than a control writing to Obsidian's variable directly. The
+     embed padding is why: --embed-padding belongs to the app, anything loading
+     after the theme can hand it different numbers, and a theme reading it gets
+     them. A private token cannot be reached that way. */
+  --bc-heading-space: 1.9;
+  --bc-p-spacing: 0.5em;
+  --bc-list-indent: 1.5em;
+  --bc-list-spacing: 0.125em;
+  --bc-toggle-scale: 1;
+
   --input-radius: var(--radius-m);
   --button-radius: var(--radius-m);
   --modal-radius: var(--bc-modal-radius);
   --checkbox-radius: var(--bc-check-radius);
   --code-radius: var(--radius-m);
   --callout-radius: var(--radius-m);
+  /* The callout frame. A tinted fill alone tells you a block is a callout only
+     while the tint is strong enough to see, and at Notion's 12% on a dark
+     ground it is not — the block reads as a paragraph with an icon. The frame
+     is what makes it a block, the same way the hairline is what makes an embed
+     a card. Alpha of the callout's own colour, so it stays in the family. */
+  --bc-callout-edge: 1px;
+  /* Light's number, overridden in the dark file. The two grounds are not
+     symmetric: the dark fill is mixed at 1.8x the wash, so it starts closer to
+     the frame's own colour and needs less alpha to separate from it, not more.
+     Measured against the fill: 0.5 here reads 1.9:1, 0.4 there reads 1.8:1. */
+  --bc-callout-edge-a: 0.5;
+  /* Per-type multipliers rather than per-type alphas, so the slider stays one
+     number: a dotted frame lays down a third of the ink a solid one does and
+     has to be stronger to read as the same weight. */
+  --bc-callout-edge-boost: 1;
+  --bc-callout-edge-heavy: 1;
+  /* What the slider writes. A multiplier rather than the alpha itself, so a
+     reader turning the frames up does not flatten the difference between the
+     two grounds — setting the alpha directly would hand dark light's number. */
+  --bc-callout-edge-strength: 1;
+  /* The signature bar: down the leading edge for advice, across the top for a
+     finished thing. 3px is the width at which a bar is a bar rather than a
+     thick border. */
+  --bc-callout-bar: 3px;
   --tag-radius: var(--radius-s);
   --tab-radius: var(--radius-l);
   --tab-radius-active: var(--radius-l);
@@ -191,7 +235,11 @@ body {
      Notion's transitions are short enough to read as instant feedback rather
      than as animation. */
   --bc-ease: cubic-bezier(0.2, 0, 0, 1);
-  --bc-speed: 100ms;
+  /* 100ms was Notion's, and Notion is not animating anything you are meant to
+     notice. Everything in the motion layer is a multiple of this, so a single
+     step up is what turns a set of effects that technically run into a set
+     that registers. */
+  --bc-speed: 170ms;
 }
 
 /* Accent intensity ------------------------------------------------------- */

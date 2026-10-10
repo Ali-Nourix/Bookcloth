@@ -141,13 +141,18 @@ body.bc-indent-guides {
   padding-block-start: var(--bc-topbar-height);
 }
 
-/* The margin carries .mod-left / .mod-right, so zeroing it from a one-class
+/* Obsidian 1.14 renamed the ribbon's side classes to .mod-primary /
+   .mod-secondary, so the sidebars can flip in RTL. Both names are carried:
+   matching only the old one let the 45px margin back in under 1.14, which is
+   the gap that opened above the ribbon card.
+
+   The margin carries .mod-left / .mod-right, so zeroing it from a one-class
    selector loses on class count — and !important because which ancestor
    classes Obsidian hangs it off varies by platform and frame mode, and this
    is a measured value rather than a preference: the space it was holding is
    now padding a few lines above. */
-.workspace-ribbon.mod-left,
-.workspace-ribbon.mod-right {
+.workspace-ribbon:is(.mod-left, .mod-primary),
+.workspace-ribbon:is(.mod-right, .mod-secondary) {
   margin-block-start: 0 !important;
 }
 
@@ -231,8 +236,8 @@ body.bc-indent-guides {
   gap: var(--bc-icon-gap);
 }
 
-.workspace-ribbon.mod-left::before,
-.workspace-ribbon.mod-right::before {
+.workspace-ribbon:is(.mod-left, .mod-primary)::before,
+.workspace-ribbon:is(.mod-right, .mod-secondary)::before {
   display: none;
 }
 
@@ -276,13 +281,13 @@ body.bc-indent-guides {
   color: var(--text-normal);
 }
 
-body.bc-hide-ribbon .workspace-ribbon.mod-left {
+body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary) {
   opacity: 0;
   transition: opacity 200ms var(--bc-ease);
 }
 
-body.bc-hide-ribbon .workspace-ribbon.mod-left:hover,
-body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
+body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):hover,
+body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
   opacity: 1;
 }
 
@@ -327,14 +332,14 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 /* --- Sidebars ------------------------------------------------------------ */
 
 .workspace-drawer,
-.workspace-split.mod-horizontal.mod-left-split,
-.workspace-split.mod-horizontal.mod-right-split {
+.workspace-split.mod-horizontal:is(.mod-left-split, .mod-primary-split),
+.workspace-split.mod-horizontal:is(.mod-right-split, .mod-secondary-split) {
   border: none;
   box-shadow: none;
 }
 
-.workspace-split.mod-left-split .workspace-tab-header-container,
-.workspace-split.mod-right-split .workspace-tab-header-container {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header-container,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header-container {
   padding-inline: var(--bc-gap-3);
   gap: var(--bc-icon-gap);
 }
@@ -344,15 +349,15 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
    rounding at all that background reads as a lozenge rather than a button.
    The background moves to the inner element so it wraps the icon, not the
    whole tab slot. */
-.workspace-split.mod-left-split .workspace-tab-header,
-.workspace-split.mod-right-split .workspace-tab-header {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header {
   padding: 0;
   background-color: transparent;
   border-radius: var(--radius-m);
 }
 
-.workspace-split.mod-left-split .workspace-tab-header-inner,
-.workspace-split.mod-right-split .workspace-tab-header-inner {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header-inner,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header-inner {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -363,19 +368,19 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
-.workspace-split.mod-left-split
+.workspace-split:is(.mod-left-split, .mod-primary-split)
   .workspace-tab-header:hover
   .workspace-tab-header-inner,
-.workspace-split.mod-right-split
+.workspace-split:is(.mod-right-split, .mod-secondary-split)
   .workspace-tab-header:hover
   .workspace-tab-header-inner {
   background-color: var(--background-modifier-hover);
 }
 
-.workspace-split.mod-left-split
+.workspace-split:is(.mod-left-split, .mod-primary-split)
   .workspace-tab-header.is-active
   .workspace-tab-header-inner,
-.workspace-split.mod-right-split
+.workspace-split:is(.mod-right-split, .mod-secondary-split)
   .workspace-tab-header.is-active
   .workspace-tab-header-inner {
   background-color: var(--bc-select-bg-strong);
@@ -399,8 +404,8 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
    between them and it. A pane that lays out something other than a tree
    keeps its own padding, which is why this asks what is inside rather than
    what the plugin is called. */
-.workspace-split.mod-left-split .view-content:has(.tree-item-self),
-.workspace-split.mod-right-split .view-content:has(.tree-item-self) {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .view-content:has(.tree-item-self),
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .view-content:has(.tree-item-self) {
   padding-inline: var(--bc-row-inset);
 }
 
@@ -508,8 +513,8 @@ body.bc-hide-ribbon .workspace-ribbon.mod-left:focus-within {
 /* Room at the foot of every scrolling pane. Without it the last item in a
    sidebar list sits underneath the status bar and is read as cut off — which
    it is. Only the block end is padded. */
-.workspace-split.mod-left-split .view-content,
-.workspace-split.mod-right-split .view-content {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .view-content,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .view-content {
   /* Enough that the last row is not read as cut off, and no more. This was
      24px of padding on top of the list's own 16px, which showed up as forty
      pixels of nothing above a plugin's footer bar. The scroll reserve stays

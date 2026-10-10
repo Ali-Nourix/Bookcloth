@@ -5,16 +5,16 @@ id: bookcloth
 settings:
     -
         id: bc-info
-        title: About
-        description: Bookcloth follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
+        title: Bookcloth
+        description: Follows Notion's geometry — a 14px interface, a 16px page, 4px corners and flush panels. Pick your accent in Obsidian's own Appearance settings; everything below is optional fine-tuning, and the theme is complete with all of it left alone.
         type: heading
         level: 1
-        collapsed: true
+        collapsed: false
     -
         id: bc-accent-head
         title: Accent
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: accent
@@ -62,7 +62,7 @@ settings:
         id: bc-surface-head
         title: Surfaces
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-bg-primary
@@ -111,7 +111,7 @@ settings:
         id: bc-ink-head
         title: Text colours
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-ink-normal
@@ -144,7 +144,7 @@ settings:
         title: Semantic colours
         description: Notion's own palette. Used by callouts, syntax highlighting, tags, the graph and most plugins. Each control drives both the solid colour and every wash derived from it.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: color-red-rgb
@@ -214,7 +214,7 @@ settings:
         id: bc-typo-head
         title: Typography
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-font-interface
@@ -300,6 +300,44 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-rtl-autodir
+        title: Each paragraph finds its own direction
+        description: A paragraph takes its direction from its first strong character rather than from the note, so Persian paragraphs stay right-aligned in a note that also has English in it, and the English ones stay left. Needs Persian and Arabic support above.
+        type: class-toggle
+        default: true
+    -
+        id: bc-rtl-justify
+        title: Justify Persian paragraphs
+        description: "Sets both edges of the paragraph. A caution worth reading: InDesign justifies Arabic script by stretching the letters — kashida — and no browser implements that, so Obsidian can only stretch the spaces. Chrome's better line-breaker is on either way and closes up most of the gaps, but a justified column here will never be an InDesign one."
+        type: class-toggle
+        default: false
+    -
+        id: bc-rtl-tracking
+        title: Letter spacing (Persian)
+        description: Tracking on a cursive script pulls the joins apart, so zero is the right default — but a display line sometimes wants opening up. Negative tightens.
+        type: variable-number-slider
+        default: 0
+        min: -0.03
+        max: 0.08
+        step: 0.005
+        format: em
+    -
+        id: bc-rtl-word-spacing
+        title: Word spacing (Persian)
+        description: "The one with real leverage on a justified column: negative values pull the words back together and take the worst of the rivers out. It is the nearest thing to kashida that CSS has, and it is not kashida — it narrows the gaps rather than filling them."
+        type: variable-number-slider
+        default: 0
+        min: -0.12
+        max: 0.4
+        step: 0.01
+        format: em
+    -
+        id: bc-rtl-features
+        title: OpenType features for Persian
+        description: "Passed straight to font-feature-settings on note text. Kerning, contextual alternates and mark positioning are on by default. Add your font's stylistic sets here — which set does what is each font's own decision, so they are yours to pick: e.g. \"kern\" 1, \"calt\" 1, \"liga\" 1, \"rlig\" 1, \"mark\" 1, \"mkmk\" 1, \"ss01\" 1"
+        type: variable-text
+        default: '"kern" 1, "calt" 1, "liga" 1, "rlig" 1, "mark" 1, "mkmk" 1'
+    -
         id: bc-rtl
         title: Persian / Arabic typography
         description: Adds Vazirmatn and Estedad to the font stacks and adjusts leading, tracking and task alignment for Arabic script.
@@ -309,7 +347,7 @@ settings:
         id: bc-shape-head
         title: Shape and density
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-radius
@@ -351,6 +389,45 @@ settings:
         max: 14
         step: 1
         format: px
+    -
+        id: bc-tab-height
+        title: Editor tab height
+        description: The tab itself, which sits bottom-flush against the page so the two merge. Shorter than the band above it on purpose.
+        type: variable-number-slider
+        default: 34
+        min: 24
+        max: 48
+        step: 1
+        format: px
+    -
+        id: bc-statusbar-height
+        title: Status bar height
+        description: Only the reserved strip at the bottom. Hide it entirely under Interface below.
+        type: variable-number-slider
+        default: 26
+        min: 16
+        max: 44
+        step: 1
+        format: px
+    -
+        id: bc-row-inset
+        title: Sidebar row inset
+        description: How far a sidebar row's text sits from the panel edge. Notion's is 8px.
+        type: variable-number-slider
+        default: 8
+        min: 0
+        max: 24
+        step: 1
+        format: px
+    -
+        id: bc-toggle-scale
+        title: Switch size
+        description: Scales the on/off switches in settings panes. 1 is Notion's 26x16.
+        type: variable-number-slider
+        default: 1
+        min: 0.7
+        max: 1.8
+        step: 0.05
     -
         id: bc-row-base
         title: Sidebar row height
@@ -395,7 +472,7 @@ settings:
         title: Floating panels
         description: Off by default. Notion's layout is flush; turning this on lifts every region onto its own rounded card, with a darker backdrop behind them.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-float-panes
@@ -408,6 +485,67 @@ settings:
         description: Floating panels are clipped at their corners so a plugin that paints its own footer cannot square them off again. Turn this on if you find a plugin that needs to draw outside its panel.
         type: class-toggle
         default: false
+    -
+        id: bc-pane-glow
+        title: Accent glow on panels
+        description: A soft wash of the accent across the top of each panel, fading out down the page. The panel you are working in glows a little harder, which is a "you are here" that costs no border and nothing that moves.
+        type: class-toggle
+        default: true
+    -
+        id: bc-glow-base
+        title: Glow strength
+        description: How much accent is in the wash at its strongest point. Dark mode takes a third more on its own, because the same amount of colour shows less against a dark ground.
+        type: variable-number-slider
+        default: 16
+        min: 0
+        max: 45
+        step: 1
+        format: '%'
+    -
+        id: bc-glow-stroke-strength
+        title: Glow stroke strength
+        description: The edge of the panel, relative to the wash. It starts thick at the top and thins as it fades — two rings over each other, because a single stroke can fade in colour or hold its width, not both.
+        type: variable-number-slider
+        default: 2.35
+        min: 0
+        max: 6
+        step: 0.05
+    -
+        id: bc-glow-height
+        title: Glow height
+        description: How far down the panel the wash reaches before it is gone.
+        type: variable-number-slider
+        default: 160
+        min: 40
+        max: 400
+        step: 10
+        format: px
+    -
+        id: bc-edge-fade
+        title: Fade the foot of the page
+        description: A progressive blur at the bottom of the editor — the nearer a line is to the edge the more it dissolves, so the column reads as continuing past the pane rather than being cut off at it. It is masked backdrop blur, which is the most expensive thing in this theme; turn it off if scrolling a long note ever feels heavy.
+        type: class-toggle
+        default: true
+    -
+        id: bc-edge-fade-height
+        title: Fade height
+        description: How far up the page the fade reaches. It is built as four stacked layers at doubling radii, so the number is the height of the outermost and faintest one; the strong end is always the last quarter of it.
+        type: variable-number-slider
+        default: 70
+        min: 40
+        max: 320
+        step: 10
+        format: px
+    -
+        id: bc-edge-fade-blur
+        title: Fade blur
+        description: The radius of the innermost layer, at the very bottom edge. The three above it run at a half, a quarter and an eighth of it, and because each sits inside the next one's backdrop the radii compound — so the bottom is blurrier than this number alone.
+        type: variable-number-slider
+        default: 22
+        min: 0
+        max: 40
+        step: 1
+        format: px
     -
         id: bc-pane-gap
         title: Gap between panels
@@ -428,7 +566,7 @@ settings:
         id: bc-icon-head
         title: Icons
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-icon-scale
@@ -451,7 +589,7 @@ settings:
         id: bc-ui-head
         title: Interface
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-tab-style
@@ -477,6 +615,36 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-motion
+        title: Motion
+        description: "Expressive is everything Full has and then some: menus grow out of the corner you opened them from, their rows arrive in the order you read them, the tick draws itself into a checkbox, and blocks settle in as you scroll to them. Full adds the press, the pop on a ticked box, the accent bar sliding into a row and the rise on menus and modals. Subtle keeps the colour fades and drops everything that moves. None stops all of it, including animation a plugin adds. The system's reduce-motion setting overrides whichever is picked here."
+        default: bc-motion-expressive
+        type: class-select
+        allowEmpty: false
+        options:
+            -
+                label: Expressive
+                value: bc-motion-expressive
+            -
+                label: Full
+                value: bc-motion-full
+            -
+                label: Subtle
+                value: bc-motion-subtle
+            -
+                label: None
+                value: bc-motion-none
+    -
+        id: bc-speed
+        title: Animation speed
+        description: How long hovers, toggles and menus take. Zero turns transitions off; the theme also respects the system's reduce-motion setting on its own.
+        type: variable-number-slider
+        default: 170
+        min: 0
+        max: 400
+        step: 10
+        format: ms
+    -
         id: bc-hide-statusbar
         title: Hide status bar until hover
         type: class-toggle
@@ -490,21 +658,110 @@ settings:
         id: bc-editor-head
         title: Editor
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-callout-style
         title: Callout style
+        description: "Framed is the tinted fill plus an edge in the callout's own colour, and a signature per kind: a solid bar down the side for tip and important, a rule across the top for success, a striped bar for warning, a dashed frame for question, a dotted one for example, a heavy frame for danger and failure, and no box at all for quote. Fill only is the tint on its own. Left rule drops the fill and keeps one coloured hairline."
         type: class-select
         allowEmpty: false
         default: bc-callout-soft
         options:
             -
-                label: Soft fill
+                label: Framed
                 value: bc-callout-soft
+            -
+                label: Fill only
+                value: bc-callout-plain
             -
                 label: Left rule
                 value: bc-callout-rule
+    -
+        id: bc-callout-edge-strength
+        title: Callout frame strength
+        description: Multiplies the frame around a callout. Zero removes it and leaves the fill, which is what Fill only does. It is a multiplier rather than a colour because light and dark start from different numbers — the dark fill is mixed stronger and so begins closer to the frame — and one number here keeps both in step.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2
+        step: 0.05
+    -
+        id: bc-callout-edge
+        title: Callout frame width
+        description: The hairline. Danger, error, failure and bug draw theirs at twice this, which is their signature.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 4
+        step: 1
+        format: px
+    -
+        id: bc-embed-padding
+        title: Embed padding
+        description: The space inside a transcluded block — a heading section pulled into another note. Inside a callout it stays two thirds of this, because the callout is already providing the edge around it.
+        type: variable-number-slider
+        default: 12
+        min: 0
+        max: 32
+        step: 1
+        format: px
+    -
+        id: bc-embed-style
+        title: Embed style
+        description: How a transclusion is drawn. Card gives it a sunken panel and a hairline; Quiet takes the fill away and keeps the hairline; Bare removes both and leaves the content, which reads as text you typed.
+        type: class-select
+        allowEmpty: false
+        default: bc-embed-card
+        options:
+            -
+                label: Card
+                value: bc-embed-card
+            -
+                label: Quiet
+                value: bc-embed-quiet
+            -
+                label: Bare
+                value: bc-embed-bare
+    -
+        id: bc-heading-space
+        title: Space above headings
+        description: The gap before a heading, as a multiple of its own size. Lower it for dense notes.
+        type: variable-number-slider
+        default: 1.9
+        min: 0
+        max: 3.5
+        step: 0.1
+    -
+        id: bc-p-spacing
+        title: Paragraph spacing
+        description: The gap between paragraphs, in ems of the text size.
+        type: variable-number-slider
+        default: 0.5
+        min: 0
+        max: 2
+        step: 0.05
+        format: em
+    -
+        id: bc-list-indent
+        title: List indent
+        description: How far each list level steps in.
+        type: variable-number-slider
+        default: 1.5
+        min: 0.5
+        max: 3.5
+        step: 0.05
+        format: em
+    -
+        id: bc-list-spacing
+        title: Space between list items
+        description: Zero packs a checklist tight; raise it for reading.
+        type: variable-number-slider
+        default: 0.125
+        min: 0
+        max: 1
+        step: 0.025
+        format: em
     -
         id: bc-wash
         title: Callout colour strength
@@ -525,6 +782,15 @@ settings:
         max: 1.6
         step: 0.05
         format: em
+    -
+        id: bc-check-border-strength
+        title: Empty checkbox edge
+        description: An unchecked box is nothing but its edge, so this is its own control rather than part of Border strength — turning every hairline off should not also turn off the checkboxes. The default is where the edge measures 3:1 against the page, the contrast threshold for an interface control. Below about 0.6 it starts to disappear.
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 2
+        step: 0.05
     -
         id: bc-task-progress
         title: In-progress task colour
@@ -573,7 +839,7 @@ settings:
         title: Plugin support
         description: Plugin styling is on by default. Turn an item on here to opt out and let that plugin fall back to its own styles.
         type: heading
-        level: 1
+        level: 2
         collapsed: true
     -
         id: bc-off-dataview
@@ -605,4 +871,20 @@ settings:
         title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
         type: class-toggle
         default: false
+    -
+        id: bc-off-taskpro
+        title: Opt out of TaskPro styling
+        description: The floating task board then gets Obsidian's plain dim instead of the blur.
+        type: class-toggle
+        default: false
+    -
+        id: bc-taskpro-blur
+        title: Blur behind the floating task board
+        description: How strongly the rest of Obsidian is blurred while TaskPro's floating board is open. Zero keeps it sharp and only dims it.
+        type: variable-number-slider
+        default: 14
+        min: 0
+        max: 40
+        step: 1
+        format: px
 */

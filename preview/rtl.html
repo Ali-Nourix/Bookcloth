@@ -8,6 +8,19 @@
 <body class="theme-light bc-rtl is-focused">
 <div class="stage">
   <div class="pane">
+    <!-- Live Preview: the shape CodeMirror actually builds. Without it every
+         rule aimed at .cm-line is written blind, which is how a horizontal
+         scrollbar reached a release. -->
+    <div class="markdown-source-view mod-cm6 is-live-preview" dir="rtl">
+      <div class="cm-editor"><div class="cm-scroller"><div class="cm-sizer"><div class="cm-contentContainer">
+        <div class="cm-content" dir="rtl">
+          <div class="cm-line">این خط در حالت ویرایش زنده است و باید در عرض ستون بپیچد بدون اینکه نوار اسکرول افقی بسازد.</div>
+          <div class="cm-line">یک خط دوم، به‌قدر کافی بلند که اگر چیزی عرض محتوا را بیشتر از ظرفش کند، همین‌جا معلوم شود و آزمون رد شود.</div>
+          <div class="cm-line">A mixed line — English inside a Persian note, which is where bidi goes wrong.</div>
+          <div class="cm-line HyperMD-task-line" data-task="/"><input class="task-list-item-checkbox" type="checkbox" data-task="/"><span>یک کار نیمه‌تمام</span></div>
+        </div>
+      </div></div></div></div>
+    </div>
     <div class="markdown-preview-view markdown-rendered" dir="rtl">
       <div class="markdown-preview-sizer">
         <div class="inline-title">آزمون چیدمان راست‌به‌چپ</div>

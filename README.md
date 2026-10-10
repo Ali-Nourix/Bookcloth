@@ -158,20 +158,190 @@ font-size slider keeps working:
 | Text colours | Body, muted and faint ink, separately per theme |
 | Semantic colours | All eight hues — red through pink — separately per theme |
 | Typography | Interface / editor / mono font, serif body, heading scale and weight, line height, code size, link style, inline code colour, Persian and Arabic support |
-| Shape and density | Corner radius, icon button size, space between icon buttons, sidebar row height, density, note width, visible borders |
-| Floating panels | Float the panels, gap, backdrop colour, corner clipping |
+| Shape and density | Corner radius, top bar height, icon button size, space between icon buttons, editor tab height, status bar height, sidebar row height and inset, switch size, density, note width, visible borders |
+| Floating panels | Float the panels, accent glow and its strength and height, gap, backdrop colour, corner clipping |
 | Icons | Icon size, stroke weight |
-| Interface | Tab style, indentation guides, hide status bar, hide ribbon |
-| Editor | Callout style and colour strength, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
-| Plugin support | Opt out of any of the bundled plugin styles |
+| Interface | Tab style, indentation guides, motion level, animation speed, hide status bar, hide ribbon |
+| Editor | Callout style and colour strength, embed padding and style, space above headings, paragraph spacing, list indent and item spacing, checkbox size and style, in-progress and needs-attention colours, task fading, active line |
+| Plugin support | Opt out of any of the bundled plugin styles; the blur behind TaskPro's floating board |
 
 Every plugin style is **on by default** and the toggles turn them off, so
 nothing depends on having Style Settings installed. Turning every control off
 still leaves a complete theme.
 
+Every slider writes to a **private** `--bc-` token that the theme then sets
+Obsidian's own variable from, rather than to Obsidian's variable directly. That
+is not tidiness: `--embed-padding` belongs to the app, and in a vault with
+twenty-six stylesheets loading after the theme, one of them handing that
+variable different numbers is ordinary — and a theme reading it gets them, with
+no way to tell from a computed style that anything happened. A private name
+cannot be reached that way, so a control that says 12px produces 12px.
+
 Semantic colours are authored as RGB triples, so one picker drives both the
 solid colour and every wash derived from it — change Blue and the note callout,
 the blue tag, the syntax token and the graph node all follow.
+
+### The heading level that crashed the plugin
+
+Worth writing down, because the YAML was valid and every other check passed.
+Style Settings makes the **first** entry of the block the root of the section
+and then, for each later heading, compares its level with the heading it is
+standing on: lower walks up and adds a sibling, *equal* adds to the current
+heading's parent, higher adds to the current heading. The root's parent is the
+container element — not a heading, and with no `addSettingChild` on it. So the
+moment a second heading appears at the root's own level, the plugin throws
+while rendering and the whole settings tab dies.
+
+This block had twelve `level: 1` headings. Every one after the first was a
+crash. The fix is that there is exactly one level 1 — the theme's own name,
+which everything else nests under — and every group heading is level 2.
+
+`preview/check-settings.mjs` now walks the heading tree the same way the plugin
+does, with the root's parent set to a bare object, so the throw happens in the
+build instead of in the app. It was written against the plugin's own source
+rather than from memory, after a first version written from memory falsely
+flagged eight good entries.
+
+## Glow and motion
+
+A soft wash of the accent across the top of each panel, fading out down the
+page, and the panel you are working in glows a little harder than the rest.
+That last part is the reason the whole thing earns its place: it is a "you are
+here" that costs no border, no shadow and nothing that moves.
+
+It lands on every surface, not just the panes: the ribbon, menus, modals, the
+quick switcher, popovers and toasts. A right-click that opens something wearing
+the theme's own light reads as part of the app rather than as a system menu
+that wandered in. The pseudo-elements take `border-radius: inherit`, which is
+how one block covers a pane card, a ribbon and a menu without any of them
+naming a radius — and why none of them need `overflow: hidden` to stop the wash
+escaping a rounded corner, which on a menu would have clipped its submenu.
+
+The ribbon is a card in float mode for the same reason every other region is.
+It had been left flush against the backdrop, which is only invisible while the
+sidebar beside it is open and covers the join; collapse the sidebar and the
+ribbon was a square-cornered strip standing alone among rounded panels.
+
+It is drawn as a pseudo-element on the pane card rather than as a background on
+the card itself. The card's background is a surface colour a reader can set,
+and a gradient painted into it could not be turned off without taking the
+surface with it. Dark mode takes a third more tint on its own, because the same
+amount of colour shows less against a dark ground.
+
+**The foot of the page** dissolves: a progressive blur where the nearer a line
+is to the bottom of the pane the more it goes, so the column reads as
+continuing past the edge rather than being cut off at it. It is short on
+purpose — 70px, about three lines — because the effect belongs to the last few
+lines and a tall field is a haze over the middle of the page.
+
+It is **four** layers, and the single-layer version it replaced is the clearest
+lesson in this file. A gradient mask over a `backdrop-filter` composites
+`alpha x blurred + (1 - alpha) x sharp`. Both terms fall together with alpha,
+so contrast drops and it reads as a ramp — but at half alpha the page is
+showing the blurred text *and* the original text, through each other. That is
+not a partial blur, it is a double image, and it was reported in exactly those
+words: I can see the blur and I can see the text. A ramp of alpha cannot make a
+ramp of blur, because alpha does not attenuate a blur, it cross-fades back to
+the unblurred original.
+
+What works is a ladder. Each layer is solid across its own band and feathers in
+only at its top edge, so almost nowhere is a sharp copy showing through, and
+because each layer sits inside the backdrop of the one above it the radii
+compound instead of competing. Four of them at doubling radii — an eighth, a
+quarter, a half and the full setting — give a smooth ramp with no ghost
+anywhere. Where a layer *is* feathered, its radius is the small one, so the
+cross-fade that remains is a cross-fade of an almost-invisible blur.
+
+It costs four `backdrop-filter`s instead of one. The single layer was cheaper
+and did not do the job.
+
+**The overhang was the band.** These layers used to hang 28px below the pane on
+the theory that a `backdrop-filter` thins at its own bottom edge with nothing
+left to sample. Measured, that is not what happens: with no overhang at all the
+bottom sixteen pixels come back at 0.05 of their original edge sharpness. What
+the overhang did do was sample the window *behind* the pane and blur it upward
+into the page — which over the empty part of a short note showed as a band of
+the wrong colour, 41/255 too dark in dark mode and 32/255 too light in light.
+That was the two-tone edge, and an earlier version of this file blamed it on a
+1/255 rounding artefact in masked `backdrop-filter`. It was not subtle and it
+was not inherent. With the overhang at zero the same measurement reads 2/255 in
+dark and 0 in light.
+
+The measurement is in `preview/fade-lab.mjs`, and it is the part worth keeping.
+Contrast alone cannot tell a blur from a cross-fade, because both lower it. So
+it takes `sd`, the contrast across a row of pixels, and `hf`, the mean step
+between neighbours, and reports `hf/sd` against the same page with the fade
+off. That ratio is scale free: dim a row and it does not move, blur a row and
+it collapses. 1.00 means the edges are exactly as crisp as they were and every
+bit of the lost contrast was a cross-fade.
+
+The one masked layer reads **0.81** across the bottom 32px — the text under it
+is very nearly as sharp as text with no fade on it at all, which is the
+double image, measured. The ladder reads **0.05** over the same rows, and 1.00
+by 75px up. Both candidates are still in `fade-lab.mjs`, so the difference can
+be re-run rather than taken on trust.
+
+And no colour. The first version laid the page colour over the bottom as well,
+which dissolves text nicely and is also plainly visible as a band across the
+empty space under a short note — a haze over nothing. A blur of a flat
+background is indistinguishable from the background, so with the colour gone
+the effect simply is not there when there is nothing to blur.
+
+**In the editor, nothing moves.** Not as a limitation — as the decision. A
+per-character pop as you type is not possible in CSS at all (there is no
+selector for "this text node is newer than that one", CodeMirror does not mark
+new characters, and nothing in a stylesheet watches a keystroke), but a *line*
+is an element and `@starting-style` gave it a state to come from. That was
+built, shipped, and taken out again, along with the scroll-driven reveal and
+the pop on a ticked checkbox. See below for why.
+
+**Expressive** is the fourth level and the one that behaves like a designed
+interface rather than a styled one. A menu opened by a right-click grows out of
+the corner nearest the pointer instead of arriving from nowhere. Its rows
+arrive in the order they are read, 14ms apart — under the threshold where that
+registers as waiting and over the one where it registers as sequence, and only
+for the first six, because past that the delay outlasts the time it takes to
+look at the menu. The tick draws itself into a checkbox by animating the mask
+it is already made of. The spring overshoots by four percent, once.
+
+**What was taken out, and why it is recorded here.** A scroll-driven reveal, a
+per-line entrance on typing, a pop on a ticked checkbox and a tick that drew
+itself in were all built, shipped, and removed at the reader's request. They
+worked. The lesson is not about the technique — it is that motion inside the
+text you are writing is not the same as motion in the chrome around it. A menu
+that grows out of the corner you opened it from is a control acknowledging you.
+A line that animates as you type it is the document arguing with you. The layer
+that survived is entirely in the chrome.
+
+Two rules govern the motion layer. **Only `transform` and `opacity` are
+animated** — those are the two the compositor can run without laying the page
+out again, and a hover that animates `height` on a list of three hundred notes
+is a stutter, not a flourish. And **every effect is reachable from the settings
+pane**: Full adds the press on a button, the pop on a ticked box, the accent
+bar sliding into a row and the rise on menus and modals; Subtle keeps the
+colour fades and drops everything that moves; None stops all of it, including
+animation a plugin adds. `prefers-reduced-motion` overrides whichever is
+picked, because motion is not a preference the theme gets to argue with.
+
+Three things in this layer are worth recording, because each shipped invisible
+and each looked exactly like the feature being absent.
+
+The glow's alpha was written `calc(var(--bc-glow-strength) / 100)` to turn 14%
+into 0.14. **A percentage divided by a number is still a percentage** — the
+alpha came out at 0.14% and every stop computed fully transparent. An alpha
+channel takes a percentage directly, so it is the percentage.
+
+Then the stroke's strength was written as a percentage and multiplied by the
+glow's. **A percentage times a percentage is a square percentage**, which is
+not a thing: `calc()` gives up, the `hsl()` around it is invalid, and the whole
+`box-shadow` computes to `none`. A multiplier is a number.
+
+And the per-surface strength did nothing at first, because it went through an
+intermediate `--bc-glow-a: var(--bc-glow-strength)` declared on `body`. **A
+custom property is substituted where it is declared** — body's strength was
+frozen into it, so a menu re-declaring the strength further down still got the
+body's number. The multiplier is applied at the point of use, which is the only
+place both halves are in scope.
 
 ## The window frame
 
@@ -354,6 +524,125 @@ set on the element for both options rather than leaving the square as "the
 state with no rule", so a box set to square cannot be quietly rounded again by
 anything else that touches the radius.
 
+## Callouts
+
+A callout used to be a tinted fill and nothing else. That works on a light page
+and fails on a dark one: at Notion's 12% wash the block is a few levels off the
+background, and what a reader sees is a paragraph with an icon beside it rather
+than a block. It was reported exactly that way — *callouts don't get a frame the
+way embeds do*.
+
+They do now. Every callout carries an edge in its own colour, drawn as an
+**outline at a negative offset** rather than a border or an inset shadow: a
+border would add a pixel to the box and shift the contents of every callout in
+the vault, a box-shadow cannot be dashed or dotted, and two of the signatures
+below are. An outline changes no geometry and still follows `border-radius`.
+
+### The contract that broke all of it
+
+Worth its own heading, because it is the reason the frames were reported
+missing and the fill had been missing long before that.
+
+Obsidian used to hand a callout its colour as a bare triple —
+`--callout-color: 68, 138, 255` — and every theme wrote `rgb(var(...))` around
+it. It now hands over a colour. Its own stylesheet reads
+
+```css
+background-color: color-mix(in oklch, var(--callout-color) 10%, transparent);
+```
+
+which cannot be written against a triple. Under the new contract every
+`rgb(var(--callout-color))` in a theme is invalid at computed-value time — and
+an invalid colour does not fall back to anything, the declaration is simply
+dropped. That took the fill, the frame, every signature bar, the left rule and
+the embed hairline, all silently, and a callout came out as a paragraph with an
+icon beside it.
+
+So the colour is resolved once, into a property registered as a `<color>`:
+
+```css
+@property --bc-callout-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #8a8a8a;
+}
+.callout { --bc-callout-c: var(--callout-color); }
+```
+
+Registration is the whole trick. An **unregistered** custom property accepts
+any text, so `rgb(#027aff)` would be stored happily and blow up only at the
+point of use, one declaration at a time, with nothing to catch it.
+**Registered**, the bad value is rejected at computed-value time and the
+property falls back to its initial value instead — so on a build old enough to
+still send a triple, a callout is framed in grey rather than not framed at all.
+`preview/callouts.html` carries one of each to keep both paths rendered.
+
+Two things now watch it. `invariants.mjs` fails if a callout's tint does not
+paint, and fails if every kind resolves to the same colour — which is exactly
+what the grey fallback looks like from outside, and what nothing else would
+notice, since the fill and the frame both still draw. `check.mjs` confirms the
+engine actually registered the `@property`: a malformed one is dropped whole,
+and then the token it was meant to type-check silently stops being
+type-checked.
+
+The harness had been hiding it. `app-shim.css` was still handing over a triple,
+so every callout rule looked correct there while being dropped in the app. A
+stand-in for an application is only worth what its accuracy is worth.
+
+### One frame per kind
+
+Hue alone does not separate them, because Obsidian does not give them separate
+hues. Note, info and todo are all blue; tip, hint, important and abstract are
+all cyan; question and warning are both orange; failure, danger, error and bug
+are all red. A reader glancing at a page sees four blocks in three colours and
+has to read the titles to tell an instruction from a hazard.
+
+So the frame carries the rest of it. Each family gets one treatment, and the
+treatment is chosen to mean something rather than merely to differ:
+
+| | | |
+| --- | --- | --- |
+| **Statement** | note, info, todo, abstract | a plain hairline — the baseline |
+| **Advice** | tip, hint, important | a solid bar down the leading edge |
+| **Finished** | success, check, done | a rule across the top, like a stamp |
+| **Open** | question, help, faq | a dashed frame: not closed yet |
+| **Hazard** | warning, caution, attention | a striped bar, which is what a striped bar has meant since before there were screens |
+| **Failure** | failure, fail, missing, danger, error, bug | the heavy frame, at twice the width, and no bar |
+| **Illustration** | example | a dotted frame |
+| **Quotation** | quote, cite | no box at all — a quotation is a rule, not a container |
+
+All eight survive greyscale, which hue does not.
+
+Success takes the one signature that does **not** flip in a right-to-left note.
+Advice and hazard run down the leading edge and turn with the writing
+direction; a stamp is a stamp whichever way the text runs, and keeping it on
+top is also what keeps success distinct from advice in both directions.
+
+The hazard stripes are drawn between the callout's colour and a transparent
+version of *itself* rather than between two colours, so they read on the
+callout's own fill in either theme without a second token to keep in step.
+
+### The numbers
+
+The fill already separates the block from the page; the frame is what says
+which block it is, so it has to be findable against the fill it sits on.
+`preview/cframe.mjs` measures every type in both themes, compositing on a
+canvas because a callout background is a `color-mix()` and comes back as
+`oklab()` — which a parser that expects `rgba()` reads as three numbers under
+one. The weakest edge is 1.82:1 in light and 1.84:1 in dark; `invariants.mjs`
+fails the build under 1.5:1.
+
+Light and dark start from **different** alphas — 0.5 and 0.4 — and the reason
+is not symmetry. The dark fill is mixed at 1.8× the wash, so it begins closer
+to the frame's own colour and needs less alpha to separate from it, not more.
+The slider is therefore a multiplier rather than a colour: turning the frames
+up should not hand dark light's number.
+
+**Fill only** puts the block back the way it was, and **Left rule** drops the
+fill for a single coloured hairline. Neither takes the signatures — drawing
+half the system would be worse than drawing none of it, and the left rule is
+already one signature and cannot carry a second.
+
 ## Transclusions
 
 An embed is the one construct in Obsidian that nests a whole
@@ -410,8 +699,25 @@ outside a container that clips is not a preference to be outvoted — it is text
 the reader cannot see. Outside a callout the unflagged rule leaves a deliberate
 bleed alone.
 
-The reason the padding kept not changing is one declaration, and it is not a
-padding. **A transclusion has to be told it is a block.** Obsidian's class for
+The padding was contested two ways at once, and from a computed style the two
+are indistinguishable. A doctor run in the vault this was reported from came
+back with the embed computing `padding: 0px 24px 0px 0px` — which is what
+`padding: var(--embed-padding)` produces when something has handed that
+variable those four numbers, and equally what a flagged rule elsewhere
+produces by winning outright. `--embed-padding` is Obsidian's variable and
+twenty-six stylesheets load after the theme there, so both are ordinary. The
+answer is to be immune to both: the value comes from a private
+`--bc-embed-padding`, and the declaration carries a flag on a selector that
+repeats the class, because one class is the floor and anything ties with it
+and wins on order.
+
+`preview/embeds.html` now loads both attacks after `theme.css` — a hijacked
+`--embed-padding` and a `padding: 0 !important; padding-inline-start: 24px
+!important` — and reproduces the reported symptom exactly: 0px above the first
+line, 24px beside it.
+
+The reason the padding kept not changing before that is one declaration, and it
+is not a padding. **A transclusion has to be told it is a block.** Obsidian's class for
 one in Live Preview is literally `inline-embed`, and the element is a `<span>`.
 On an inline box, horizontal padding lays out and vertical padding only paints
 — so the sides showed the padding and the top showed nothing, and correcting
@@ -498,11 +804,89 @@ setting, which its cells should follow, and the colour actually painted behind
 a tracker, which a sticky row label has to match when a month-wide grid
 scrolls under it.
 
+### TaskPro's floating board
+
+[TaskPro](https://github.com/Ali-Nourix/Task-Pro)'s **Toggle Floating Task
+Board** (`Ctrl/Cmd+Shift+B`) opens its task board as a large window over the
+whole app. The plugin only sizes it and dims what is behind; the theme blurs
+the rest of Obsidian and puts the board on the page colour, one radius step up
+from a dialog, with a deeper shadow.
+
+![TaskPro's floating board over a blurred Obsidian, light](docs/taskpro-float-light.png)
+
+![The same in dark mode](docs/taskpro-float-dark.png)
+
+<sub>Screenshots of Obsidian 1.13.7 with this theme, not harness renders.</sub>
+
+The blur is `filter` on `body > .app-container` and `.titlebar`, not
+`backdrop-filter` on the modal background, and that choice is the whole
+feature. A backdrop filter is recomputed whenever anything over it repaints,
+so every hover in the board re-blurred the window; a filtered layer whose own
+content has not changed is composited from cache. With the board repainting a
+row every frame, `preview/float-lab.mjs` measures:
+
+| | Harness | Obsidian 1.13.7 |
+| --- | --- | --- |
+| No blur | 16.6 ms a frame | 16.6 ms |
+| `filter` (this theme) | 16.6 ms | 16.6 ms |
+| `backdrop-filter` | 30.6–32.7 ms | 38.6 ms |
+
+The blur is not animated either — a transition on it cost frames of up to
+85 ms — so it is simply on while the board is, and the modal's usual rise is
+what reads as the arrival. The strength is a slider under **Plugin support**;
+zero keeps the app sharp and only dims it.
+
 Bundled styles: Dataview, Tasks, Kanban, Calendar and Periodic Notes,
-Habbiter, Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr,
-Style Settings.
+Habbiter, Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr, Style Settings,
+TaskPro.
+
 Anything not on the list inherits the correct surface, ink and radius from the
 variable layer.
+
+## Persian and Arabic typesetting
+
+**What a theme cannot do, first.** InDesign justifies Arabic script by
+stretching the letters themselves — kashida, the None / Short / Medium / Long /
+Stylistic control. No browser implements it. `text-justify: kashida` was
+Internet Explorer's and is gone, Blink has never implemented the `text-justify`
+property at all (the theme's own build check rejects every value of it), and so
+justified Persian in any Electron app can only stretch the spaces — opening
+exactly the rivers kashida exists to close. That is a text-shaping feature
+living inside InDesign's engine. A stylesheet cannot add one, and a theme that
+offers you a kashida toggle is offering you a control that does nothing.
+
+What is here instead, all of it measured:
+
+- **`text-wrap: pretty`** on paragraphs and **`balance`** on headings. Chrome's
+  slower line-breaker looks ahead instead of greedily filling each line, which
+  closes most of the gaps justification opens and stops a title ending on one
+  orphaned word.
+- **Each paragraph finds its own direction** — `unicode-bidi: plaintext`, so a
+  paragraph takes its direction from its first strong character rather than
+  from the note. Persian paragraphs stay right-aligned in a note that opens in
+  English, and the English ones stay left.
+- **No hyphenation.** Arabic script does not hyphenate, and a browser asked to
+  try will break a word at a joining letter.
+- **Shaping features** — kerning, contextual alternates, required ligatures and
+  mark positioning, so a Persian diacritic sits over the right part of its
+  letter rather than the middle of it. Stylistic sets are a text field rather
+  than a toggle, because which set does what is each font's own decision:
+  Vazirmatn's `ss01` is not Estedad's.
+- **Tracking and word spacing as numbers**, defaulting to zero. Tracking a
+  cursive script pulls the joins apart, so zero is right — but "hard-coded" and
+  "correct" are different claims, and a typesetter has reasons to move both.
+  Word spacing is the one with real leverage on a justified column: negative
+  values pull the words back together and take the worst of the rivers out.
+  That is the nearest thing to kashida CSS has, and it is not kashida — it
+  narrows the gaps rather than filling them.
+
+Note what is deliberately **not** applied to the live editor: `text-wrap` and
+`unicode-bidi`. CodeMirror measures every line itself to decide what to keep in
+the viewport, and a rule that moves the break points after that measurement
+leaves it with a width it did not compute — a horizontal scrollbar, and a view
+that jumps as you scroll past it. That shipped once, because the harness had no
+`.cm-line` in it to render the rule against. It has a CodeMirror-shaped editor
+now, and `invariants.mjs` fails on any scroll container wider than itself.
 
 ## Persian and Arabic
 
@@ -543,6 +927,9 @@ All of them respond to the user's accent, theme and density settings.
 
 ## Building
 
+The [consolidation audit](docs/integration-audit.md) records the branch decisions,
+semantic resolutions, automated checks and remaining real-vault checks.
+
 Written as partials and concatenated, because Obsidian loads one stylesheet per
 theme.
 
@@ -563,6 +950,29 @@ ln -s "$(pwd)" /path/to/vault/.obsidian/themes/Bookcloth
 `preview/` holds a browser harness that reproduces Obsidian's DOM so you can
 look at changes — and take screenshots and measure contrast — without launching
 the app. See `preview/README.md`.
+
+`node check-settings.mjs` validates the Style Settings block against the
+plugin's **own** shapes — `SettingType` and the interfaces in
+`SettingHandlers.ts`, fetched rather than remembered. The first version of it
+was written from memory and flagged eight entries that were fine, because
+`rgb-values` is a real colour format and I did not think it was; writing a
+validator from memory is the same mistake as writing the theme from memory.
+
+It catches the trap that costs the most: a **colon-space inside an unquoted
+scalar**. YAML reads `description: it works like this: a nested mapping` as
+exactly that, the parse fails, and Style Settings shows the theme no settings
+at all — which reads to a user as the plugin being broken rather than as one
+piece of punctuation.
+
+It also walks the heading tree exactly as the plugin does, which is the check
+that would have caught the crash described under Settings. A valid block is not
+a working one.
+
+`node fade-lab.mjs [light|dark]` measures the bottom fade two ways — with the
+note's last lines pressed against the pane floor, and again with the pane empty
+under them — and reports whether the blur is a blur or a cross-fade. It exists
+because a screenshot of a cross-fade and a screenshot of a blur look similar
+enough to argue about, and the numbers do not.
 
 ## Measuring the real app
 
@@ -639,6 +1049,24 @@ into "this plugin ships a 13px glyph".
 size and names what owns each one, which is how a plugin shipping a hardcoded
 13px glyph gets found without hunting for it.
 
+### Probing a callout
+
+`tools/callout-probe.js` is the one to reach for when a callout looks wrong in
+a real vault. Paste it into Obsidian's console with the callout on screen, run
+`bcCallouts()` and then `await bcSave()`, and send the file. It reports the
+theme version actually loaded, the body classes, which of the two renderers is
+on screen, every rendered callout's composited fill and edge — composited on a
+canvas, because a `color-mix()` comes back as `oklab()` — and **every rule in
+every loaded stylesheet whose selector mentions a callout, in cascade order,
+grouped by the file it came from**. That last part is the one that settles an
+argument: a snippet or a plugin loading after the theme can turn any of this
+off, and no amount of reading the theme's source will show it.
+
+It also names the state where there is nothing to measure. While the cursor is
+inside a callout in Live Preview, Obsidian throws the rendered callout away and
+shows raw `.HyperMD-quote` lines instead — there is no `.callout` element at
+all, and no theme can style one that does not exist.
+
 ## Accessibility
 
 Measured against the default palette, in the harness, at the ratios the browser
@@ -652,6 +1080,7 @@ actually resolves:
 | Links | 5.0:1 | 6.8:1 |
 | Button label on accent | 5.0:1 | 5.1:1 |
 | Error / warning / success text | 4.9 / 4.9 / 4.5:1 | 6.6 / 13.1 / 6.4:1 |
+| Empty checkbox edge | 3.1:1 | 3.1:1 |
 
 Two values are knowingly below 4.5:1, both of them Notion's own:
 
@@ -666,6 +1095,17 @@ and 4.5:1 on the page; Notion's yellow (2.8:1) and orange (3.3:1) do not, which
 is why the three *message* colours — error, warning, success — are darkened
 separately rather than read from the hues. The hues themselves drive callout
 fills, tags, the graph and syntax, where they are a wash or an icon.
+
+An empty checkbox is measured as a **user interface component**, not as text,
+so its bar is 3:1 rather than 4.5:1 — and it is measured at all because it
+failed. It had been sharing a token with the decorative hairlines and came out
+at 1.24:1 light and 1.47:1 dark, which is a box you can only find because you
+know where it is. It now has its own token, set where the edge measures 3:1 on
+the page, with its own slider; **Border strength** no longer reaches it,
+because switching every hairline off should not also switch off the only thing
+an unchecked checkbox is made of. `preview/invariants.mjs` asserts the ratio on
+every page, composited over whatever the box actually sits on — a callout, an
+embed, the page — so it cannot drift back.
 
 Focus rings are visible on every interactive element, and
 `prefers-reduced-motion` is respected.
