@@ -1,13 +1,10 @@
-<div dir="rtl" align="right">
+<p align="center">
+  <strong>Bookcloth</strong><br>
+  <strong>پوسته‌ای آرام با الهام از Notion برای Obsidian.</strong><br>
+  محیطی تمیز برای نوشتن، رابطی با رنگ‌های خنثی و گرم، تایپوگرافی سنجیده و پشتیبانی دقیق از نوشتار راست‌به‌چپ.
 
-# Bookcloth
-
-**پوسته‌ای آرام با الهام از Notion برای Obsidian.**  
-محیطی تمیز برای نوشتن، رابطی با رنگ‌های خنثی و گرم، تایپوگرافی سنجیده و پشتیبانی دقیق از نوشتار راست‌به‌چپ.
-
-[English](README.md) · [ویژگی‌ها](#ویژگیها) · [نصب](#نصب) · [شخصیسازی](#شخصیسازی)
-
-</div>
+[English](README.md) · [ویژگی‌ها](#ویژگیها) · [نصب](#نصب) · [شخصی‌سازی](#شخصیسازی)
+</p>
 
 <p align="center">
   <a href="https://github.com/Ali-Nourix/Obsidian-Theme/blob/main/LICENSE"><img alt="مجوز GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-46A171.svg"></a>
