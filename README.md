@@ -1,114 +1,120 @@
 # Bookcloth
 
-**A Notion-inspired theme for [Obsidian](https://obsidian.md).**
+<p align="center">
+  <strong>A calm, Notion-inspired theme for Obsidian.</strong><br>
+  A clean writing surface, warm neutral interface, refined typography, and thoughtful support for right-to-left writing.
+</p>
 
-Bookcloth brings Notion's calm, paper-like interface to Obsidian: a white writing surface, warm neutral chrome, compact controls, clear typography, and panels that feel like one continuous workspace. It is minimal in appearance, not in capability.
+<p align="center">
+  <a href="https://github.com/Ali-Nourix/Obsidian-Theme/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://obsidian.md"><img alt="Made for Obsidian" src="https://img.shields.io/badge/made%20for-Obsidian-7C3AED"></a>
+  <img alt="Version 3.8.1" src="https://img.shields.io/badge/version-3.8.1-64748b">
+</p>
 
-![Bookcloth in light mode](screenshot.png)
+<p align="center">
+  <img src="screenshot.png" alt="Bookcloth in light mode" width="49%">
+  <img src="screenshot-dark.png" alt="Bookcloth in dark mode" width="49%">
+</p>
 
-![Bookcloth in dark mode](screenshot-dark.png)
+## Overview
+
+Bookcloth brings the quiet, paper-like feel of Notion to [Obsidian](https://obsidian.md). The document stays visually prominent while the surrounding interface uses warm neutrals, compact controls, restrained borders, and clear hierarchy.
+
+The goal is a minimal interface that remains practical for everyday note-taking—not a reduction in Obsidian's capabilities.
 
 ## Features
 
-- **Light and dark themes** with carefully tuned neutral surfaces.
-- **Notion-inspired typography** with a clear distinction between interface and document text.
-- **Flush panels** that reduce visual clutter, with optional floating-panel styling.
-- **Configurable accent color** that follows Obsidian's Accent color setting.
-- **Style Settings support** for adjusting colors, typography, density, panel layout, icons, motion, callouts, embeds, and supported plugin styling.
+- **Light and dark modes** with carefully tuned neutral surfaces.
+- **Notion-inspired visual language** with readable typography and consistent spacing.
+- **Clean panels** with optional floating-panel styling.
+- **Accent color integration** with Obsidian's Appearance settings.
+- **Style Settings support** for colors, typography, density, panels, icons, motion, callouts, embeds, and supported plugin styling.
 - **Editor refinements** for headings, links, code, tables, lists, checkboxes, and callouts.
-- **RTL-aware styling** for right-to-left writing, including Persian and Arabic text.
-- **Responsive layouts** for desktop and mobile use.
+- **Right-to-left (RTL) support** for Persian, Arabic, and other RTL writing.
+- **Responsive layouts** for desktop and mobile.
 - **Reduced-motion options** and adjustable interface details.
 
-Bookcloth works without the Style Settings community plugin. Installing Style Settings unlocks additional customization controls.
+Bookcloth works without additional plugins. Install [Style Settings](https://github.com/mgmeyers/obsidian-style-settings) if you want access to the theme's extra customization controls.
 
 ## Installation
 
-### From Obsidian
+### Install through Obsidian
 
 1. Open **Settings → Appearance**.
-2. Under **Themes**, select **Manage**.
+2. Find the **Themes** section and select **Manage**.
 3. Search for **Bookcloth**.
 4. Select **Install**, then **Use**.
 
-### Manual installation
+### Install manually
 
-1. Download or clone this repository.
-2. Copy the theme folder into your vault's `.obsidian/themes/` directory.
-3. In Obsidian, open **Settings → Appearance → Themes**.
-4. Select **Bookcloth**.
+1. Download the repository or the theme files.
+2. Place the theme folder in your vault at `.obsidian/themes/Bookcloth/`.
+3. Confirm that `theme.css` and `manifest.json` are inside that folder.
+4. Open **Settings → Appearance** and select **Bookcloth**.
 
-At runtime, Obsidian needs `theme.css` and `manifest.json`. The remaining files support development, previews, and validation.
+## Customization
 
-## Recommended companion
+For additional controls, install the community plugin [Style Settings](https://github.com/mgmeyers/obsidian-style-settings).
 
-Install the community plugin **[Style Settings](https://github.com/mgmeyers/obsidian-style-settings)** to customize the theme.
+Customization covers accent and surface colors, text, semantic colors, typography, shape and density, floating panels, icons, editor behavior, motion, and supported plugin interfaces. These settings are optional; the default theme is ready to use.
 
-Settings are grouped around accent, surfaces, text, semantic colors, typography, shape and density, floating panels, icons, editor behavior, and plugin support. All controls are optional; Bookcloth remains a complete theme with default settings.
+## Design principles
 
-## Design approach
-
-Bookcloth takes inspiration from Notion's restrained interface rather than copying its product behavior. Its main principles are:
-
-- A bright, readable page against quieter application chrome.
-- Consistent spacing, compact controls, and restrained corner radii.
-- Accent color used primarily for meaningful interaction states.
-- Clear hierarchy for headings, links, code, tables, and callouts.
-- Minimal borders, with surface contrast doing most of the structural work.
-- RTL support that respects writing direction rather than merely aligning text to the right.
-
-The theme includes deliberate contrast and sizing adjustments where a literal visual match would reduce readability or accessibility.
+- Keep the note itself as the primary visual focus.
+- Use warm, quiet neutrals for application chrome.
+- Keep borders subtle and use surface contrast to establish hierarchy.
+- Apply accent color mainly to meaningful interaction states.
+- Maintain readable typography and consistent spacing.
+- Treat RTL as a writing direction, not simply right-aligned text.
+- Prefer readability and usability over a literal visual copy of another product.
 
 ## Compatibility
 
-- **Minimum Obsidian version declared by the theme:** `1.5.0`.
-- Intended for Obsidian desktop and mobile; behavior can vary with Obsidian versions and third-party plugins.
-- Optional plugin-specific styling may depend on the relevant plugin being installed.
-- For the best customization experience, install Style Settings.
+- **Current theme version:** `3.8.1`
+- **Minimum Obsidian version:** `1.5.0`
+- Designed for Obsidian desktop and mobile. Exact behavior may vary by Obsidian version and third-party plugins.
+- Plugin-specific styling applies only when the corresponding plugin is installed.
 
-If an update causes an issue, temporarily disable Style Settings and other snippets to check for a styling conflict before reporting the problem.
-
-## Development
-
-The repository contains the distributable theme and its source styles, along with preview and validation tools.
-
-When changing the theme:
-
-1. Inspect the relevant source styles before editing generated output.
-2. Follow the repository's existing build process to regenerate `theme.css`.
-3. Run the available validation and preview checks.
-4. Test both light and dark modes, desktop and mobile layouts, RTL content, callouts, embeds, and any affected plugin interfaces.
-5. Include screenshots and clear reproduction steps when reporting visual regressions.
-
-Do not edit generated `theme.css` independently if the source/build workflow is available; source and generated output should remain in sync.
+If something looks wrong after an update, temporarily disable other CSS snippets and Style Settings customizations to check for a styling conflict.
 
 ## Troubleshooting
 
-**A plugin looks inconsistent with the theme**
+**A plugin's interface does not match the theme**
 
-Some plugins render their own interface or ship CSS that overrides theme styles. Update the plugin, check its Bookcloth/Style Settings compatibility options, and temporarily disable conflicting CSS snippets.
+Plugins may use their own styles or override theme rules. Update the plugin, review relevant Style Settings options, and temporarily disable conflicting snippets.
 
-**The theme looks different after an Obsidian update**
+**The theme changed after an Obsidian update**
 
-Obsidian's internal interface styles can change between releases. Report the Obsidian version, operating system, affected view, and steps to reproduce the issue.
+Obsidian can change internal interface styles between releases. Include your Obsidian version, operating system, affected view, and reproduction steps when reporting the issue.
 
-**A Style Settings section fails to appear**
+**Style Settings controls are missing**
 
-Update Style Settings and Bookcloth, then restart Obsidian. If the problem persists, include the relevant console error and your Obsidian version in the report.
+Update both Bookcloth and Style Settings, then restart Obsidian. If the issue continues, include your Obsidian version and any relevant console errors.
 
-## Reporting issues
+## Report a bug or request a feature
 
-When opening an issue, include:
+- [Report a bug](https://github.com/Ali-Nourix/Obsidian-Theme/issues/new?template=bug_report.yml)
+- [Request a feature](https://github.com/Ali-Nourix/Obsidian-Theme/issues/new?template=feature_request.yml)
+- [Browse existing issues](https://github.com/Ali-Nourix/Obsidian-Theme/issues)
 
-- Obsidian version and operating system.
-- Light or dark mode.
-- Desktop or mobile.
-- Steps to reproduce the problem.
-- Screenshots, if the issue is visual.
-- Relevant plugins, snippets, and Style Settings values.
+For a useful report, include your Obsidian version, operating system, light/dark mode, desktop/mobile context, steps to reproduce, screenshots when relevant, and any related plugins or snippets.
 
-Please separate confirmed bugs from feature requests and visual preferences.
+## Contributing
+
+Contributions, bug reports, and carefully scoped improvements are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. For visual changes, include before/after screenshots and test both light and dark modes where applicable.
+
+## Development
+
+Bookcloth's styles are built from source files in `src/`. Edit the source partials and run the repository's build process:
+
+```bash
+node build.mjs
+```
+
+Review the generated `theme.css` after building, then test the result in Obsidian. Check light and dark modes, desktop and mobile layouts, RTL text, callouts, embeds, and any plugin interfaces affected by the change.
+
+Do not edit generated `theme.css` independently when the source/build workflow can be used; keep source styles and generated output in sync.
 
 ## License
 
-Check the repository's license file and distribution terms before redistributing or modifying Bookcloth. If no license is present, do not assume that the project is open-source licensed; ask the maintainer for clarification.
+Bookcloth is distributed under the [MIT License](LICENSE).
