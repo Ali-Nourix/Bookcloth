@@ -3,6 +3,8 @@
 <p align="center">
   <strong>A calm, Notion-inspired theme for Obsidian.</strong><br>
   A clean writing surface, warm neutral interface, refined typography, and thoughtful support for right-to-left writing.
+
+[فارسی](README.fa.md) · [Features](#features) · [Installation](#installation) · [Customization](#customization)
 </p>
 
 <p align="center">
