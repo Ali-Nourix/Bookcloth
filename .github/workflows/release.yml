@@ -1,0 +1,167 @@
+name: Release Bookcloth from main
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bookcloth-release-main
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate and package main
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      source_sha: ${{ steps.version.outputs.source_sha }}
+    steps:
+      - name: Require main
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
+            echo "::error::Run this release workflow on main only."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Rebuild and reject generated CSS drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          node build.mjs
+          git diff --exit-code -- theme.css
+
+      - name: Validate version markers
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const manifest = JSON.parse(readFileSync('manifest.json', 'utf8'));
+          const css = readFileSync('theme.css', 'utf8');
+          const source = readFileSync('src/01-tokens.css', 'utf8');
+          assert.equal(manifest.name, 'Bookcloth');
+          assert.match(manifest.version, /^\d+\.\d+\.\d+$/, 'Use a stable numeric theme version');
+          assert(css.startsWith(`/* ${manifest.name} ${manifest.version} `), 'CSS banner version differs');
+          for (const text of [css, source]) {
+            assert.equal(text.match(/--bc-version:\s*"([^"]+)"/)?.[1], manifest.version, 'Version token differs');
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT,
+            `version=${manifest.version}\ntag=v${manifest.version}\nsource_sha=${process.env.GITHUB_SHA}\n`);
+          NODE
+
+      - name: Install declared preview dependencies
+        working-directory: preview
+        run: npm install --ignore-scripts --no-package-lock
+
+      - name: Install browser and Linux dependencies
+        working-directory: preview
+        run: npx playwright install --with-deps chromium
+
+      - name: Run CSS, settings and integration assertions
+        working-directory: preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          node check.mjs
+          node check-settings.mjs
+          node integration.mjs
+
+      - name: Run preview assertions in both themes
+        working-directory: preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          for mode in light dark; do
+            for page in index.html overlays.html rtl.html plugin-pane.html controls.html checkboxes.html embeds.html callouts.html; do
+              node invariants.mjs "$mode" "$page"
+            done
+            node invariants.mjs "$mode" index.html "bc-float-panes bc-pane-glow bc-motion-expressive"
+            node invariants.mjs "$mode" embeds.html "bc-callout-rule"
+            node invariants.mjs "$mode" rtl.html "bc-rtl-autodir bc-rtl-justify"
+          done
+
+      - name: Package installation files
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/Bookcloth
+          cp theme.css manifest.json release/Bookcloth/
+          cp theme.css manifest.json release/
+          (
+            cd release
+            zip -X "Bookcloth-$VERSION.zip" Bookcloth/theme.css Bookcloth/manifest.json
+            unzip -t "Bookcloth-$VERSION.zip"
+          )
+
+      - name: Save validated release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: bookcloth-release-${{ steps.version.outputs.version }}
+          path: |
+            release/theme.css
+            release/manifest.json
+            release/Bookcloth-*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publish validated GitHub Release
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: bookcloth-release-${{ needs.validate.outputs.version }}
+          path: release
+
+      - name: Create draft, upload assets, then publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ needs.validate.outputs.version }}
+          TAG: ${{ needs.validate.outputs.tag }}
+          SOURCE_SHA: ${{ needs.validate.outputs.source_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Never move/reuse an existing tag or overwrite a published release.
+          # Authentication/API errors fail this command; they are not treated as absence.
+          refs="$(gh api "repos/$GH_REPO/git/matching-refs/tags/$TAG" --jq '.[].ref')"
+          if grep -Fxq "refs/tags/$TAG" <<< "$refs"; then
+            echo "::error::Tag $TAG already exists. Increase manifest.json and --bc-version, rebuild and commit on main; or inspect an unfinished draft."
+            exit 1
+          fi
+          gh release create "$TAG" \
+            release/theme.css release/manifest.json "release/Bookcloth-$VERSION.zip" \
+            --repo "$GH_REPO" --target "$SOURCE_SHA" \
+            --title "Bookcloth $VERSION" --generate-notes --draft
+          gh release edit "$TAG" --repo "$GH_REPO" --draft=false --latest
+          {
+            echo "## Published Bookcloth $VERSION"
+            echo "Source commit: \`$SOURCE_SHA\`"
+            echo "Release: https://github.com/$GH_REPO/releases/tag/$TAG"
+            echo "Assets: theme.css, manifest.json, Bookcloth-$VERSION.zip"
+            echo "Validation: browser harness only, not a live Obsidian test."
+          } >> "$GITHUB_STEP_SUMMARY"
