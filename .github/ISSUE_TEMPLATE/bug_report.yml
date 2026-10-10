@@ -1,0 +1,71 @@
+name: Bug report
+description: Report a reproducible issue with the Bookcloth theme
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: "Please check existing issues first. Disable conflicting snippets temporarily and include screenshots for visual problems."
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian version
+      placeholder: "e.g. 1.8.10"
+    validations:
+      required: true
+  - type: input
+    id: theme-version
+    attributes:
+      label: Bookcloth version
+      placeholder: "e.g. 3.8.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Android
+        - iOS / iPadOS
+    validations:
+      required: true
+  - type: dropdown
+    id: appearance
+    attributes:
+      label: Appearance
+      options:
+        - Light mode
+        - Dark mode
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide clear, numbered steps.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Plugins, snippets, and additional context
+      description: Mention Style Settings, relevant plugins, CSS snippets, and attach screenshots if possible.
+    validations:
+      required: false
