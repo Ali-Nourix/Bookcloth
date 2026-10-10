@@ -796,6 +796,14 @@ plugin renders outside its own bounds, and forcing a background onto every
 registered pane breaks canvases, boards and embedded editors that paint their
 own surface.
 
+[Habbiter](https://github.com/Ali-Nourix/Habbiter) needs almost nothing: it
+reads its accent, its checkbox corner and its hit size from the variable layer
+and arrives looking like the rest of the theme. The partial adds the two
+things the plugin cannot see from where it stands — the circular-checkbox
+setting, which its cells should follow, and the colour actually painted behind
+a tracker, which a sticky row label has to match when a month-wide grid
+scrolls under it.
+
 ### TaskPro's floating board
 
 [TaskPro](https://github.com/Ali-Nourix/Task-Pro)'s **Toggle Floating Task
@@ -829,8 +837,9 @@ what reads as the arrival. The strength is a slider under **Plugin support**;
 zero keeps the app sharp and only dims it.
 
 Bundled styles: Dataview, Tasks, Kanban, Calendar and Periodic Notes,
-Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr, Style Settings,
+Habbiter, Excalidraw, Iconize, Editing Toolbar, Omnisearch, Highlightr, Style Settings,
 TaskPro.
+
 Anything not on the list inherits the correct surface, ink and radius from the
 variable layer.
 
@@ -917,6 +926,9 @@ var(--bc-topbar-height) var(--bc-control-height)
 All of them respond to the user's accent, theme and density settings.
 
 ## Building
+
+The [consolidation audit](docs/integration-audit.md) records the branch decisions,
+semantic resolutions, automated checks and remaining real-vault checks.
 
 Written as partials and concatenated, because Obsidian loads one stylesheet per
 theme.

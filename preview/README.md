@@ -60,6 +60,7 @@ node check.mjs           # every rule keeps a declaration, every declaration par
 node measure.mjs         # geometry of the controls that are meant to line up
 node contrast.mjs        # the ratios the main README publishes
 node invariants.mjs      # the assertions that hold on every page, in both modes
+node integration.mjs     # build/version and consolidation compatibility regressions
 node check-settings.mjs  # the Style Settings block, against the plugin's own shapes
 node fade-lab.mjs dark   # is the bottom fade a blur, or a cross-fade?
 node cframe.mjs          # every callout frame, measured against its own fill

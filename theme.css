@@ -866,6 +866,11 @@ settings:
         type: class-toggle
         default: false
     -
+        id: bc-off-habbiter
+        title: Opt out of Habbiter styling
+        type: class-toggle
+        default: false
+    -
         id: bc-off-misc
         title: Opt out of Excalidraw, Iconize, Editing Toolbar and Omnisearch styling
         type: class-toggle
@@ -2173,14 +2178,14 @@ body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
 /* --- Sidebars ------------------------------------------------------------ */
 
 .workspace-drawer,
-.workspace-split.mod-horizontal.mod-left-split,
-.workspace-split.mod-horizontal.mod-right-split {
+.workspace-split.mod-horizontal:is(.mod-left-split, .mod-primary-split),
+.workspace-split.mod-horizontal:is(.mod-right-split, .mod-secondary-split) {
   border: none;
   box-shadow: none;
 }
 
-.workspace-split.mod-left-split .workspace-tab-header-container,
-.workspace-split.mod-right-split .workspace-tab-header-container {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header-container,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header-container {
   padding-inline: var(--bc-gap-3);
   gap: var(--bc-icon-gap);
 }
@@ -2190,15 +2195,15 @@ body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
    rounding at all that background reads as a lozenge rather than a button.
    The background moves to the inner element so it wraps the icon, not the
    whole tab slot. */
-.workspace-split.mod-left-split .workspace-tab-header,
-.workspace-split.mod-right-split .workspace-tab-header {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header {
   padding: 0;
   background-color: transparent;
   border-radius: var(--radius-m);
 }
 
-.workspace-split.mod-left-split .workspace-tab-header-inner,
-.workspace-split.mod-right-split .workspace-tab-header-inner {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header-inner,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header-inner {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2209,19 +2214,19 @@ body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
   transition: background-color var(--bc-speed) var(--bc-ease);
 }
 
-.workspace-split.mod-left-split
+.workspace-split:is(.mod-left-split, .mod-primary-split)
   .workspace-tab-header:hover
   .workspace-tab-header-inner,
-.workspace-split.mod-right-split
+.workspace-split:is(.mod-right-split, .mod-secondary-split)
   .workspace-tab-header:hover
   .workspace-tab-header-inner {
   background-color: var(--background-modifier-hover);
 }
 
-.workspace-split.mod-left-split
+.workspace-split:is(.mod-left-split, .mod-primary-split)
   .workspace-tab-header.is-active
   .workspace-tab-header-inner,
-.workspace-split.mod-right-split
+.workspace-split:is(.mod-right-split, .mod-secondary-split)
   .workspace-tab-header.is-active
   .workspace-tab-header-inner {
   background-color: var(--bc-select-bg-strong);
@@ -2245,8 +2250,8 @@ body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
    between them and it. A pane that lays out something other than a tree
    keeps its own padding, which is why this asks what is inside rather than
    what the plugin is called. */
-.workspace-split.mod-left-split .view-content:has(.tree-item-self),
-.workspace-split.mod-right-split .view-content:has(.tree-item-self) {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .view-content:has(.tree-item-self),
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .view-content:has(.tree-item-self) {
   padding-inline: var(--bc-row-inset);
 }
 
@@ -2354,8 +2359,8 @@ body.bc-hide-ribbon .workspace-ribbon:is(.mod-left, .mod-primary):focus-within {
 /* Room at the foot of every scrolling pane. Without it the last item in a
    sidebar list sits underneath the status bar and is read as cut off — which
    it is. Only the block end is padded. */
-.workspace-split.mod-left-split .view-content,
-.workspace-split.mod-right-split .view-content {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .view-content,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .view-content {
   /* Enough that the last row is not read as cut off, and no more. This was
      24px of padding on top of the list's own 16px, which showed up as forty
      pixels of nothing above a plugin's footer bar. The scroll reserve stays
@@ -2756,7 +2761,10 @@ body.bc-code-ink {
 
 @property --bc-callout-c {
   syntax: "<color>";
-  inherits: false;
+  /* Embed hairlines and callout signatures must use their container's colour.
+     Every nested callout resolves its own value, so inheritance cannot leak
+     an outer callout's kind into a nested one. */
+  inherits: true;
   initial-value: #8a8a8a;
 }
 
@@ -4678,8 +4686,8 @@ body,
   background-color: transparent;
 }
 
-.workspace-split.mod-left-split,
-.workspace-split.mod-right-split {
+.workspace-split:is(.mod-left-split, .mod-primary-split),
+.workspace-split:is(.mod-right-split, .mod-secondary-split) {
   background-color: var(--background-secondary);
   border: none;
   box-shadow: none;
@@ -4690,10 +4698,10 @@ body,
    they become two cards with the same gap as everything else. Without this
    they run together into a single tall surface and the seam between two
    unrelated views disappears. */
-.workspace-split.mod-left-split .workspace-tabs + .workspace-tabs,
-.workspace-split.mod-right-split .workspace-tabs + .workspace-tabs,
-.workspace-split.mod-left-split .workspace-tabs:not(:first-child),
-.workspace-split.mod-right-split .workspace-tabs:not(:first-child) {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tabs + .workspace-tabs,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tabs + .workspace-tabs,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tabs:not(:first-child),
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tabs:not(:first-child) {
   box-shadow: inset 0 1px 0 0 var(--background-modifier-border);
 }
 
@@ -4701,16 +4709,16 @@ body,
    the only one there is. .view-content is on the list because a pane that
    paints its own background is a pane whose bottom corners are square
    whatever the panel above it is rounded to. */
-.workspace-split.mod-left-split .workspace-tabs,
-.workspace-split.mod-right-split .workspace-tabs,
-.workspace-split.mod-left-split .workspace-leaf-content,
-.workspace-split.mod-right-split .workspace-leaf-content,
-.workspace-split.mod-left-split .workspace-tab-header-container,
-.workspace-split.mod-right-split .workspace-tab-header-container,
-.workspace-split.mod-left-split .workspace-leaf,
-.workspace-split.mod-right-split .workspace-leaf,
-.workspace-split.mod-left-split .view-content,
-.workspace-split.mod-right-split .view-content {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tabs,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tabs,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf-content,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf-content,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header-container,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header-container,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .view-content,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .view-content {
   background-color: transparent;
 }
 
@@ -4726,8 +4734,8 @@ body,
 .workspace-split.mod-root,
 .workspace-split.mod-root .workspace-split,
 .workspace-split.mod-root .workspace-leaf,
-.workspace-split.mod-left-split .workspace-split,
-.workspace-split.mod-right-split .workspace-split {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-split,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-split {
   background-color: transparent;
 }
 
@@ -4745,11 +4753,11 @@ body,
 
 /* Optional hairlines, for anyone who wants the regions drawn rather than
    toned. */
-body.bc-borders .workspace-split.mod-left-split {
+body.bc-borders .workspace-split:is(.mod-left-split, .mod-primary-split) {
   box-shadow: inset -1px 0 0 0 var(--background-modifier-border);
 }
 
-body.bc-borders .workspace-split.mod-right-split {
+body.bc-borders .workspace-split:is(.mod-right-split, .mod-secondary-split) {
   box-shadow: inset 1px 0 0 0 var(--background-modifier-border);
 }
 
@@ -4809,8 +4817,8 @@ body.bc-float-panes .workspace {
    split behind them keeps only the gap. `:has(… ~ …)` rather than `+`
    because Obsidian puts a resize handle between them. */
 
-body.bc-float-panes .workspace-split.mod-left-split,
-body.bc-float-panes .workspace-split.mod-right-split {
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) {
   background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
 }
@@ -4821,11 +4829,11 @@ body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
 }
 
 body.bc-float-panes
-  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs),
+  .workspace-split:is(.mod-left-split, .mod-primary-split):has(.workspace-tabs ~ .workspace-tabs),
 body.bc-float-panes
-  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs),
-body.bc-float-panes .workspace-split.mod-left-split .workspace-split,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
+  .workspace-split:is(.mod-right-split, .mod-secondary-split):has(.workspace-tabs ~ .workspace-tabs),
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-split,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-split {
   background-color: transparent;
   border-radius: 0;
   gap: var(--bc-pane-gap);
@@ -4836,10 +4844,10 @@ body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
 }
 
 body.bc-float-panes
-  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-left-split, .mod-primary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs,
 body.bc-float-panes
-  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-right-split, .mod-secondary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs {
   background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
@@ -4886,30 +4894,30 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
 /* The clip follows the card. On a single-pane sidebar that is the split, so a
    footer rendered outside .workspace-tabs is still cut at the panel's corner;
    on a stacked one it is each leaf group. */
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split:is(.mod-right-split, .mod-secondary-split),
 body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
   overflow: clip;
 }
 
 body.bc-float-panes:not(.bc-no-clip-panes)
-  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-left-split, .mod-primary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs,
 body.bc-float-panes:not(.bc-no-clip-panes)
-  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-right-split, .mod-secondary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs {
   overflow: clip;
 }
 
-body.bc-float-panes .workspace-split.mod-left-split > .workspace-tabs,
-body.bc-float-panes .workspace-split.mod-right-split > .workspace-tabs {
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) > .workspace-tabs,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) > .workspace-tabs {
   border-radius: var(--bc-pane-radius);
 }
 
-body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .workspace-leaf-content,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .workspace-leaf-content,
-body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .view-content,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .view-content {
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf:last-child .view-content,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf:last-child .view-content {
   border-end-start-radius: var(--bc-pane-radius);
   border-end-end-radius: var(--bc-pane-radius);
 }
@@ -4945,8 +4953,8 @@ body.bc-float-panes .workspace-ribbon:is(.mod-right, .mod-secondary) {
   margin-inline: 0 var(--bc-pane-gap);
 }
 
-body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
-body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
+body.bc-float-panes.bc-borders .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.bc-float-panes.bc-borders .workspace-split:is(.mod-right-split, .mod-secondary-split),
 body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
   box-shadow: 0 0 0 1px var(--background-modifier-border);
 }
@@ -5663,8 +5671,8 @@ body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tabs,
 body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf,
 body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf-content,
 body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tab-header-container,
-body.is-mobile.bc-float-panes .workspace-split.mod-left-split,
-body.is-mobile.bc-float-panes .workspace-split.mod-right-split {
+body.is-mobile.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.is-mobile.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) {
   border-radius: 0;
 }
 
@@ -6249,6 +6257,63 @@ body:not(.bc-off-calendar) #calendar-container .day.today {
 
 body:not(.bc-off-calendar) #calendar-container .week-num {
   border-radius: var(--radius-s);
+}
+
+/* --------------------------------------------------------------------------
+   Habbiter
+   Keep tracker checkbox shape in sync with the reader's setting, and hand
+   sticky labels the surface actually painted behind them. The surface token
+   lives on containers and is inherited, so the nearest callout, embed, sidebar
+   or popover wins, including nested and transparent variants. This also uses
+   the resolved callout colour instead of the obsolete RGB-triple contract.
+   -------------------------------------------------------------------------- */
+
+body.bc-check-circle:not(.bc-off-habbiter) .hb-root {
+  --hb-radius: 50%;
+}
+
+body:not(.bc-off-habbiter) .hb-root {
+  --hb-page: var(--bc-hb-page, var(--background-primary));
+}
+
+body:not(.bc-off-habbiter) .workspace-split:is(.mod-left-split, .mod-primary-split),
+body:not(.bc-off-habbiter) .workspace-split:is(.mod-right-split, .mod-secondary-split) {
+  --bc-hb-page: var(--background-secondary);
+}
+
+body:not(.bc-off-habbiter) .popover.hover-popover {
+  --bc-hb-page: var(--bc-surface-raised);
+}
+
+body:not(.bc-off-habbiter) .callout {
+  --bc-hb-page: color-mix(in oklab, var(--bc-callout-c) var(--bc-wash), var(--background-primary));
+}
+
+body.theme-dark:not(.bc-off-habbiter) .callout {
+  --bc-hb-page: color-mix(in oklab, var(--bc-callout-c) calc(var(--bc-wash) * 1.8), var(--background-primary));
+}
+
+body:not(.bc-off-habbiter) .callout:is([data-callout="quote"], [data-callout="cite"]),
+body.bc-callout-rule:not(.bc-off-habbiter) .callout {
+  --bc-hb-page: inherit;
+}
+
+body:not(.bc-off-habbiter) .markdown-embed {
+  --bc-hb-page: var(--bc-surface-sunken);
+}
+
+/* Card embeds inside filled callouts draw a ring but no second fill. */
+body:not(.bc-off-habbiter) .callout .markdown-embed {
+  --bc-hb-page: inherit;
+}
+
+body.bc-callout-rule:not(.bc-off-habbiter) .callout .markdown-embed {
+  --bc-hb-page: var(--bc-surface-sunken);
+}
+
+/* Reader-selected transparent embeds retain the surrounding surface. */
+body:is(.bc-embed-quiet, .bc-embed-bare):not(.bc-off-habbiter) .markdown-embed.markdown-embed {
+  --bc-hb-page: inherit;
 }
 
 /* --------------------------------------------------------------------------

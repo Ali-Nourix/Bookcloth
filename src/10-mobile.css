@@ -40,8 +40,8 @@ body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tabs,
 body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf,
 body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-leaf-content,
 body.is-mobile.bc-float-panes .workspace-split.mod-root .workspace-tab-header-container,
-body.is-mobile.bc-float-panes .workspace-split.mod-left-split,
-body.is-mobile.bc-float-panes .workspace-split.mod-right-split {
+body.is-mobile.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.is-mobile.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) {
   border-radius: 0;
 }
 

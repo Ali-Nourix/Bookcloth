@@ -25,8 +25,8 @@ body,
   background-color: transparent;
 }
 
-.workspace-split.mod-left-split,
-.workspace-split.mod-right-split {
+.workspace-split:is(.mod-left-split, .mod-primary-split),
+.workspace-split:is(.mod-right-split, .mod-secondary-split) {
   background-color: var(--background-secondary);
   border: none;
   box-shadow: none;
@@ -37,10 +37,10 @@ body,
    they become two cards with the same gap as everything else. Without this
    they run together into a single tall surface and the seam between two
    unrelated views disappears. */
-.workspace-split.mod-left-split .workspace-tabs + .workspace-tabs,
-.workspace-split.mod-right-split .workspace-tabs + .workspace-tabs,
-.workspace-split.mod-left-split .workspace-tabs:not(:first-child),
-.workspace-split.mod-right-split .workspace-tabs:not(:first-child) {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tabs + .workspace-tabs,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tabs + .workspace-tabs,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tabs:not(:first-child),
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tabs:not(:first-child) {
   box-shadow: inset 0 1px 0 0 var(--background-modifier-border);
 }
 
@@ -48,16 +48,16 @@ body,
    the only one there is. .view-content is on the list because a pane that
    paints its own background is a pane whose bottom corners are square
    whatever the panel above it is rounded to. */
-.workspace-split.mod-left-split .workspace-tabs,
-.workspace-split.mod-right-split .workspace-tabs,
-.workspace-split.mod-left-split .workspace-leaf-content,
-.workspace-split.mod-right-split .workspace-leaf-content,
-.workspace-split.mod-left-split .workspace-tab-header-container,
-.workspace-split.mod-right-split .workspace-tab-header-container,
-.workspace-split.mod-left-split .workspace-leaf,
-.workspace-split.mod-right-split .workspace-leaf,
-.workspace-split.mod-left-split .view-content,
-.workspace-split.mod-right-split .view-content {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tabs,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tabs,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf-content,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf-content,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-tab-header-container,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-tab-header-container,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf,
+.workspace-split:is(.mod-left-split, .mod-primary-split) .view-content,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .view-content {
   background-color: transparent;
 }
 
@@ -73,8 +73,8 @@ body,
 .workspace-split.mod-root,
 .workspace-split.mod-root .workspace-split,
 .workspace-split.mod-root .workspace-leaf,
-.workspace-split.mod-left-split .workspace-split,
-.workspace-split.mod-right-split .workspace-split {
+.workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-split,
+.workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-split {
   background-color: transparent;
 }
 
@@ -92,11 +92,11 @@ body,
 
 /* Optional hairlines, for anyone who wants the regions drawn rather than
    toned. */
-body.bc-borders .workspace-split.mod-left-split {
+body.bc-borders .workspace-split:is(.mod-left-split, .mod-primary-split) {
   box-shadow: inset -1px 0 0 0 var(--background-modifier-border);
 }
 
-body.bc-borders .workspace-split.mod-right-split {
+body.bc-borders .workspace-split:is(.mod-right-split, .mod-secondary-split) {
   box-shadow: inset 1px 0 0 0 var(--background-modifier-border);
 }
 
@@ -156,8 +156,8 @@ body.bc-float-panes .workspace {
    split behind them keeps only the gap. `:has(… ~ …)` rather than `+`
    because Obsidian puts a resize handle between them. */
 
-body.bc-float-panes .workspace-split.mod-left-split,
-body.bc-float-panes .workspace-split.mod-right-split {
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) {
   background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
 }
@@ -168,11 +168,11 @@ body.bc-float-panes .workspace-split.mod-root .workspace-tabs {
 }
 
 body.bc-float-panes
-  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs),
+  .workspace-split:is(.mod-left-split, .mod-primary-split):has(.workspace-tabs ~ .workspace-tabs),
 body.bc-float-panes
-  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs),
-body.bc-float-panes .workspace-split.mod-left-split .workspace-split,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
+  .workspace-split:is(.mod-right-split, .mod-secondary-split):has(.workspace-tabs ~ .workspace-tabs),
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-split,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-split {
   background-color: transparent;
   border-radius: 0;
   gap: var(--bc-pane-gap);
@@ -183,10 +183,10 @@ body.bc-float-panes .workspace-split.mod-right-split .workspace-split {
 }
 
 body.bc-float-panes
-  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-left-split, .mod-primary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs,
 body.bc-float-panes
-  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-right-split, .mod-secondary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs {
   background-color: var(--background-secondary);
   border-radius: var(--bc-pane-radius);
@@ -233,30 +233,30 @@ body.bc-float-panes .workspace-split.mod-root .workspace-leaf-content {
 /* The clip follows the card. On a single-pane sidebar that is the split, so a
    footer rendered outside .workspace-tabs is still cut at the panel's corner;
    on a stacked one it is each leaf group. */
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-left-split,
-body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-right-split,
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split:is(.mod-right-split, .mod-secondary-split),
 body.bc-float-panes:not(.bc-no-clip-panes) .workspace-split.mod-root .workspace-tabs {
   overflow: clip;
 }
 
 body.bc-float-panes:not(.bc-no-clip-panes)
-  .workspace-split.mod-left-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-left-split, .mod-primary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs,
 body.bc-float-panes:not(.bc-no-clip-panes)
-  .workspace-split.mod-right-split:has(.workspace-tabs ~ .workspace-tabs)
+  .workspace-split:is(.mod-right-split, .mod-secondary-split):has(.workspace-tabs ~ .workspace-tabs)
   .workspace-tabs {
   overflow: clip;
 }
 
-body.bc-float-panes .workspace-split.mod-left-split > .workspace-tabs,
-body.bc-float-panes .workspace-split.mod-right-split > .workspace-tabs {
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) > .workspace-tabs,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) > .workspace-tabs {
   border-radius: var(--bc-pane-radius);
 }
 
-body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .workspace-leaf-content,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .workspace-leaf-content,
-body.bc-float-panes .workspace-split.mod-left-split .workspace-leaf:last-child .view-content,
-body.bc-float-panes .workspace-split.mod-right-split .workspace-leaf:last-child .view-content {
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf:last-child .workspace-leaf-content,
+body.bc-float-panes .workspace-split:is(.mod-left-split, .mod-primary-split) .workspace-leaf:last-child .view-content,
+body.bc-float-panes .workspace-split:is(.mod-right-split, .mod-secondary-split) .workspace-leaf:last-child .view-content {
   border-end-start-radius: var(--bc-pane-radius);
   border-end-end-radius: var(--bc-pane-radius);
 }
@@ -292,8 +292,8 @@ body.bc-float-panes .workspace-ribbon:is(.mod-right, .mod-secondary) {
   margin-inline: 0 var(--bc-pane-gap);
 }
 
-body.bc-float-panes.bc-borders .workspace-split.mod-left-split,
-body.bc-float-panes.bc-borders .workspace-split.mod-right-split,
+body.bc-float-panes.bc-borders .workspace-split:is(.mod-left-split, .mod-primary-split),
+body.bc-float-panes.bc-borders .workspace-split:is(.mod-right-split, .mod-secondary-split),
 body.bc-float-panes.bc-borders .workspace-split.mod-root .workspace-tabs {
   box-shadow: 0 0 0 1px var(--background-modifier-border);
 }

@@ -1,0 +1,56 @@
+/* --------------------------------------------------------------------------
+   Habbiter
+   Keep tracker checkbox shape in sync with the reader's setting, and hand
+   sticky labels the surface actually painted behind them. The surface token
+   lives on containers and is inherited, so the nearest callout, embed, sidebar
+   or popover wins, including nested and transparent variants. This also uses
+   the resolved callout colour instead of the obsolete RGB-triple contract.
+   -------------------------------------------------------------------------- */
+
+body.bc-check-circle:not(.bc-off-habbiter) .hb-root {
+  --hb-radius: 50%;
+}
+
+body:not(.bc-off-habbiter) .hb-root {
+  --hb-page: var(--bc-hb-page, var(--background-primary));
+}
+
+body:not(.bc-off-habbiter) .workspace-split:is(.mod-left-split, .mod-primary-split),
+body:not(.bc-off-habbiter) .workspace-split:is(.mod-right-split, .mod-secondary-split) {
+  --bc-hb-page: var(--background-secondary);
+}
+
+body:not(.bc-off-habbiter) .popover.hover-popover {
+  --bc-hb-page: var(--bc-surface-raised);
+}
+
+body:not(.bc-off-habbiter) .callout {
+  --bc-hb-page: color-mix(in oklab, var(--bc-callout-c) var(--bc-wash), var(--background-primary));
+}
+
+body.theme-dark:not(.bc-off-habbiter) .callout {
+  --bc-hb-page: color-mix(in oklab, var(--bc-callout-c) calc(var(--bc-wash) * 1.8), var(--background-primary));
+}
+
+body:not(.bc-off-habbiter) .callout:is([data-callout="quote"], [data-callout="cite"]),
+body.bc-callout-rule:not(.bc-off-habbiter) .callout {
+  --bc-hb-page: inherit;
+}
+
+body:not(.bc-off-habbiter) .markdown-embed {
+  --bc-hb-page: var(--bc-surface-sunken);
+}
+
+/* Card embeds inside filled callouts draw a ring but no second fill. */
+body:not(.bc-off-habbiter) .callout .markdown-embed {
+  --bc-hb-page: inherit;
+}
+
+body.bc-callout-rule:not(.bc-off-habbiter) .callout .markdown-embed {
+  --bc-hb-page: var(--bc-surface-sunken);
+}
+
+/* Reader-selected transparent embeds retain the surrounding surface. */
+body:is(.bc-embed-quiet, .bc-embed-bare):not(.bc-off-habbiter) .markdown-embed.markdown-embed {
+  --bc-hb-page: inherit;
+}

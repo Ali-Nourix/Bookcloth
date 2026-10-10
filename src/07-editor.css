@@ -203,7 +203,10 @@ body.bc-code-ink {
 
 @property --bc-callout-c {
   syntax: "<color>";
-  inherits: false;
+  /* Embed hairlines and callout signatures must use their container's colour.
+     Every nested callout resolves its own value, so inheritance cannot leak
+     an outer callout's kind into a nested one. */
+  inherits: true;
   initial-value: #8a8a8a;
 }
 

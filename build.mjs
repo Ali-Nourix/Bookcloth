@@ -30,6 +30,7 @@ const files = [
   "plugins/tasks.css",
   "plugins/kanban.css",
   "plugins/calendar.css",
+  "plugins/habbiter.css",
   "plugins/misc.css",
   "plugins/taskpro.css",
 ];
